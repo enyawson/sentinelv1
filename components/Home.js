@@ -8,9 +8,12 @@ import {
   View,
   Text,
   Image,
+  Modal,
   TouchableOpacity,
 } from 'react-native';
 import React, {Component} from 'react';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 
 
@@ -23,68 +26,24 @@ export default function Home ({ navigation }){
     
       <View style= { styles.MainContainer }>
         <View style={styles.headerContainer}>
-            <Text>Image #01</Text>
-            <Text>Image #02</Text>
-            <Text style={{paddingLeft: 80}}>VectorImage #03</Text> 
+          <Text style={{marginLeft: 25, marginTop: 5, alignContent: 'center'}}>logo</Text>
+          <Image 
+          style={styles.logo} 
+          source = { require('../assets/softmastersLogo.png') } 
+          />
+          <Icon
+            name={'ellipsis-vertical'} 
+            size={23}
+            color="black"
+            style={{ marginLeft: 11, marginBottom:8}}/>
         </View>
-        <View style={styles.containerAB}>
+        <View style={{alignSelf: 'center'}}>
           <Image 
           style={styles.image}
-          source = { require('../assets/voting.jpg') } /> 
+          source = { require('../assets/voting.jpg') }>
+          </Image> 
         </View>
-        <View style={styles.instructionContainer}>
-          <Text style={styles.text}>
-            Submit evidence of bad deeds to promote the
-          </Text>
-          <Text style={styles.text}>public good</Text>
-        </View>
-        <View style={styles.containerAB}>
-          <View style={styles.boxInRows}>
-            <View style={styles.box}>
-              <TouchableOpacity
-                style={styles.touchableButton}
-                onPress={() => navigation.navigate('PhotoLogic')}
-                >
-                <Image 
-                style={styles.imageInBox}
-                source = { require('../assets/cameraImage.png') } />
-                <Text style={styles.text}>Photo</Text>
-              </TouchableOpacity>
-            </View>
-            {/* <View style={styles.box}>
-              <TouchableOpacity
-                  style={styles.touchableButton}>
-                  <Image 
-                  style={styles.imageInBox}
-                  source = { require('../assets/videoImage.png') } />
-                  <Text style={styles.text}>Video</Text>
-            </TouchableOpacity>
-            </View> */}
-          </View>
-          <View style={styles.boxInRows}>
-                <View style={styles.box}>
-                  <TouchableOpacity
-                    style={styles.touchableButton}>
-                    <Image 
-                    style={styles.imageInBox}
-                    source = { require('../assets/audioImage.png') } />
-                    <Text style={styles.text}>Voice</Text>
-                  </TouchableOpacity>
-                </View>
-                <View style={styles.box}>
-                <TouchableOpacity
-                    style={styles.touchableButton}>
-                    <Image 
-                    style={styles.imageInBox}
-                    source = { require('../assets/audioImage.png') } />
-                    <Text style={styles.text}>Election {'\n'} Results </Text>
-                  
-                  </TouchableOpacity>
-                </View>
-          </View>
-      </View>
-      <View style={styles.bottomContainer} backgroundColor='#F0F0F0'> 
-          <TouchableOpacity style={styles.button}>  
+        <TouchableOpacity style={styles.alarmButton}>  
             <Text style={{
               color: 'white',
               fontSize:18, 
@@ -97,8 +56,53 @@ export default function Home ({ navigation }){
             <Image 
               style={styles.imageInBox}
               source = { require('../assets/megaPhone.png') }/>
-          </TouchableOpacity>
-          <View style={styles.bottomContainerB}> 
+        </TouchableOpacity>
+        {/* <View style={styles.instructionContainer}>
+
+          <Text style={styles.text}>
+            Submit evidence of bad deeds to promote the
+          </Text>
+          <Text style={styles.text}>public good</Text>
+        </View> */}
+        
+        <View style={styles.buttonInRowContainer} marginTop= {15}>
+            <View style={styles.box} marginRight={35}>
+              <TouchableOpacity
+                onPress={() => navigation.navigate('PhotoLogic')}
+                >
+                <Image 
+                style={styles.imageInBox}
+                source = { require('../assets/cameraImage.png') } />
+                <Text style={styles.text}>Photo</Text>
+              </TouchableOpacity>
+            </View>
+            <View style={styles.box}>
+              <TouchableOpacity>
+               <Image style={styles.imageInBox}
+                source = { require('../assets/formIcon.png') }/>
+                <Text style={styles.text}>Register</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+          <View style={styles.buttonInRowContainer}>
+                <View style={styles.box} marginRight={35}>
+                  <TouchableOpacity>
+                    <Image 
+                    style={styles.imageInBox}
+                    source = { require('../assets/audioImage.png') } />
+                    <Text style={styles.text}>Voice</Text>
+                  </TouchableOpacity>
+                </View>
+                <View style={styles.box}>
+                <TouchableOpacity>
+                    <Image 
+                    style={styles.imageInBox}
+                    source = { require('../assets/resultImage.png') } />
+                    <Text style={styles.text}> Results </Text>
+                  </TouchableOpacity>
+                </View>    
+          </View>
+      <View style={styles.bottomContainer}> 
             <TouchableOpacity>
                 <Text>Location</Text>
             </TouchableOpacity>
@@ -111,8 +115,7 @@ export default function Home ({ navigation }){
             <TouchableOpacity>
                 <Text>Help</Text>
             </TouchableOpacity>
-          </View>
-      </View>
+        </View>
     </View>
     );
   }
@@ -120,64 +123,41 @@ export default function Home ({ navigation }){
 const styles = StyleSheet.create({
   MainContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'stretch',
     backgroundColor:'#f0f0f0',
-
   },
-  text: {
-    fontSize: 14,
-    justifyContent: 'center',
-    marginTop: 2,
-  },
-  button: {
-    flexDirection: 'row',
-    backgroundColor: '#ed7055',
-    height: 40,
-    width: 315,
-    borderRadius: 5,
-    alignContent:'center',
-    justifyContent: 'center',
-    marginTop: 10,
-  },
-  containerAB: {
-    flex: 1,
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: "center",
-    backgroundColor: '#F0F0F0',
-    alignSelf: 'stretch',
-  },
-  bottomContainer: {
-    flex: 0.5,
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    alignSelf: 'stretch',
-    marginLeft: 10,
-    marginRight: 10,
-    
-  
-  },
-  bottomContainerB: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    alignSelf: 'stretch',
-    marginBottom: 15,
+  logo: {
+    width: 200,
+    height: 100,
+    marginRight: 50,
+    marginTop:10
   },
   headerContainer: {
     flex: 0.45,
     flexDirection: 'row',
     backgroundColor: '#F0F0F0',
-    width: 325,
+    marginTop: 20,
     alignItems: 'center',
+    alignSelf: 'center',
   },
-  headerImagesContainer: {
-    flexDirection: 'row', 
-    alignContent: 'flex-start',
-    
+
+  text: {
+    fontSize: 14,
+    justifyContent: 'center',
+    marginTop: 2,
   },
+  
+  containerImage: {
+    flex: 1,
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: "center",
+    backgroundColor: '#f0f0f0',
+    alignSelf: 'center',
+    alignSelf: 'stretch',
+    marginTop: 5,
+  },
+  
+ 
   instructionContainer: {
     flex: 0.2,
     flexDirection: 'column',
@@ -186,34 +166,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#F0F0F0',
     alignSelf: 'stretch',
   },
-  box: {
-    width: 88,
-    height: 67,
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    backgroundColor: '#F0F0F0',
-    borderRadius: 10,
-    elevation: 5,
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-    margin: 25,
-  },
-  boxText: {
-    color: 'darkslategray',
-    fontWeight: 'bold',
-    fontFamily: 'Roboto',
-    fontStyle: 'normal',
-  },
-  boxInRows: {
-    flex: 1,
-    flexDirection: 'row',
-    
-    alignItems: 'center',
-  },
   image: {
     width: 325,
-    height: 200,
-    borderRadius: 15,
+    height: 205,
+    borderRadius: 20,
     justifyContent: 'center',
     alignSelf: 'auto',
     shadowOffset: {
@@ -224,14 +180,54 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     shadowColor: "darkslategray",
   },
+  alarmButton: {
+    flexDirection: 'row',
+    backgroundColor: '#ed7055',
+    height: 40,
+    width: 330,
+    borderRadius: 5,
+    alignContent:'center',
+    justifyContent: 'center',
+    marginTop: 25,
+    alignSelf: 'center',
+  },
+  
+  buttonInRowContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#f0f0f0',
+    alignSelf: 'center',
+    padding: 10,
+    
+  },
+  box: {
+    width: 88,
+    height: 67,
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    backgroundColor: '#Ffffff',
+    borderRadius: 10,
+    elevation: 5,
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+  },
   imageInBox: {
     width: 23,
     height: 23,
     justifyContent: 'center',
     alignSelf:'center',
   },
-  touchableButton: {
-    alignContent: 'stretch',
+
+  bottomContainer: {
+    flex: 0.3,
+    flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
+    alignSelf: 'stretch',
+    marginTop: 30,
+    marginLeft: 30,
+    marginRight:30,
+    backgroundColor: '#f0f0f0',
   },
+  
 });

@@ -8,6 +8,9 @@ export default class GPSLocationLogic extends React.Component{
         latitude: null,
         loading: false,
         updatesEnabled: false,
+        isPermissionEnabled: false,
+        timeStamp: null,
+        isWithinAccuracy: null,
     };
     componentDidMount = () => {
         let that = this;
@@ -24,6 +27,7 @@ export default class GPSLocationLogic extends React.Component{
                      }
                  )
                  if (granted === PermissionsAndroid.RESULTS.GRANTED){
+                    
                      that.callLocation(that);
                  }else{
                      alert("Permission alert")
@@ -45,16 +49,20 @@ export default class GPSLocationLogic extends React.Component{
                 (position) => {
                     const currentLongitude =  JSON.stringify(position.coords.longitude);
                     const currentLatitude = JSON.stringify(position.coords.latitude);
+                    const locationTime = JSON.stringify (position.timestamp);
+                    const locationAccuracy = JSON.stringify (position.coords.accuracy);
                     //setting state to re-render positions
                     this.setState({ longitude: currentLongitude,
                         latitude: currentLatitude,
-                        loading: false });
+                        loading: false,
+                        timeStamp: Date(locationTime),
+                        isWithinAccuracy : locationAccuracy});
                 },
                 (error) => {
                     Alert.alert(error.message);},
                 { enableHighAccuracy: true,
                      timeout: 20000,
-                     maximumAge: 10000,
+                     maximumAge: 0,
                      distanceFilter: 0, 
                      enableHighAccuracy: true
                     }
@@ -65,8 +73,16 @@ export default class GPSLocationLogic extends React.Component{
                 that.watchID = Geolocation.watchPosition((position) => {
                 const currentLongitude = JSON.stringify(position.coords.longitude);
                 const currentLatitude = JSON.stringify(position.coords.latitude);
-                that.setState({longitude: currentLongitude});
-                that.setState({latitude: currentLatitude});
+                const locationTime = JSON.stringify (position.timestamp);
+                const locationAccuracy = JSON.stringify (position.coords.accuracy);
+                that.setState({longitude: currentLongitude,
+                    latitude: currentLatitude,
+                    timeStamp: Date(locationTime),
+                    isWithinAccuracy : locationAccuracy});
+               
+                console.log('lng :' + this.state.currentLongitude);
+                console.log('lng :' + this.state.currentLatitude);
+
             },
             (error) => {Alert.alert(error.message)},
             {distanceFilter: 0.1, 
@@ -90,15 +106,28 @@ export default class GPSLocationLogic extends React.Component{
     
     render(){
         return (
-            <View style={styles.gpsContainer}>
-                <Text style={styles.text}>
-                    Long:{this.state.longitude}
+            <View style={{flexDirection: 'column'}}>
+                    <View style={styles.gpsContainer}>
+                    <Text style={styles.text}>
+                        Lng:{this.state.longitude}   
+                    </Text>
+                    <Text style={{fontSize: 16, color: 'white', marginLeft: 5}} >
+                    Lat:{this.state.latitude}
+                    </Text>
                     
-                </Text>
-                <Text style={{fontSize: 16, color: 'white', marginLeft: 5}} >
-                   Lat:{this.state.latitude}
-                </Text>
+                    </View>
+                <View>
+                    <Text style={{fontSize: 16, color: 'white', marginLeft: 5}} >
+                    Time:{this.state.timeStamp}
+                    </Text>
+                    <Text style={{fontSize: 16, color: 'white', marginLeft: 5, alignItems: 'center'}} >
+                    acc:{this.state.isWithinAccuracy}
+                    </Text>
+                </View>
             </View>
+           
+          
+            
         )
     }
 }
