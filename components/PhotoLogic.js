@@ -1,12 +1,18 @@
 import React, { PureComponent } from 'react';
-import { AppRegistry, StyleSheet, Text, TouchableOpacity, View, Image} from 'react-native';
+import { AppRegistry, StyleSheet, Text, TouchableOpacity, View, Modal, Image} from 'react-native';
 import { RNCamera } from 'react-native-camera';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon from 'react-native-vector-icons/FontAwesome5';
+import ArrowBack from 'react-native-vector-icons/Ionicons';
+import FlashOff from 'react-native-vector-icons/Ionicons';
+
+
+
 import GPSLocationLogic from './GPSLocationLogic';
 
 export default function PhotoLogic (props) {
         return (
             <View style={styles.container}>
+            
                 <RNCamera
                  ref={(ref) => {
                      camera = ref;
@@ -27,18 +33,59 @@ export default function PhotoLogic (props) {
                       buttonNegative: 'Cancel',
                   }}
                 >
-                 <GPSLocationLogic />
+                <Modal
+                transparent = {true}
+                visible = {true}>
+                    <View style={{alignItems:'flex-start',
+                     flexDirection: 'row', 
+                     justifyContent:'space-between', flex:1}}>
+                        <ArrowBack
+                            name={'arrow-back-outline'}
+                            size={23}
+                            color="white"
+                            style={{margin:15, alignContent: 'center'}}/>
+
+                        <FlashOff
+                            name={'flash-off-outline'}
+                            size={23}
+                            color="white"
+                            style={{margin:15, alignContent: 'center'}}/>   
+
+                        <Icon
+                            name={'map-marker-alt'}
+                            size={23}
+                            color="white"
+                            style={{margin:15, alignContent: 'center'}}/>  
+                    </View>
+                    <View style={{flex: 1, flexDirection: 'row', alignSelf:'center',
+                    marginTop: 540}}>
+                     <TouchableOpacity 
+                        onPress={takePicture} 
+                        style={styles.alternateCapture}>
+                         <Icon name="camera" size={30} color="#1D5179"/>
+                         </TouchableOpacity>
+                        <TouchableOpacity 
+                        onPress={takePicture} 
+                        style={styles.capture}>
+                         <Icon name="camera" size={30} color="#1D5179"/>
+                         </TouchableOpacity>
+                        <TouchableOpacity 
+                        onPress={takePicture} 
+                        style={styles.alternateCapture}>
+                        <Icon name="camera" size={30} color="#1D5179"/>
+                        
+                     </TouchableOpacity>
+                </View>
+
+                </Modal>
+
+{/* 
+                 <GPSLocationLogic /> */}
                 </RNCamera>
 
                 
 
-                <View style={{flex: 0, flexDirection: 'row', justifyContent: 'center',}}>
-                    <TouchableOpacity 
-                    onPress={takePicture} 
-                    style={styles.capture}>
-                       <Icon name="camera" size={35} color="#1D5179"/>
-                    </TouchableOpacity>
-                </View>
+                
             </View>
         );
     }
@@ -71,6 +118,16 @@ const styles = StyleSheet.create ({
         alignContent:'center',
         borderRadius: 100,
         
+    },
+    alternateCapture:{
+        flex: 0,
+        backgroundColor: '#fff',
+        padding: 10,
+        paddingHorizontal: 15,
+        alignSelf: 'center',
+        margin: 15,
+        alignContent:'center',
+        borderRadius: 10,
     },
     
 });
