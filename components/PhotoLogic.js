@@ -2,14 +2,15 @@ import React, { PureComponent } from 'react';
 import { AppRegistry, StyleSheet, Text, TouchableOpacity, View, Modal, Image} from 'react-native';
 import { RNCamera } from 'react-native-camera';
 import Icon from 'react-native-vector-icons/FontAwesome5';
+import PhotoVideo from 'react-native-vector-icons/FontAwesome5';
 import ArrowBack from 'react-native-vector-icons/Ionicons';
 import FlashOff from 'react-native-vector-icons/Ionicons';
-
-
-
+import Video from 'react-native-vector-icons/Feather';
 import GPSLocationLogic from './GPSLocationLogic';
 
+TouchableOpacity.defaultProps = { activeOpacity : 0.8};
 export default function PhotoLogic (props) {
+
         return (
             <View style={styles.container}>
             
@@ -57,30 +58,32 @@ export default function PhotoLogic (props) {
                             color="white"
                             style={{margin:15, alignContent: 'center'}}/>  
                     </View>
-                    <View style={{flex: 1, flexDirection: 'row', alignSelf:'center',
-                    marginTop: 540}}>
-                     <TouchableOpacity 
-                        onPress={takePicture} 
-                        style={styles.alternateCapture}>
-                         <Icon name="camera" size={30} color="#1D5179"/>
-                         </TouchableOpacity>
+                    <View style={{flex: 1, flexDirection: 'row', alignSelf:'stretch',
+                    marginTop: 500,
+                    backgroundColor: 'rgba(0, 0, 0, 0.4)',
+                    justifyContent: 'center'
+                     }}>
                         <TouchableOpacity 
-                        onPress={takePicture} 
-                        style={styles.capture}>
-                         <Icon name="camera" size={30} color="#1D5179"/>
+                            onPress={takePicture} 
+                            style={styles.alternateCapture}>
+                            <PhotoVideo name="photo-video" size={28} color="#f8f8ff"/>
                          </TouchableOpacity>
+                         <TouchableOpacity 
+                            onPress={takePicture} 
+                            style={styles.capture}>
+                            <Icon name="camera" size={28} color="#1D5179"/>
+                        </TouchableOpacity>
                         <TouchableOpacity 
-                        onPress={takePicture} 
-                        style={styles.alternateCapture}>
-                        <Icon name="camera" size={30} color="#1D5179"/>
-                        
-                     </TouchableOpacity>
+                            onPress={takePicture} 
+                            style={styles.alternateCapture}>
+                            <Video name="video" size={28} color="#f8f8ff"/>
+                         </TouchableOpacity>    
                 </View>
 
                 </Modal>
 
-{/* 
-                 <GPSLocationLogic /> */}
+
+                {/* <GPSLocationLogic /> */}
                 </RNCamera>
 
                 
@@ -101,7 +104,7 @@ const styles = StyleSheet.create ({
     container: {
         flex: 1,
         flexDirection: 'column',
-        backgroundColor: 'black',  
+         
     },
     preview: {
         flex: 1,
@@ -110,7 +113,7 @@ const styles = StyleSheet.create ({
     },
     capture: {
         flex: 0,
-        backgroundColor: '#fff',
+        backgroundColor: '#ffffff', 
         padding: 15,
         paddingHorizontal: 15,
         alignSelf: 'center',
@@ -121,7 +124,7 @@ const styles = StyleSheet.create ({
     },
     alternateCapture:{
         flex: 0,
-        backgroundColor: '#fff',
+        backgroundColor: 'rgba(52, 52, 52, 0.8)', 
         padding: 10,
         paddingHorizontal: 15,
         alignSelf: 'center',
