@@ -12,6 +12,7 @@ import {
   BackHandler,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
+import CopyRight from 'react-native-vector-icons/FontAwesome5';
 
 
 export default function Home ({ navigation }){
@@ -47,13 +48,17 @@ export default function Home ({ navigation }){
         <View style={styles.headerContainer}>
           <Image style={styles.logo}
           source= {require('../assets/electionWatch.png')}/>
+          <View style={{marginTop: 20}}>
           <Icon
             name={'ellipsis-vertical'} 
             size={24}
             color="black"
-            style={{ marginBottom:10, marginTop:17, marginRight: 20 }}/>
+            style={{ marginRight: 18 }}/>
+
+          </View>
+          
         </View>
-        <View style={{alignSelf: 'center'}}>
+        <View style={{alignSelf: 'center', marginTop: 50,}}>
           <Image 
           style={styles.image}
           source = { require('../assets/voting.jpg') }>
@@ -132,13 +137,16 @@ export default function Home ({ navigation }){
                 <Text>Help</Text>
             </TouchableOpacity>
       </View>
-      <View style={{alignItems: 'center', alignSelf: 'center', flexDirection:'row'}}>
-        <Text style={styles.text}>
-        <Image style={styles.imageInBox}
-        source = { require('../assets/copyright.png') }/>
-        by SoftMasters 
-        </Text>
-      </View>
+     <View style={{alignContent: 'center', marginTop:10,
+      flexDirection:'row', 
+      justifyContent:'center'}}>
+      <CopyRight name="copyright" size={14} 
+        alignContent='center'
+        marginTop={10}
+        color="#1D5179"
+        marginRight={10}/>
+      <Text style={styles.textBottom}>by SoftMasters</Text>
+     </View>
     </View>
     );
   }
@@ -150,16 +158,18 @@ const styles = StyleSheet.create({
   },
   logo: {
     width: 90,
-    height: 50,
-    marginTop:10,
-    marginLeft: 25
+    height: 45,
+    marginTop:15,
+    marginLeft: 25,
   },
   headerContainer: {
     flex: 0.45,
     flexDirection: 'row',
     backgroundColor: '#F0F0F0',
-    marginTop: 15,
+    marginTop: 12,
     justifyContent:'space-between',
+    alignContent: 'center',
+  
   },
 
   containerImage: {
@@ -243,13 +253,24 @@ const styles = StyleSheet.create({
     marginTop: 30,
     marginLeft: 30,
     marginRight:30,
-    
+    marginBottom: 30,
+   
+  
     backgroundColor: '#f0f0f0',
   },
   text: {
     fontSize: 12,
     justifyContent: 'center',
     alignSelf: 'center',
+  },
+  textBottom: {
+    fontSize: 12,
+    justifyContent: 'center',
+    alignSelf: 'center',
+    marginLeft: 5,
+    alignContent:'center',
+  
+    color: '#1D5179'
   },
 
   
