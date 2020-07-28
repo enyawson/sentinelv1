@@ -2,39 +2,56 @@
 /**
  *Home Screen
  */
-
+import React  from 'react';
 import {
   StyleSheet,
   View,
   Text,
   Image,
-  Modal,
   TouchableOpacity,
+  BackHandler,
 } from 'react-native';
-import React, {Component} from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 
-
-
-
 export default function Home ({ navigation }){
+
+  /**
+   * This function exit app 
+   */
+  // disableBackButton = () => {
+  //   BackHandler.exitApp();
+  //   return true;
+  // }
+
+  /**
+   * This method is called when components are mounted
+   * component mounts adds an event listener to the following parameters
+   */
+  // componentWillMount() 
+  // {
+  //   BackHandler.addEventListener('hardwareBackPress', disableBackButton);
+  // }
+  // /**
+  //  * This method is called when components unmount
+  //  */
+  // componentWillUnmount()
+  // {
+  //   BackHandler.removeEventListener('hardwareBackPress', disableBackButton);
+  // }
   
     return (
       // Home page
     
       <View style= { styles.MainContainer }>
         <View style={styles.headerContainer}>
-          <Text style={{marginLeft: 25, marginTop: 5, alignContent: 'center'}}>logo</Text>
-          <Image 
-          style={styles.logo} 
-          source = { require('../assets/softmastersLogo.png') } 
-          />
+          <Image style={styles.logo}
+          source= {require('../assets/electionWatch.png')}/>
           <Icon
             name={'ellipsis-vertical'} 
-            size={23}
+            size={24}
             color="black"
-            style={{ marginLeft: 11, marginBottom:8}}/>
+            style={{ marginBottom:10, marginTop:17, marginRight: 20 }}/>
         </View>
         <View style={{alignSelf: 'center'}}>
           <Image 
@@ -98,7 +115,7 @@ export default function Home ({ navigation }){
                     style={styles.imageInBox}
                     source = { require('../assets/resultImage.png') } />
                     <Text style={styles.text}> Results </Text>
-                  </TouchableOpacity>
+                </TouchableOpacity>
                 </View>    
           </View>
       <View style={styles.bottomContainer}> 
@@ -114,7 +131,14 @@ export default function Home ({ navigation }){
             <TouchableOpacity>
                 <Text>Help</Text>
             </TouchableOpacity>
-        </View>
+      </View>
+      <View style={{alignItems: 'center', alignSelf: 'center', flexDirection:'row'}}>
+        <Text style={styles.text}>
+        <Image style={styles.imageInBox}
+        source = { require('../assets/copyright.png') }/>
+        by SoftMasters 
+        </Text>
+      </View>
     </View>
     );
   }
@@ -125,26 +149,19 @@ const styles = StyleSheet.create({
     backgroundColor:'#f0f0f0',
   },
   logo: {
-    width: 200,
-    height: 100,
-    marginRight: 50,
-    marginTop:10
+    width: 90,
+    height: 50,
+    marginTop:10,
+    marginLeft: 25
   },
   headerContainer: {
     flex: 0.45,
     flexDirection: 'row',
     backgroundColor: '#F0F0F0',
-    marginTop: 20,
-    alignItems: 'center',
-    alignSelf: 'center',
+    marginTop: 15,
+    justifyContent:'space-between',
   },
 
-  text: {
-    fontSize: 14,
-    justifyContent: 'center',
-    marginTop: 2,
-  },
-  
   containerImage: {
     flex: 1,
     flexDirection: 'column',
@@ -226,7 +243,14 @@ const styles = StyleSheet.create({
     marginTop: 30,
     marginLeft: 30,
     marginRight:30,
+    
     backgroundColor: '#f0f0f0',
   },
+  text: {
+    fontSize: 12,
+    justifyContent: 'center',
+    alignSelf: 'center',
+  },
+
   
 });

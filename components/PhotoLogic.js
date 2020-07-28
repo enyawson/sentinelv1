@@ -1,15 +1,27 @@
-import React, { PureComponent } from 'react';
-import { AppRegistry, StyleSheet, Text, TouchableOpacity, View, Modal, Image} from 'react-native';
+import React from 'react';
+import { AppRegistry, StyleSheet, 
+    TouchableOpacity, View, Modal,
+     BackHandler} from 'react-native';
 import { RNCamera } from 'react-native-camera';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import PhotoVideo from 'react-native-vector-icons/FontAwesome5';
 import ArrowBack from 'react-native-vector-icons/Ionicons';
 import FlashOff from 'react-native-vector-icons/Ionicons';
 import Video from 'react-native-vector-icons/Feather';
-import GPSLocationLogic from './GPSLocationLogic';
+
+
+
 
 TouchableOpacity.defaultProps = { activeOpacity : 0.8};
-export default function PhotoLogic (props) {
+export default function PhotoLogic ({navigation}) {
+
+    /**
+     * This function enable the device back button
+     */
+//    function handleBackButtonClick(){
+//        navigation.goBack();
+//        return true;
+//    }
 
         return (
             <View style={styles.container}>
@@ -44,7 +56,9 @@ export default function PhotoLogic (props) {
                             name={'arrow-back-outline'}
                             size={23}
                             color="white"
-                            style={{margin:15, alignContent: 'center'}}/>
+                            style={{margin:15, alignContent: 'center'}}
+                            onPress={()=> navigation.goBack()}
+                            />
 
                         <FlashOff
                             name={'flash-off-outline'}
