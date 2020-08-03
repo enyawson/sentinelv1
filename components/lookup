@@ -8,14 +8,13 @@ export default class GPSLocationLogic extends Component{
      this.state = {
         longitude: null,
         latitude: null,
-       
+        loading: false,
         updatesEnabled: false,
         isPermissionEnabled: false,
         timeStamp: null,
         date: null,
         dateTime: null,
-        isWithInAccuracy: null, // receives the accuracy of the coordinates
-        captureSwitch: false, // turns camera or video on and off
+        isWithinAccuracy: null,
     };
     }
    
@@ -34,7 +33,7 @@ export default class GPSLocationLogic extends Component{
                      }
                  )
                  if (granted === PermissionsAndroid.RESULTS.GRANTED){
-                      that.getDateOfLocation();
+                      that.getDateTimeOfLocation();
                       that.getTimeOfLocation();
                      that.callLocation(that);
                  }else{
@@ -52,7 +51,7 @@ export default class GPSLocationLogic extends Component{
     /**
      * This function gets date and Time
      */
-    getDateOfLocation(){
+    getDateOfLocation (){
         setInterval(()=> {
             let datePic = new Date().getDate(); //current date
             let month = new Date().getMonth() + 1; //current Month
@@ -70,7 +69,7 @@ export default class GPSLocationLogic extends Component{
         }, 1000)
         
     }
-getTimeOfLocation() {
+getTimeOfLocation () {
     setInterval(() => {
         let hours = new Date().getHours(); //current hours
             let min = new Date().getMinutes(); //current minutes
@@ -87,36 +86,34 @@ getTimeOfLocation() {
     //call location
     callLocation (that){
          this.setState({loading: true});
-        
+        if (this.state.loading === true){ 
             Geolocation.getCurrentPosition(
                 (position) => {
                     const currentLongitude =  JSON.stringify(position.coords.longitude);
                     const currentLatitude = JSON.stringify(position.coords.latitude);
                     const locationTime = this.state.date;
                     const locationAccuracy = position.coords.accuracy;
-                    console.log('I happened'); // console log
-                    console.log(position);  // console log
                      
                     //setting state to re-render positions
                     this.setState({ longitude: currentLongitude,
                         latitude: currentLatitude,
+                        loading: false,
                         timeStamp: locationTime,
                         isWithinAccuracy : locationAccuracy});
-                        
                 },
                 (error) => {
                     Alert.alert(error.message)
                 },
                 {    enableHighAccuracy: true,
                      timeout: 20000,
-                     maximumAge: 5000,
+                     maximumAge: 0,
                      distanceFilter: 5, 
                      enableHighAccuracy: true
                     }
             );
+        } 
+        if (this.state.loading === false){
                 that.watchID = Geolocation.watchPosition((position) => {
-                console.log('change in position'); //console log
-                console.log(position); //console log
                 const currentLongitude = JSON.stringify(position.coords.longitude);
                 const currentLatitude = JSON.stringify(position.coords.latitude);
                 const locationTime =  this.state.date;
@@ -124,9 +121,11 @@ getTimeOfLocation() {
                
                 
                 that.setState({longitude: currentLongitude,
-                latitude: currentLatitude,
-                timeStamp: locationTime,
-                isWithinAccuracy : locationAccuracy});
+                    latitude: currentLatitude,
+                    timeStamp: locationTime,
+                    isWithinAccuracy : locationAccuracy});
+              
+
             },
             (error) => {Alert.alert(error.message)},
             {distanceFilter: 0.1, 
@@ -135,14 +134,18 @@ getTimeOfLocation() {
                 enableHighAccuracy: true,
                 useSignificantChanges: true
              });
-        
+        }
         
     }
-    //remove location updates on component unmount
-    componentWillUnmount = () => {
-     Geolocation.clearWatch(this.watchID);
-     console.log('unmounted successfully'); // console log
+    //remove location updates
+    removeLocationUpdates = () => {
+        if (this.watchID !== null){
+            Geolocation.clearWatch(this.watchID);
+        }
     }
+    // componentWillUnmount = () => {
+    //  //  Geolocation.clearWatch(this.watchID);
+    // }
     
     render(){
         return (

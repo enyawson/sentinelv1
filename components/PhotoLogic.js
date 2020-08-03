@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { PureComponent } from 'react';
 import { AppRegistry, StyleSheet, 
     TouchableOpacity, View, Modal,
      BackHandler} from 'react-native';
@@ -8,6 +8,8 @@ import PhotoVideo from 'react-native-vector-icons/FontAwesome5';
 import ArrowBack from 'react-native-vector-icons/Ionicons';
 import FlashOff from 'react-native-vector-icons/Ionicons';
 import Video from 'react-native-vector-icons/Feather';
+import  GPSLocationLogic from './GPSLocationLogic';
+import GPSLocation from './GPSLocation';
 
 
 
@@ -93,22 +95,15 @@ export default function PhotoLogic ({navigation}) {
                             <Video name="video" size={28} color="#f8f8ff"/>
                          </TouchableOpacity>    
                 </View>
-
                 </Modal>
-
-
-                {/* <GPSLocationLogic /> */}
+                <GPSLocationLogic />
                 </RNCamera>
-
-                
-
-                
             </View>
         );
     }
     takePicture = async () => {
         if (camera){
-            const options = {quality: 0.5, base64: true};
+            const options = {quality: 1, base64: true};
             const data = await camera.takePictureAsync(options);
             console.log(data.uri);
         }

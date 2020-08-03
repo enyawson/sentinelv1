@@ -46,8 +46,13 @@ export default function Home ({ navigation }){
     
       <View style= { styles.MainContainer }>
         <View style={styles.headerContainer}>
-          <Image style={styles.logo}
-          source= {require('../assets/electionWatch.png')}/>
+        {/* <Image
+          style={styles.logo}
+          source= {require('../assets/electionWatch2.png')}/> */}
+        <View>
+          <Text style={styles.logoName}>Election Watch</Text>
+        </View>
+          
           <View style={{marginTop: 20}}>
           <Icon
             name={'ellipsis-vertical'} 
@@ -93,14 +98,14 @@ export default function Home ({ navigation }){
                 >
                 <Image 
                 style={styles.imageInBox}
-                source = { require('../assets/cameraImage.png') } />
+                source = { require('../assets/photo.png') } />
                 <Text style={styles.text}>Photo</Text>
               </TouchableOpacity>
             </View>
             <View style={styles.box}>
               <TouchableOpacity>
                <Image style={styles.imageInBox}
-                source = { require('../assets/formIcon.png') }/>
+                source = { require('../assets/add.png') }/>
                 <Text style={styles.text}>Register</Text>
               </TouchableOpacity>
             </View>
@@ -110,7 +115,7 @@ export default function Home ({ navigation }){
                   <TouchableOpacity>
                     <Image 
                     style={styles.imageInBox}
-                    source = { require('../assets/audioImage.png') } />
+                    source = { require('../assets/microphone.png') } />
                     <Text style={styles.text}>Voice</Text>
                   </TouchableOpacity>
                 </View>
@@ -140,12 +145,18 @@ export default function Home ({ navigation }){
      <View style={{alignContent: 'center', marginTop:10,
       flexDirection:'row', 
       justifyContent:'center'}}>
-      <CopyRight name="copyright" size={14} 
+      
+      <Text style={styles.textBottomA}>developed by</Text>
+      <View style={{ alignSelf: 'center', alignItems: 'center', flexDirection:'row'}}>
+        <CopyRight name="copyright" size={14} 
         alignContent='center'
         marginTop={10}
-        color="#1D5179"
+        color='#ed7055'
         marginRight={10}/>
-      <Text style={styles.textBottom}>by SoftMasters</Text>
+         <Text style={styles.textBottom}>SOFTMASTERS</Text>
+      </View>
+      
+     
      </View>
     </View>
     );
@@ -157,10 +168,18 @@ const styles = StyleSheet.create({
     backgroundColor:'#f0f0f0',
   },
   logo: {
-    width: 90,
-    height: 45,
+    width: 55,
+    height: 35,
     marginTop:15,
     marginLeft: 25,
+  },
+  logoName: {
+    fontSize: 30,
+    fontWeight: 'bold',
+    marginTop:12,
+    marginLeft: 86,
+    color: '#ed7055',
+    alignItems: 'center'
   },
   headerContainer: {
     flex: 0.45,
@@ -264,14 +283,24 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   textBottom: {
-    fontSize: 12,
+    fontSize: 26,
+    fontWeight: 'bold',
     justifyContent: 'center',
     alignSelf: 'center',
     marginLeft: 5,
     alignContent:'center',
   
-    color: '#1D5179'
+    color:'#ed7055'
   },
-
+  textBottomA: {
+    fontSize: 12,
+    justifyContent: 'center',
+    alignSelf: 'center',
+    marginRight:10, 
+    alignContent:'center',
+    color: '#ed7055'
+  },
+  
+  
   
 });
