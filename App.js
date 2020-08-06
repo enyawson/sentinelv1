@@ -7,8 +7,10 @@ import {
 } from 'react-native';
 import Home from './components/Home';
 import PhotoLogic from './components/PhotoLogic';
+import GPSLocationLogic from './components/GPSLocationLogic'
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+
 
 const Stack = createStackNavigator();
 
@@ -27,6 +29,12 @@ export default function App() {
         <Stack.Screen 
         name="PhotoLogic" 
         component ={PhotoLogic}
+        options={{
+          headerShown: false
+        }}/>
+        <Stack.Screen 
+        name="GPSLocationLogic" 
+        component ={GPSLocationLogic}
         options={{
           headerShown: false
         }}/>

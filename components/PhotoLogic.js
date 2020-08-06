@@ -1,4 +1,4 @@
-import React, { PureComponent } from 'react';
+import React, { PureComponent, useState} from 'react';
 import { AppRegistry, StyleSheet, 
     TouchableOpacity, View, Modal,
      BackHandler} from 'react-native';
@@ -10,20 +10,49 @@ import FlashOff from 'react-native-vector-icons/Ionicons';
 import Video from 'react-native-vector-icons/Feather';
 import  GPSLocationLogic from './GPSLocationLogic';
 import GPSLocation from './GPSLocation';
+import { acc, set } from 'react-native-reanimated';
 
 
 
 
 TouchableOpacity.defaultProps = { activeOpacity : 0.8};
-export default function PhotoLogic ({navigation}) {
+export default function PhotoLogic ({ navigation}) {
+    const falseValue = 'false';
+    const trueValue = 'true';
+
+     
+    // states to hold data from GPSLocation file
+    const[state, setState] = useState({
+        permissionEnable : true,
+        standardValue: 6,
+        disableCameraView: '',
+        accuracyValue: 0,
+    });
+   
 
     /**
-     * This function enable the device back button
+     * This method handles the accuracy of the coordinates  from GPSLocation
      */
-//    function handleBackButtonClick(){
-//        navigation.goBack();
-//        return true;
-//    }
+    handleData = (value) => {
+       
+         let setAccuracyValue = value.isWithInAccuracy;
+         let setDisableCameraView = value.disableCameraButton;
+         console.log('accuracy value on camera: ' +  setAccuracyValue); //text passed accuracy
+         console.log('disabled view : '+ setDisableCameraView)
+         setState({
+            accuracyValue : setAccuracyValue,
+            disableCameraView : setDisableCameraView,
+           
+        }) 
+       
+        
+    }
+    //console check of accuracyValue and disableCameraView
+    console.log ('yep: '+state.accuracyValue);
+    console.log('tey: '+ state.disableCameraView);
+    
+    
+  
 
         return (
             <View style={styles.container}>
@@ -34,7 +63,7 @@ export default function PhotoLogic ({navigation}) {
                  }}
                   style = {styles.preview}
                   type={RNCamera.Constants.Type.back}
-                  flashMode={RNCamera.Constants.FlashMode.auto}
+                  flashMode={RNCamera.Constants.FlashMode.on}
                   androidCameraPermissionOptions={{
                       title: 'Permission to use camera',
                       message: 'permission needed to use camera',
@@ -72,31 +101,58 @@ export default function PhotoLogic ({navigation}) {
                             name={'map-marker-alt'}
                             size={23}
                             color="white"
-                            style={{margin:15, alignContent: 'center'}}/>  
+                                style={{margin:15, alignContent: 'center'}}/>  
                     </View>
-                    <View style={{flex: 1, flexDirection: 'row', alignSelf:'stretch',
-                    marginTop: 500,
-                    backgroundColor: 'rgba(0, 0, 0, 0.4)',
-                    justifyContent: 'center'
-                     }}>
-                        <TouchableOpacity 
-                            onPress={takePicture} 
-                            style={styles.alternateCapture}>
-                            <PhotoVideo name="photo-video" size={28} color="#f8f8ff"/>
-                         </TouchableOpacity>
-                         <TouchableOpacity 
-                            onPress={takePicture} 
-                            style={styles.capture}>
-                            <Icon name="camera" size={28} color="#1D5179"/>
-                        </TouchableOpacity>
-                        <TouchableOpacity 
-                            onPress={takePicture} 
-                            style={styles.alternateCapture}>
-                            <Video name="video" size={28} color="#f8f8ff"/>
-                         </TouchableOpacity>    
+                    <View style={{
+                            flex: 1, 
+                            flexDirection: 'row', 
+                            alignSelf:'stretch',
+                            marginTop: 500,
+                            backgroundColor: 'rgba(0, 0, 0, 0.4)',
+                            justifyContent: 'center'
+                        }}>
+                        
+                        <View 
+                        flexDirection='row' 
+                        pointerEvents={(state.disableCameraView)? 'none': 'auto'}
+                        opacity={(state.disableCameraView===false)? 1 : 0.5}>
+                            <TouchableOpacity
+                                disabled={false} 
+                                onPress={takePicture} 
+                                style={styles.alternateCapture}
+                            >
+                                <PhotoVideo 
+                                    name="photo-video" 
+                                    size={28} 
+                                    color="#f8f8ff"
+                                    disabled={true}
+                                />
+                            </TouchableOpacity>
+                            <TouchableOpacity 
+                                disabled={false}
+                                onPress={takePicture} 
+                                style={styles.capture}
+                            >
+                                <Icon
+                                    name="camera"
+                                    size={28}
+                                    color="#1D5179"
+                                />
+                            </TouchableOpacity>
+                                <TouchableOpacity 
+                                    disabled={false}
+                                    onPress={takePicture} 
+                                    style={styles.alternateCapture}>
+                                <Video 
+                                    name="video"
+                                    size={28} 
+                                    color="#f8f8ff"
+                                />
+                            </TouchableOpacity>  
+                        </View>  
                 </View>
                 </Modal>
-                <GPSLocationLogic />
+                <GPSLocationLogic customProp={handleData} />
                 </RNCamera>
             </View>
         );
@@ -140,6 +196,13 @@ const styles = StyleSheet.create ({
         margin: 15,
         alignContent:'center',
         borderRadius: 10,
+    },
+    turnViewOff: {
+        flexDirection: 'row',
+    },
+    turnViewOn: {
+        flexDirection: 'row',
+        
     },
     
 });

@@ -1,22 +1,25 @@
 import React, { Component } from 'react';
-import Geolocation from 'react-native-geolocation-service';
+import Geolocation, { stopObserving } from 'react-native-geolocation-service';
 import { AppRegistry,StyleSheet, Text, PermissionsAndroid, View, Image, Alert} from 'react-native';
 
+
+
 export default class GPSLocationLogic extends Component{
-    constructor(){
-        super();
+    constructor(props){
+        super(props);
      this.state = {
         longitude: null,
         latitude: null,
-       
-        updatesEnabled: false,
         isPermissionEnabled: false,
         timeStamp: null,
         date: null,
         dateTime: null,
         isWithInAccuracy: null, // receives the accuracy of the coordinates
-        captureSwitch: false, // turns camera or video on and off
+        disableCameraButton: false,
+        standardAccuracyValue: 6,
     };
+
+
     }
    
     componentDidMount = () => {
@@ -34,9 +37,13 @@ export default class GPSLocationLogic extends Component{
                      }
                  )
                  if (granted === PermissionsAndroid.RESULTS.GRANTED){
-                      that.getDateOfLocation();
-                      that.getTimeOfLocation();
-                     that.callLocation(that);
+                     
+                    that.getDateOfLocation();
+                    that.getTimeOfLocation();
+                    that.callLocation(that);
+                   
+                    
+
                  }else{
                      alert("Permission alert")
                  }
@@ -49,6 +56,12 @@ export default class GPSLocationLogic extends Component{
             requestLocationPermission();
         }
     }
+     //remove location updates on component unmount
+     componentWillUnmount = () => {
+        Geolocation.clearWatch(this.watchID);
+        console.log('unmounted successfully'); // console log
+   
+    }
     /**
      * This function gets date and Time
      */
@@ -57,9 +70,6 @@ export default class GPSLocationLogic extends Component{
             let datePic = new Date().getDate(); //current date
             let month = new Date().getMonth() + 1; //current Month
             let year = new Date().getFullYear(); //current year
-            // let hours = new Date().getHours(); //current hours
-            // let min = new Date().getMinutes(); //current minutes
-            // let sec = new Date().getSeconds(); //current getSeconds
             //setting sate to time
             const dateString = ( datePic + '/' + month + '/' + year) 
             // const timeString = (hours + ':' + min + ':' + sec)
@@ -82,12 +92,14 @@ getTimeOfLocation() {
     }, 1000);
     
 }
-
          
-    //call location
+    /**
+     * This method generates the gps location of the device using react native
+     * geolocation
+     * @param {*} that is the activity context (this)
+     */
     callLocation (that){
-         this.setState({loading: true});
-        
+            //this method finds the geolocation of the device
             Geolocation.getCurrentPosition(
                 (position) => {
                     const currentLongitude =  JSON.stringify(position.coords.longitude);
@@ -96,13 +108,27 @@ getTimeOfLocation() {
                     const locationAccuracy = position.coords.accuracy;
                     console.log('I happened'); // console log
                     console.log(position);  // console log
+
+                    if(position.coords.accuracy > this.state.standardAccuracyValue){
+                        this.setState({disableCameraButton: true,})
+                        console.log('abooozegi true :' + this.state.disableCameraButton);
+                    }
                      
                     //setting state to re-render positions
                     this.setState({ longitude: currentLongitude,
                         latitude: currentLatitude,
                         timeStamp: locationTime,
-                        isWithinAccuracy : locationAccuracy});
-                        
+                        isWithInAccuracy : locationAccuracy,
+                      
+                    });
+
+                    
+                    /*This passes the state of the activity to PhotoLogic,
+                    accuracy and disableCameraButton is retrieved from this to 
+                    create the logic of disabling camera button when below standardValue*/
+                    that.props.customProp(this.state);
+                    console.log('hello'+ this.state);
+                    
                 },
                 (error) => {
                     Alert.alert(error.message)
@@ -122,12 +148,27 @@ getTimeOfLocation() {
                 const locationTime =  this.state.date;
                 const locationAccuracy = position.coords.accuracy;
                
-                
+                /*set the state(disableCameraButton) to false or true when
+                 below or above standardValue*/
+                if(position.coords.accuracy > this.state.standardAccuracyValue){
+                    this.setState({disableCameraButton: true,});
+                    console.log('abooozegi true :' + this.state.disableCameraButton);
+                }else{
+                    this.setState({disableCameraButton: false,});
+                    console.log('abooozegi false :' + this.state.disableCameraButton);
+                }
+
                 that.setState({longitude: currentLongitude,
                 latitude: currentLatitude,
                 timeStamp: locationTime,
-                isWithinAccuracy : locationAccuracy});
-            },
+                isWithInAccuracy : locationAccuracy});
+
+                that.props.customProp(this.state);
+
+                //console test for state passed to photologic 
+                console.log('hello '+ this.state); 
+                
+                           },
             (error) => {Alert.alert(error.message)},
             {distanceFilter: 0.1, 
                 interval: 10000, 
@@ -135,14 +176,8 @@ getTimeOfLocation() {
                 enableHighAccuracy: true,
                 useSignificantChanges: true
              });
-        
-        
     }
-    //remove location updates on component unmount
-    componentWillUnmount = () => {
-     Geolocation.clearWatch(this.watchID);
-     console.log('unmounted successfully'); // console log
-    }
+   
     
     render(){
         return (
@@ -157,7 +192,7 @@ getTimeOfLocation() {
                     </Text>
                     <Text style={{fontSize: 16, color: 'white', alignItems: 'center',
                      alignSelf:'center', marginLeft: 5, marginBottom:0}} >
-                    acc:{Math.round(this.state.isWithinAccuracy).toFixed(3)} 
+                    acc:{Math.round(this.state.isWithInAccuracy).toFixed(3)} 
                     </Text>
                 </View>
                 <View style={{marginBottom: 70, alignSelf: 'center'}}>

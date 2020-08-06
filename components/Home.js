@@ -99,7 +99,7 @@ export default function Home ({ navigation }){
                 <Image 
                 style={styles.imageInBox}
                 source = { require('../assets/photo.png') } />
-                <Text style={styles.text}>Photo</Text>
+                <Text style={styles.text}>Pics & Video</Text>
               </TouchableOpacity>
             </View>
             <View style={styles.box}>
@@ -124,13 +124,13 @@ export default function Home ({ navigation }){
                     <Image 
                     style={styles.imageInBox}
                     source = { require('../assets/resultImage.png') } />
-                    <Text style={styles.text}> Results </Text>
+                    <Text style={styles.text}> Submit Results </Text>
                 </TouchableOpacity>
                 </View>    
           </View>
       <View style={styles.bottomContainer}> 
             <TouchableOpacity>
-                <Text>Location</Text>
+                <Text>Locate</Text>
             </TouchableOpacity>
             <TouchableOpacity>
                 <Text>Call</Text>
