@@ -11,6 +11,7 @@ import Video from 'react-native-vector-icons/Feather';
 import  GPSLocationLogic from './GPSLocationLogic';
 import GPSLocation from './GPSLocation';
 import { acc, set } from 'react-native-reanimated';
+import EvidenceSubmission from './EvidenceSubmission';
 
 
 
@@ -63,7 +64,9 @@ export default function PhotoLogic ({ navigation}) {
                  }}
                   style = {styles.preview}
                   type={RNCamera.Constants.Type.back}
-                  flashMode={RNCamera.Constants.FlashMode.on}
+                  flashMode={RNCamera.Constants.FlashMode.auto}
+                  autoFocus={RNCamera.Constants.AutoFocus.on}
+                  whiteBalance={RNCamera.Constants.WhiteBalance.auto}
                   androidCameraPermissionOptions={{
                       title: 'Permission to use camera',
                       message: 'permission needed to use camera',
@@ -159,10 +162,14 @@ export default function PhotoLogic ({ navigation}) {
     }
     takePicture = async () => {
         if (camera){
-            const options = {quality: 1, base64: true};
+            const options = {quality: 1, 
+                base64: true,
+            
+            };
             const data = await camera.takePictureAsync(options);
             console.log(data.uri);
         }
+
     };
 
 const styles = StyleSheet.create ({

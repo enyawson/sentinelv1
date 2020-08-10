@@ -83,14 +83,6 @@ export default function Home ({ navigation }){
               style={styles.imageInBox}
               source = { require('../assets/megaPhone.png') }/>
         </TouchableOpacity>
-        {/* <View style={styles.instructionContainer}>
-
-          <Text style={styles.text}>
-            Submit evidence of bad deeds to promote the
-          </Text>
-          <Text style={styles.text}>public good</Text>
-        </View> */}
-        
         <View style={styles.buttonInRowContainer} marginTop= {15}>
             <View style={styles.box} marginRight={35}>
               <TouchableOpacity
@@ -103,7 +95,8 @@ export default function Home ({ navigation }){
               </TouchableOpacity>
             </View>
             <View style={styles.box}>
-              <TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => navigation.navigate('EvidenceSubmission') }>
                <Image style={styles.imageInBox}
                 source = { require('../assets/add.png') }/>
                 <Text style={styles.text}>Register</Text>

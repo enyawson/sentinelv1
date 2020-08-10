@@ -10,6 +10,7 @@ import PhotoLogic from './components/PhotoLogic';
 import GPSLocationLogic from './components/GPSLocationLogic'
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import EvidenceSubmission from './components/EvidenceSubmission';
 
 
 const Stack = createStackNavigator();
@@ -37,6 +38,22 @@ export default function App() {
         component ={GPSLocationLogic}
         options={{
           headerShown: false
+        }}/>
+         <Stack.Screen 
+        name="EvidenceSubmission" 
+        component ={EvidenceSubmission}
+        options={{
+          title: 'Evidence Submission',
+          headerStyle: {
+            backgroundColor: '#1D5179',
+          },
+          headerTintColor: '#FFFFFF',
+          headerTitleStyle: {
+            fontWeight: 'normal',
+            marginLeft: 20,
+            fontFamily: 'roboto'
+          }
+          
         }}/>
       </Stack.Navigator>
     </NavigationContainer>
