@@ -246,7 +246,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#Ffffff',
     borderRadius: 10,
     elevation: 5,
-    shadowOpacity: 0.3,
+    shadowOpacity: 0.5,
     shadowRadius: 4,
   },
   imageInBox: {

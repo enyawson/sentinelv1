@@ -10,7 +10,9 @@ import PhotoLogic from './components/PhotoLogic';
 import GPSLocationLogic from './components/GPSLocationLogic'
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+
 import EvidenceSubmission from './components/EvidenceSubmission';
+import PhotoPreviewer from './components/PhotoPreviewer';
 
 
 const Stack = createStackNavigator();
@@ -55,6 +57,13 @@ export default function App() {
           }
           
         }}/>
+        <Stack.Screen 
+        name="PhotoPreviewer"
+        component={PhotoPreviewer}
+        options={{
+          headerShown: false
+        }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

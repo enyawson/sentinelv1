@@ -195,7 +195,7 @@ getTimeOfLocation() {
                     acc:{Math.round(this.state.isWithInAccuracy).toFixed(3)} 
                     </Text>
                 </View>
-                <View style={{marginBottom: 70, alignSelf: 'center'}}>
+                <View style={{marginBottom: 75, alignSelf: 'center'}}>
                     <Text style={{fontSize: 16, color: 'white', marginLeft: 5}} >
                     Date:{this.state.date} time: {this.state.dateTime}
                     </Text>
