@@ -3,32 +3,25 @@ import {
     AppRegistry,
     StyleSheet, 
     TouchableOpacity, View, Modal,
-     BackHandler,
-     Dimensions,
-     Image,
-     Text,
-     ImageBackground,
-     CameraRoll,
-    } from 'react-native';
+    Dimensions,
+    Image,
+    Text,
+} from 'react-native';
 import { RNCamera } from 'react-native-camera';
-import Camera from 'react-native-camera';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import PhotoVideo from 'react-native-vector-icons/FontAwesome5';
 import ArrowBack from 'react-native-vector-icons/Ionicons';
 import FlashOff from 'react-native-vector-icons/Ionicons';
-
 import Video from 'react-native-vector-icons/Feather';
-import  GPSLocationLogic from './GPSLocationLogic';
-import { acc, set } from 'react-native-reanimated';
-import EvidenceSubmission from './EvidenceSubmission';
-import { NavigationEvents } from 'react-navigation';
+import GPSLocationLogic from './GPSLocationLogic';
 import { TextInput } from 'react-native-gesture-handler';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 
 
 
 
 TouchableOpacity.defaultProps = { activeOpacity : 0.8};
-export default function PhotoLogic ({ navigation},props) {
+export default function PhotoLogic ({ navigation }) {
     const falseValue = 'false';
     const trueValue = 'true';
 
@@ -47,22 +40,44 @@ export default function PhotoLogic ({ navigation},props) {
         pathStatus: false,
 
     })
-   
+
+    // this state holds the coordinates of the image on capture
+    const[capturedImageState, setCapturedImageSate] = useState({
+         capturedImageLatitude: null,
+         capturedImageLongitude: null,
+         capturedImageDate: null,
+         capturedImageDateTime: null,
+    })
+    
 
     /**
      * This method handles the accuracy of the coordinates  from GPSLocation
      */
     handleData = (value) => {
-       
+        
          let setAccuracyValue = value.isWithInAccuracy;
          let setDisableCameraView = value.disableCameraButton;
+
+         //sets the value of coordinates from GPSLocationLogic
+         let setPreviewImageLongitude = value.longitude;
+         let setPreviewImageLatitude = value.latitude;
+         let setPreviewImageDate = value.date;
+         let setPreviewImageDateTime = value.dateTime;
+
          console.log('accuracy value on camera: ' +  setAccuracyValue); //text passed accuracy
          console.log('disabled view : '+ setDisableCameraView)
+         console.log('coordinates appearing on preview: ' + value.longitude + ',' + value.latitude)
          setState({
             accuracyValue : setAccuracyValue,
-            disableCameraView : setDisableCameraView,
-           
-        }) 
+            disableCameraView : setDisableCameraView, 
+        }),
+        //this sets the value of co-ordinates , date and time on the preview image
+         setCapturedImageSate({
+             capturedImageLatitude: setPreviewImageLatitude,
+             capturedImageLongitude: setPreviewImageLongitude,
+             capturedImageDate: setPreviewImageDate,
+             capturedImageDateTime: setPreviewImageDateTime,
+         })
        
         
     }
@@ -85,6 +100,12 @@ export default function PhotoLogic ({ navigation},props) {
                 path: data.uri,
                 pathStatus: true,
             });
+
+            // This state sets the coordinates of the captured image.
+            // setCapturedImageSate({
+            //      capturedImageLatitude: ,
+            //      capturedImageLongitude: ,
+            // })
         }
     };
   
@@ -104,11 +125,12 @@ export default function PhotoLogic ({ navigation},props) {
              flashMode={RNCamera.Constants.FlashMode.auto}
              autoFocus={RNCamera.Constants.AutoFocus.on}
              whiteBalance={RNCamera.Constants.WhiteBalance.auto}
+             zoom= {0}
               androidCameraPermissionOptions={{
-                 title: 'Permission to use camera',
-                 message: 'permission needed to use camera',
-                 buttonPositive: 'Ok',
-                 buttonNegative: 'Cancel',
+                title: 'Permission to use camera',
+                message: 'permission needed to use camera',
+                buttonPositive: 'Ok',
+                buttonNegative: 'Cancel',
              }}  
              androidRecordAudioPermissionOptions={{
                  title: 'Permission to use audio recording',
@@ -215,7 +237,7 @@ export default function PhotoLogic ({ navigation},props) {
                         size={23}
                         color="white"
                         style={{margin:15, alignContent: 'center'}}
-                        onPress={()=> navigation.goBack()}
+                        onPress={renderCamera}
                     />
                     <Icon
                         name={'map-marker-alt'}
@@ -280,8 +302,7 @@ export default function PhotoLogic ({ navigation},props) {
                         <TouchableOpacity 
                             disabled={false}
                             style={{alignSelf: 'center', marginLeft:0, }}
-                            onPress={() => {
-                            setCamState({ path: null })}
+                            onPress={() => navigation.navigate('EvidenceSubmission') 
                         }>
                             <Image style={{width: 49 , height: 39, borderRadius:5}}
                             source = { require('../assets/send.png') }/>
@@ -291,12 +312,22 @@ export default function PhotoLogic ({ navigation},props) {
                  </View>
             </Modal>
             
+            <View>
                 <Image
-                    style={{width: Dimensions.get('window').width, height: Dimensions.get('window').height,}}
-                    source={{uri: camState.path}}
-                />
+                style={{width: Dimensions.get('window').width, height: Dimensions.get('window').height, resizeMode:'cover'}}
+                source={{uri: camState.path}}/>
+                <View style={{ position: 'absolute', top: 300, left: 0, right: 0, height: 300, alignItems: 'center', justifyContent: 'center'}}>
+                    <Text style={{fontSize: 15, color: '#E6E4E4'}}>
+                    
+                        {capturedImageState.capturedImageLatitude + ', ' + capturedImageState.capturedImageLongitude + 
+                        ' ' + capturedImageState.capturedImageDate + ' ' + capturedImageState.capturedImageDateTime}
+                        {console.log('text on image did mount successfully')}
+                    </Text>
+                </View>
 
             </View>
+
+        </View>
         );
     }
 

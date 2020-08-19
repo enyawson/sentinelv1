@@ -41,30 +41,32 @@ export default function App() {
         options={{
           headerShown: false
         }}/>
-         <Stack.Screen 
+        
+        <Stack.Screen 
+        name="PhotoPreviewer"
+        component={PhotoPreviewer}
+        options={{
+        headerShown: false
+        }}
+        />
+      </Stack.Navigator>
+
+      <Stack.Screen 
         name="EvidenceSubmission" 
         component ={EvidenceSubmission}
         options={{
           title: 'Evidence Submission',
           headerStyle: {
-            backgroundColor: '#1D5179',
+          backgroundColor: '#1D5179',
           },
           headerTintColor: '#FFFFFF',
           headerTitleStyle: {
-            fontWeight: 'normal',
-            marginLeft: 20,
-            fontFamily: 'roboto'
+          fontWeight: 'normal',
+          marginLeft: 20,
+          fontFamily: 'roboto'
           }
           
         }}/>
-        <Stack.Screen 
-        name="PhotoPreviewer"
-        component={PhotoPreviewer}
-        options={{
-          headerShown: false
-        }}
-        />
-      </Stack.Navigator>
     </NavigationContainer>
   );
 }
