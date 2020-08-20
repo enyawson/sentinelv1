@@ -135,6 +135,10 @@ const globalStyle = StyleSheet.create({
         alignContent:'center',
         color: '#ed7055'
       },
-       
+       shadowMaker:{
+        elevation: 5,
+        shadowColor: 'black',
+        shadowOpacity: 1,
+       },
     });
 export default globalStyle;

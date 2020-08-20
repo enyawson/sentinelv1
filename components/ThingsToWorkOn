@@ -1,0 +1,8 @@
+things to work on
+
+1. after capture a black screen is seen before preview, how to prevent that.
+there is a solution on react native camera api main site
+2. the preview device back button has is not working
+3. work on the shape of the input text of the preview when keypad appears.
+4.* very important- work on lifecycle of the photoLogic -----------------------worked on.
+5. the loading view between the capture image and the preview.

@@ -10,7 +10,9 @@ import PhotoLogic from './components/PhotoLogic';
 import GPSLocationLogic from './components/GPSLocationLogic'
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+
 import EvidenceSubmission from './components/EvidenceSubmission';
+import PhotoPreviewer from './components/PhotoPreviewer';
 
 
 const Stack = createStackNavigator();
@@ -39,23 +41,32 @@ export default function App() {
         options={{
           headerShown: false
         }}/>
-         <Stack.Screen 
+        
+        <Stack.Screen 
+        name="PhotoPreviewer"
+        component={PhotoPreviewer}
+        options={{
+        headerShown: false
+        }}
+        />
+      </Stack.Navigator>
+
+      <Stack.Screen 
         name="EvidenceSubmission" 
         component ={EvidenceSubmission}
         options={{
           title: 'Evidence Submission',
           headerStyle: {
-            backgroundColor: '#1D5179',
+          backgroundColor: '#1D5179',
           },
           headerTintColor: '#FFFFFF',
           headerTitleStyle: {
-            fontWeight: 'normal',
-            marginLeft: 20,
-            fontFamily: 'roboto'
+          fontWeight: 'normal',
+          marginLeft: 20,
+          fontFamily: 'roboto'
           }
           
         }}/>
-      </Stack.Navigator>
     </NavigationContainer>
   );
 }

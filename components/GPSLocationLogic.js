@@ -5,6 +5,8 @@ import { AppRegistry,StyleSheet, Text, PermissionsAndroid, View, Image, Alert} f
 
 
 export default class GPSLocationLogic extends Component{
+   
+
     constructor(props){
         super(props);
      this.state = {
@@ -17,12 +19,14 @@ export default class GPSLocationLogic extends Component{
         isWithInAccuracy: null, // receives the accuracy of the coordinates
         disableCameraButton: false,
         standardAccuracyValue: 6,
+        
     };
 
 
     }
    
     componentDidMount = () => {
+
         let that = this;
         if (Platform.OS === 'ios'){
             this.callLocation(that)
@@ -56,42 +60,40 @@ export default class GPSLocationLogic extends Component{
             requestLocationPermission();
         }
     }
-     //remove location updates on component unmount
-     componentWillUnmount = () => {
-        Geolocation.clearWatch(this.watchID);
-        console.log('unmounted successfully'); // console log
    
-    }
+
     /**
      * This function gets date and Time
      */
     getDateOfLocation(){
-        setInterval(()=> {
-            let datePic = new Date().getDate(); //current date
-            let month = new Date().getMonth() + 1; //current Month
-            let year = new Date().getFullYear(); //current year
-            //setting sate to time
-            const dateString = ( datePic + '/' + month + '/' + year) 
-            // const timeString = (hours + ':' + min + ':' + sec)
-            this.setState({
-                date: dateString,
-                // dateTime: timeString
-            });
-        }, 1000)
+            setInterval(()=> {
+                let datePic = new Date().getDate(); //current date
+                let month = new Date().getMonth() + 1; //current Month
+                let year = new Date().getFullYear(); //current year
+                //setting sate to time
+                const dateString = ( datePic + '/' + month + '/' + year) 
+                // const timeString = (hours + ':' + min + ':' + sec)
+                this.setState({
+                    date: dateString,
+                    // dateTime: timeString
+                });
+            }, 1000)
+            
+    }
+
+    //This function sets time 
+    getTimeOfLocation() {
+        setInterval(() => {
+            let hours = new Date().getHours(); //current hours
+                let min = new Date().getMinutes(); //current minutes
+                let sec = new Date().getSeconds(); //current getSeconds
+                const timeString = (hours + ':' + min + ':' + sec)
+                this.setState({
+                    dateTime: timeString
+                });
+        }, 1000);
         
     }
-getTimeOfLocation() {
-    setInterval(() => {
-        let hours = new Date().getHours(); //current hours
-            let min = new Date().getMinutes(); //current minutes
-            let sec = new Date().getSeconds(); //current getSeconds
-            const timeString = (hours + ':' + min + ':' + sec)
-            this.setState({
-                dateTime: timeString
-            });
-    }, 1000);
-    
-}
          
     /**
      * This method generates the gps location of the device using react native
@@ -108,7 +110,7 @@ getTimeOfLocation() {
                     const locationAccuracy = position.coords.accuracy;
                     console.log('I happened'); // console log
                     console.log(position);  // console log
-
+                    //this set the disableCameraButton to true
                     if(position.coords.accuracy > this.state.standardAccuracyValue){
                         this.setState({disableCameraButton: true,})
                         console.log('abooozegi true :' + this.state.disableCameraButton);
@@ -177,6 +179,18 @@ getTimeOfLocation() {
                 useSignificantChanges: true
              });
     }
+
+      //remove location updates on component unmount
+      componentWillUnmount(){
+       
+        Geolocation.clearWatch(this.watchID);
+        console.log('unmounted successfully'); // console log
+
+        //this fixes react can't set state on an unmount
+        this.setState = (state, callback) =>{
+            return;
+        };
+    }
    
     
     render(){
@@ -195,7 +209,7 @@ getTimeOfLocation() {
                     acc:{Math.round(this.state.isWithInAccuracy).toFixed(3)} 
                     </Text>
                 </View>
-                <View style={{marginBottom: 70, alignSelf: 'center'}}>
+                <View style={{marginBottom: 75, alignSelf: 'center'}}>
                     <Text style={{fontSize: 16, color: 'white', marginLeft: 5}} >
                     Date:{this.state.date} time: {this.state.dateTime}
                     </Text>
@@ -208,12 +222,13 @@ getTimeOfLocation() {
         )
     }
 }
-const styles = StyleSheet.create({
-    gpsContainer: {
-      flexDirection: 'row',
-      justifyContent:'center',
-      alignItems: 'center',
-      
-    },
-});
+    const styles = StyleSheet.create({
+        gpsContainer: {
+        flexDirection: 'row',
+        justifyContent:'center',
+        alignItems: 'center',
+        
+        },
+    });
+
 AppRegistry.registerComponent('App', () => GPSLocationLogic);
