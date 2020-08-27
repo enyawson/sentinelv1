@@ -17,8 +17,6 @@ import FlashOff from 'react-native-vector-icons/Ionicons';
 import Video from 'react-native-vector-icons/Feather';
 import GPSLocationLogic from './GPSLocationLogic';
 import { TextInput } from 'react-native-gesture-handler';
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
 import CameraRoll from "@react-native-community/cameraroll";
 import ImageMaker, { ImageFormat } from "react-native-image-marker";
 import Marker from 'react-native-image-marker';
