@@ -19,7 +19,6 @@ const Stack = createStackNavigator();
 
 export default function App() {
   return (
-   
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen 
@@ -49,9 +48,7 @@ export default function App() {
         headerShown: false
         }}
         />
-      </Stack.Navigator>
-
-      <Stack.Screen 
+         <Stack.Screen 
         name="EvidenceSubmission" 
         component ={EvidenceSubmission}
         options={{
@@ -67,6 +64,7 @@ export default function App() {
           }
           
         }}/>
+      </Stack.Navigator>
     </NavigationContainer>
   );
 }

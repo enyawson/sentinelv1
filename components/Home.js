@@ -11,55 +11,32 @@ import {
   TouchableOpacity,
   BackHandler,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons';
 import CopyRight from 'react-native-vector-icons/FontAwesome5';
+
 
 
 export default function Home ({ navigation }){
 
-  /**
-   * This function exit app 
-   */
-  // disableBackButton = () => {
-  //   BackHandler.exitApp();
-  //   return true;
-  // }
-
-  /**
-   * This method is called when components are mounted
-   * component mounts adds an event listener to the following parameters
-   */
-  // componentWillMount() 
-  // {
-  //   BackHandler.addEventListener('hardwareBackPress', disableBackButton);
-  // }
-  // /**
-  //  * This method is called when components unmount
-  //  */
-  // componentWillUnmount()
-  // {
-  //   BackHandler.removeEventListener('hardwareBackPress', disableBackButton);
-  // }
   
     return (
       // Home page
     
       <View style= { styles.MainContainer }>
         <View style={styles.headerContainer}>
-        {/* <Image
-          style={styles.logo}
-          source= {require('../assets/electionWatch2.png')}/> */}
         <View>
           <Text style={styles.logoName}>Election Watch</Text>
         </View>
           
           <View style={{marginTop: 20}}>
-          <Icon
-            name={'ellipsis-vertical'} 
-            size={24}
-            color="black"
-            style={{ marginRight: 18 }}/>
-
+            {/* <TouchableOpacity
+              onPress={}>
+              <Icon
+              name={'ellipsis-vertical'} 
+              size={24}
+              color="black"
+              style={{ marginRight: 18 }}/>
+            </TouchableOpacity> */}
+            {/* <HomeMenuItem /> */}
           </View>
           
         </View>
@@ -95,8 +72,7 @@ export default function Home ({ navigation }){
               </TouchableOpacity>
             </View>
             <View style={styles.box}>
-              <TouchableOpacity
-                onPress={() => navigation.navigate('EvidenceSubmission') }>
+              <TouchableOpacity>
                <Image style={styles.imageInBox}
                 source = { require('../assets/add.png') }/>
                 <Text style={styles.text}>Register</Text>
@@ -117,7 +93,7 @@ export default function Home ({ navigation }){
                     <Image 
                     style={styles.imageInBox}
                     source = { require('../assets/resultImage.png') } />
-                    <Text style={styles.text}> Submit Results </Text>
+                    <Text style={styles.text}> Results </Text>
                 </TouchableOpacity>
                 </View>    
           </View>
