@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
     StyleSheet, 
     View, 
@@ -13,18 +13,16 @@ import {
 } from 'react-native';
 import globalStyle from '../components_styles/globalStyle';
 import { ScrollView } from 'react-native-gesture-handler';
-import Icon from 'react-native-vector-icons/Ionicons';
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
 import SafeAreaView from 'react-native-safe-area-view';
 import { Picker } from '@react-native-community/picker';
 import Microphone from 'react-native-vector-icons/FontAwesome5';
+import {Card} from 'react-native-paper';
+
 
 // number of items per row
 const itemsPerRow = 4;
 
-export default function EvidenceSubmission ({navigation}){
+export default function EvidenceSubmission ({route, navigation}){
 
     const [state, setState]= useState({
         
@@ -33,46 +31,68 @@ export default function EvidenceSubmission ({navigation}){
     const [text, onChangeText] = useState({
         textInputted: '',
     })
+    //state to hold transferred image
+    const[imgState, setImageState] = useState({
+        retrievedImage: null,
+    });
+    
 
-   
+    //navigating value of image from photoLogic to this page
+    const { transferredImage }= route.params
+    const { getOverHereTransferred } = route.params
+    const { getLatitudeTransferred } = route.params
+    const { getLongitudeTransferred } = route.params
+    const { getTimeTransferred } = route.params
+    const { getDateTransferred } = route.params
+
+    
+    console.log('TRANSFERRED:' + transferredImage )    
+
     return(
-        
         <SafeAreaView style= {globalStyle.MainContainer}>
          <StatusBar barStyle="light-content" backgroundColor="#174060"/>
-            <View flexDirection='column' flex={1} marginTop={20} 
-            marginRight ={10}
-            marginLeft ={10}
+            <View flexDirection='column' flex={1} marginTop={5} 
+            marginRight ={5}
+            marginLeft ={5}
             borderWidth={1}
             borderRadius={3}
             borderColor='#7E7E7E'
+            backgroundColor='green'
             >
+            <View
+                style={{width: 65,
+                        height: 85,
+                        borderRadius:3, 
+                        borderWidth: 0.4,
+                        borderColor:'#DCDCDC',
+                        margin: 5,
+                        shadowOpacity:0.3,
+                        shadowColor:"#000",
+                        backgroundColor:'#FFFFF0'}}>
                 <View styles={[styles.contentContainer, styles.imageContainer]} >
                     <ScrollView 
-                        horizontal={false}
-                        pagingEnabled={false}
-                        showsHorizontalScrollIndicator={true}
-                        >
-                     
-                            <Image 
-                                style={styles.image}
-                                source = { require('../assets/10fdcd199128418af42afd4b91d762a7.jpg') }>
-                            </Image>
-                            <Image 
-                                style={styles.image}
-                                source = { require('../assets/0ed1d28683ac1d158f80a4fea80629a1.jpg') }>
-                            </Image>
-                            <Image 
-                                style={styles.image}
-                                source = { require('../assets/6507381cd3361b79d0cfe921af583598.jpg') }>
-                            </Image>
-                            <Image 
-                                style={styles.image}
-                                source = { require('../assets/6507381cd3361b79d0cfe921af583598.jpg') }>
-                            </Image>
-                        
-                       
+                    horizontal={false}
+                    pagingEnabled={false}
+                    showsHorizontalScrollIndicator={true}>
+                    <Card>
+                        <View>
+                            <Image style={{width: 65, height: 65, borderTopRightRadius:3,borderTopLeftRadius:3}}
+                            source= { {uri: `data:image/jpeg;base64, ${transferredImage}`}}/>
+                            <View style={{flexDirection:'row',justifyContent:'center'}}>
+                                <Text style={styles.text}>{getLatitudeTransferred}</Text>
+                                <Text style={styles.text}>{getLongitudeTransferred}</Text>
+                            </View>
+                            <View style={{flexDirection:'row',justifyContent:'center'}}>
+                                <Text style={styles.text}>{getDateTransferred},</Text>
+                                <Text style={styles.text}> {getTimeTransferred}</Text>
+                            </View>
+                        </View>
+                    </Card>
+                    
                     </ScrollView>
                 </View> 
+            </View>
+               
                  {/* <TouchableOpacity style={styles.moreView}>
                         <Icon
                         name={'add-outline'} 
@@ -82,12 +102,7 @@ export default function EvidenceSubmission ({navigation}){
                         />
                  </TouchableOpacity>  */}
                 </View>
-                <View style={{justifyContent: 'center'}}>
-                    <View  marginBottom={5} marginLeft={10} marginTop={40}>
-                        <Text style={styles.textStyle}>
-                            
-                        </Text>
-                    </View>
+                <View style={{justifyContent: 'center', backgroundColor:'brown', margin: 5}}>
                     <View style={{borderWidth: 1, 
                         borderColor:'#C4C4C4',
                         borderRadius:5,
@@ -177,10 +192,13 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         
     },
+    text:{
+        color: "#000",
+        fontSize: 6,
+    },
     image: {
         width: 90,
         height: 90,
-        overflow: 'hidden',
         marginHorizontal: 10,
         marginTop: 10,
         marginBottom: 10,
@@ -218,7 +236,7 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         justifyContent: 'center',
         backgroundColor: '#1D5179',
-        alignSelf:'flex-end'
+        alignSelf:'center'
     },
     microphoneButton:{
         width: 40,

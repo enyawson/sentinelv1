@@ -6,6 +6,9 @@ import {
     Dimensions,
     Image,
     Text,
+    PermissionsAndroid,
+    Platform,
+    Pressable,
 } from 'react-native';
 import { RNCamera } from 'react-native-camera';
 import Icon from 'react-native-vector-icons/FontAwesome5';
@@ -16,12 +19,15 @@ import GPSLocationLogic from './GPSLocationLogic';
 import { TextInput } from 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import CameraRoll from "@react-native-community/cameraroll";
+import ImageMaker, { ImageFormat } from "react-native-image-marker";
+import Marker from 'react-native-image-marker';
 
 
 
 
 TouchableOpacity.defaultProps = { activeOpacity : 0.8};
-export default function PhotoLogic ({ navigation }) {
+export default function PhotoLogic ({ props, navigation }) {
     const falseValue = 'false';
     const trueValue = 'true';
 
@@ -38,22 +44,26 @@ export default function PhotoLogic ({ navigation }) {
     const[camState, setCamState]= useState({
         path : null,                        // path of image saved.
         pathStatus: false,
-
+        focusedScreen: null,
+        pathBase64: null,
     })
 
     // this state holds the coordinates of the image on capture
     const[capturedImageState, setCapturedImageSate] = useState({
-         capturedImageLatitude: null,
-         capturedImageLongitude: null,
-         capturedImageDate: null,
-         capturedImageDateTime: null,
+        capturedImageLatitude: null,
+        capturedImageLongitude: null,
+        capturedImageDate: null,
+        capturedImageDateTime: null,
+        //state for watermark
+        loading: null,  
+        saveFormat: ImageFormat.png,
+        base64: false,
     })
     
-
     /**
      * This method handles the accuracy of the coordinates  from GPSLocation
      */
-    handleData = (value) => {
+   let handleData = (value) => {
         
          let setAccuracyValue = value.isWithInAccuracy;
          let setDisableCameraView = value.disableCameraButton;
@@ -85,44 +95,133 @@ export default function PhotoLogic ({ navigation }) {
     console.log ('yep: '+state.accuracyValue);
     console.log('tey: '+ state.disableCameraView);
 
-
+    // //if component did mount check the following
+    // componentDidMount() 
+    // {
+    //     navigation.addListener('willFocus', () => 
+    //     setCamState({focusedScreen: true,}) 
+    //     );
+    //     const { navigation } = AppRegistry.props;
+    //     navigation.addListener('willFocus', () => 
+    //     setCamState({focusedScreen: false,})
+    //     );
+    // }
     /**
      * This method takes photo on capture press.
      */
-    takePicture = async () => {
+    const takePicture = async () => {
         if (camera){
             const options = {quality: 1, 
-                base64: true,
+            base64: true,
             };
             const data = await camera.takePictureAsync(options);
-            console.log(data.uri);
+          
             setCamState({
                 path: data.uri,
                 pathStatus: true,
+                pathBase64: data.base64,
             });
-
-            // This state sets the coordinates of the captured image.
-            // setCapturedImageSate({
-            //      capturedImageLatitude: ,
-            //      capturedImageLongitude: ,
-            // })
+            { console.log('this is the path' + camState.path)}
+            { console.log('this is the data.uri' + data.uri)}
+            // //save photo
+            // savePicture(data.uri);
         }
+        
     };
+
+    // function to create water mark
+    function createWaterMark (){
+        setCapturedImageSate({
+            loading: true,
+        })
+        
+        Marker.markText({
+        src: camState.path,
+        text: 'GPS location is here',
+        position: 'bottomCenter',
+        color: '#FF0000',
+        fontName: 'Arial-BoldItalicMT',
+        fontSize: 44,
+        shadowStyle: {
+            dx: 10.5,
+            dy: 20.8,
+            radius: 20.9,
+            color: '#ff00ff'
+        },
+        textBackgroundStyle: {
+            type: 'stretchX',
+            paddingX: 10,
+            paddingY: 10,
+            color: '#0f0'
+        },
+        scale: 1,
+        saveFormat: capturedImageState.saveFormat,
+        quality :100
+        }).then ((path) => {
+            setCamState({
+                path: capturedImageState.saveFormat === ImageFormat.base64 ? path : Platform.OS ==='android'? 'file://' + path : path,
+                loading: false,
+                
+            })
+            
+            console.log("water mark save to path")
+        }).catch(( err ) => {
+            console.log(err)
+            setCapturedImageSate({
+                loading: false,
+                err
+            })
+
+        })
   
+    }
+    //requested Permissions to save data
+    async function hasAndroidPermission() {
+       
+        const permission = PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE;
+
+        //checks the permission response from the user (whether accepted or denied)
+        const hasPermission = await PermissionsAndroid.check(permission);
+        if (hasPermission){
+            return true;
+            //save image in album
+        }
+
+        //return status of storage permission
+        const status = await PermissionsAndroid.request(permission);
+        // this can be used when status is required to perform certain action
+        return status == 'granted';
+    }
+
+    //function to save Image
+    async function savePicture(path){
+        let imageUri = path;
+        //if permission denied do this or save picture
+        if  (Platform.OS == "android" && !(await hasAndroidPermission() )){
+            //returns this if permission denied
+            return;
+            console.log('Image NOT Saved in Election Watch folder');
+        }
+        CameraRoll.save(imageUri, {type:'photo', album: 'ElectionWatchFolder'});
+        console.log('Image Saved in Election Watch folder');
+        
+    }
+    
 
     /**
      * This method calls camera to take picture
      */
-    renderCamera = ()=>{
+  const  renderCamera = ()=>{
+    
         return(
-            <View style={styles.container}>
-                <RNCamera
+        
+         <RNCamera
             ref={(ref) => {
                 camera = ref;
             }}
              style = {styles.preview}
              type={RNCamera.Constants.Type.back}
-             flashMode={RNCamera.Constants.FlashMode.auto}
+             flashMode={RNCamera.Constants.FlashMode.off}
              autoFocus={RNCamera.Constants.AutoFocus.on}
              whiteBalance={RNCamera.Constants.WhiteBalance.auto}
              zoom= {0}
@@ -139,39 +238,42 @@ export default function PhotoLogic ({ navigation }) {
                  buttonNegative: 'Cancel',
              }}
            >
-           <Modal
-           transparent = {true}
-           visible = {true}>
-               <View style={{alignItems:'flex-start',
+          
+            <View style={{alignItems:'flex-start',
                 flexDirection: 'row', 
-                justifyContent:'space-between', flex:1, }}>
+                justifyContent:'space-between', 
+                flex:4,
+                alignSelf: 'stretch'}}>
                    <ArrowBack
-                       name={'arrow-back-outline'}
-                       size={23}
-                       color="white"
-                       style={{margin:15, alignContent: 'center'}}
-                       onPress={()=> navigation.goBack()}
-                       />
-                    
-
+                        name={'arrow-back-outline'}
+                        size={23}
+                        color="white"
+                        style={{margin:15, alignContent: 'center'}}
+                        onPress={()=> navigation.goBack()}
+                    />
                    <FlashOff
                        name={'flash-off-outline'}
                        size={23}
                        color="white"
-                       style={{margin:15, alignContent: 'center'}}/>   
-
+                       style={{margin:15, alignContent: 'center'}}
+                    />   
                    <Icon
                        name={'map-marker-alt'}
                        size={23}
                        color="white"
-                       style={{margin:15, alignContent: 'center'}}/>  
-               </View>
+                       style={{margin:15, alignContent: 'center'}}
+                    />  
+                </View>
+               <View
+                    style={{alignSelf: 'stretch',
+                    flex: 0.35,
+                    alignContent:'center'}}>
+                    <GPSLocationLogic customProp={handleData} />
+                </View>  
                <View style={{
-                       flex: 1, 
+                       flex: 0., 
                        flexDirection: 'row', 
                        alignSelf:'stretch',
-                       marginTop: 500,
-                       backgroundColor: 'rgba(0, 0, 0, 0.5)',
                        justifyContent: 'center'
                    }}>
                    
@@ -179,43 +281,45 @@ export default function PhotoLogic ({ navigation }) {
                    flexDirection='row' 
                    pointerEvents={(state.disableCameraView)? 'auto': 'auto'} //change first auto to none to use accuracy detection
                    opacity={(state.disableCameraView===false)? 1 : 0.5}
-                   style={{margin: 10,  }}>
-                       {/* <TouchableOpacity
-                           disabled={false} 
-                        //    onPress={takePicture} 
-                           style={styles.alternateCapture}>
-                           <Image style={{width: 30, height: 28, }}
-                            source = { require('../assets/imagesFolder.png') }/>
-                       </TouchableOpacity> */}
-
-                       <TouchableOpacity 
+                   style={{
+                      marginBottom: 25,
+                   }}>
+                       <Pressable
                            disabled={false}
-                           onPress={takePicture} 
+                           onPressIn={takePicture} 
+                           onPressOut={()=> {navigation.navigate('EvidenceSubmission' ,
+                           {
+                            transferredImage: camState.pathBase64,
+                            getLatitudeTransferred: capturedImageState.capturedImageLatitude,
+                            getLongitudeTransferred: capturedImageState.capturedImageLongitude,
+                            getDateTransferred: capturedImageState.capturedImageDate,
+                            getTimeTransferred: capturedImageState.capturedImageDateTime,
+                           })}}
+                           
                            style={styles.capture}>
 
                            <Icon
                                name="camera"
                                size={28}
                                color="#1D5179"/>
-                        </TouchableOpacity>
+                        </Pressable>
 
-                        <TouchableOpacity 
+                        <Pressable
                                disabled={false}
                             //    onPress={takePicture} 
-                               style={styles.alternateCapture}>
+                               style={styles.alternateCaptureVideo} >
+
                            <Video 
                                name="video"
                                size={28} 
                                color="#f8f8ff"
                            />
-                       </TouchableOpacity>  
+                       </Pressable>  
                    </View>  
                 </View>
-           </Modal>
-           <GPSLocationLogic customProp={handleData} />
-           </RNCamera>
-            </View>
-            
+                 
+           
+           </RNCamera>   
         );
     }
 
@@ -223,7 +327,7 @@ export default function PhotoLogic ({ navigation }) {
     /**
      * This method calls the PreView
     */
-    renderPreviewImage =()=>{
+    const renderPreviewImage =()=>{
         return(
             <View>
             <Modal
@@ -237,19 +341,14 @@ export default function PhotoLogic ({ navigation }) {
                         size={23}
                         color="white"
                         style={{margin:15, alignContent: 'center'}}
-                        onPress={renderCamera}
+                        onPress={()=> navigation.popToTop('PhotoLogic')}
                     />
-                    <Icon
-                        name={'map-marker-alt'}
-                        size={23}
-                        color="white"
-                        style={{margin:15, alignContent: 'center'}}
-                    />  
+                   
                 </View>
 
                 <View
                     style={{ marginBottom: 15}}> 
-                    <TouchableOpacity 
+                    {/* <TouchableOpacity 
                         disabled={false}
                         onPress={()=>{
                             setCamState({ path: null });
@@ -261,7 +360,7 @@ export default function PhotoLogic ({ navigation }) {
                             size={28}
                             color="#1D5179"
                         />
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
                 </View>
                 
  
@@ -301,9 +400,8 @@ export default function PhotoLogic ({ navigation }) {
                    
                         <TouchableOpacity 
                             disabled={false}
-                            style={{alignSelf: 'center', marginLeft:0, }}
-                            onPress={() => navigation.navigate('EvidenceSubmission') 
-                        }>
+                            style={{alignSelf: 'center', marginLeft:0, }}>
+                            
                             <Image style={{width: 49 , height: 39, borderRadius:5}}
                             source = { require('../assets/send.png') }/>
                         </TouchableOpacity>  
@@ -316,13 +414,15 @@ export default function PhotoLogic ({ navigation }) {
                 <Image
                 style={{width: Dimensions.get('window').width, height: Dimensions.get('window').height, resizeMode:'cover'}}
                 source={{uri: camState.path}}/>
-                <View style={{ position: 'absolute', top: 300, left: 0, right: 0, height: 300, alignItems: 'center', justifyContent: 'center'}}>
+                <View style={{ position: 'absolute', top: 350, left: 0, right: 0, height: 300, alignItems: 'center', justifyContent: 'center'}}>
                     <Text style={{fontSize: 15, color: '#E6E4E4'}}>
-                    
-                        {capturedImageState.capturedImageLatitude + ', ' + capturedImageState.capturedImageLongitude + 
-                        ' ' + capturedImageState.capturedImageDate + ' ' + capturedImageState.capturedImageDateTime}
+                        {capturedImageState.capturedImageLatitude + ', ' + capturedImageState.capturedImageLongitude}
                         {console.log('text on image did mount successfully')}
                     </Text>
+                    <Text style={{fontSize: 15, color: '#E6E4E4'}}>
+                        { 'Date :' + capturedImageState.capturedImageDate + ' Time :' + capturedImageState.capturedImageDateTime}
+                        {console.log('text on image did mount successfully')}
+                </Text>
                 </View>
 
             </View>
@@ -333,7 +433,8 @@ export default function PhotoLogic ({ navigation }) {
 
     return (  
         <View style={styles.container}>
-            { camState.path ? renderPreviewImage() : renderCamera() }
+            {/* { camState.path ? renderPreviewImage() : renderCamera() } */}
+            { renderCamera() }
         </View>
     );
 }
@@ -359,7 +460,6 @@ const styles = StyleSheet.create ({
         flex: 0,
         backgroundColor: '#ffffff', 
         padding: 15,
-        paddingHorizontal: 15,
         alignSelf: 'center',
         margin: 10,
         alignContent:'center',
@@ -370,12 +470,23 @@ const styles = StyleSheet.create ({
         flex: 0,
         backgroundColor: '#212121',
         padding: 15,
-        paddingHorizontal: 15,
         alignSelf: 'center',
         margin: 10,
         alignContent:'center',
         borderRadius: 100,
         elevation: 5,
+    },
+    alternateCaptureVideo:{
+        flex: 0,
+        backgroundColor: '#212121',
+        padding: 15,
+        alignSelf: 'center',
+        margin: 10,
+        alignContent:'center',
+        borderRadius: 100,
+        elevation: 5,
+        borderWidth : 1,
+        borderColor: 'red',
     },
     cancel: {
         position: 'absolute',
