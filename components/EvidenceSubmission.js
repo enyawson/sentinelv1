@@ -9,6 +9,8 @@ import {
     TextInput,
     Pressable,
     Button,
+    Alert,
+    CameraRoll,
    
 } from 'react-native';
 import globalStyle from '../components_styles/globalStyle';
@@ -18,42 +20,82 @@ import { Picker } from '@react-native-community/picker';
 import Microphone from 'react-native-vector-icons/FontAwesome5';
 import  Add from 'react-native-vector-icons/Ionicons';
 import  Trash from 'react-native-vector-icons/Ionicons';
+import AsyncStorage from '@react-native-community/async-storage'
 
-
-
-
-
-// number of items per row
-const itemsPerRow = 4;
 
 export default function EvidenceSubmission ({route, navigation}){
 
+    //Incidence
     const [state, setState]= useState({
-        
         selectedIncidence: 'Please select incidence',
+        photos: [],
+        index: null,
     });
+    //Description
     const [text, onChangeText] = useState({
         textInputted: '',
     })
+
+    //loading images from camera roll
+    _LoadCapturedImagesFromStorage= () => {
+        CameraRoll.getPhotos({
+            first: 20,
+            assetType: "All"
+        })
+        .then(r => {
+            this.setState({
+                photos: r.edges
+            });
+        })
+        .catch((err) => {
+            console.log("Error loading images into Evidence Submission")
+        });
+    };
+
+    //Component loads images when mounted
+    ComponentDidMount(){
+        _LoadCapturedImagesFromStorage();
+    }
+
+
     //state to hold transferred image
-    const[imgState, setImageState] = useState({
-        retrievedImage: null,
-    });
+    // const[retrievedImages,setRetrievedImage] = useState([]);
+    
+    // //navigating value of image from photoLogic to this page
+
+    // const { transferredImage }= route.params
+    // const { getLatitudeTransferred } = route.params
+    // const { getLongitudeTransferred } = route.params
+    // const { getTimeTransferred } = route.params
+    // const { getDateTransferred } = route.params
+
+    // console.log('TRANSFERRED:' + transferredImage ) 
+
+    //save retrieved image in an array
+   
+    // ComponentDidMount= () => {
+    //     retrievedImages.push(transferredImage); //saving photos taken
+    //     storeData();
+    //     setRetrievedImage([...retrievedImages]);
+    // }
     
 
-    //navigating value of image from photoLogic to this page
-    const { transferredImage }= route.params
-    const { getLatitudeTransferred } = route.params
-    const { getLongitudeTransferred } = route.params
-    const { getTimeTransferred } = route.params
-    const { getDateTransferred } = route.params
-
+    // const storeData = async (retrievedImages) => {
+    //     try {
+    //         const jsonValue = JSON.stringify(retrievedImages)
+    //         await AsyncStorage.setItem('@storage_key', JSON.stringify(jsonValue))
+    //          Alert.alert('Photo added', 'Successful');
+    //     } catch (error) {
+    //         Alert.alert('Error', 'error adding')
+    //     }
+    // }
     
-    console.log('TRANSFERRED:' + transferredImage )    
+
+
 
     return(
         <SafeAreaView style= {globalStyle.MainContainer}>
-         <StatusBar barStyle="light-content" backgroundColor="#174060"/>
+        <StatusBar barStyle="light-content" backgroundColor="#174060"/>
            {/* <TouchableOpacity style={styles.trashButton}>
                     <Trash
                        name={'trash-outline'}
@@ -65,12 +107,30 @@ export default function EvidenceSubmission ({route, navigation}){
             <View flexDirection='column' flex={1} marginTop={30} 
             marginRight ={5}
             marginLeft ={5}
-            borderWidth={1}
+            borderWidth={0.5}
             borderRadius={3}
             borderColor='#7E7E7E'>
-                <View
+                <View>
+                    <ScrollView>
+                        {state.photos.map((p, i) => {
+                            return (
+                                <Image 
+                                    key={i}
+                                    style={
+                                        {
+                                            width:65,
+                                            height:65,
+                                        }
+                                    }
+                                    source={{uri: p.node.image.uri}}
+                                />
+                            );
+                        })}
+                    </ScrollView>
+                </View>
+                {/* <View
                 style={{width: 65,
-                height: 85,
+                height: 65,
                 borderRadius:3, 
                 borderWidth: 0.4,
                 borderColor:'#DCDCDC',
@@ -86,6 +146,7 @@ export default function EvidenceSubmission ({route, navigation}){
                             <View>
                                 <Image style={{width: 65, height: 65, borderTopRightRadius:3,borderTopLeftRadius:3}}
                                 source= { {uri: `data:image/jpeg;base64, ${transferredImage}`}}/>
+                                <View style={{position: 'absolute', left: 0, right: 0, top: 45}}>
                                 <View style={{flexDirection:'row',justifyContent:'center'}}>
                                     <Text style={styles.text}>{getLatitudeTransferred}</Text>
                                     <Text style={styles.text}>{getLongitudeTransferred}</Text>
@@ -94,12 +155,16 @@ export default function EvidenceSubmission ({route, navigation}){
                                     <Text style={styles.text}>{getDateTransferred},</Text>
                                     <Text style={styles.text}> {getTimeTransferred}</Text>
                                 </View>
+
+                            </View>
+                               
                             </View> 
                         </ScrollView>
                     </View> 
-                </View>
+                </View> */}
             </View>
-            <TouchableOpacity style={styles.addPhotoButton}>
+            <TouchableOpacity style={styles.addPhotoButton}
+                    onPress={()=>{navigation.goBack()}}>
                     <Add
                        name={'add'}
                        size={30}
@@ -205,8 +270,9 @@ const styles = StyleSheet.create({
         
     },
     text:{
-        color: "#000",
+        color: "#E6E4E4",
         fontSize: 6,
+        opacity: 1,
     },
     image: {
         width: 90,

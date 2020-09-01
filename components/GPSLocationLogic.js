@@ -18,7 +18,7 @@ export default class GPSLocationLogic extends Component{
         dateTime: null,
         isWithInAccuracy: null, // receives the accuracy of the coordinates
         disableCameraButton: false,
-        standardAccuracyValue: 6,
+        standardAccuracyValue: 4000,
         
     };
 
@@ -111,7 +111,7 @@ export default class GPSLocationLogic extends Component{
                     console.log('I happened'); // console log
                     console.log(position);  // console log
                     //this set the disableCameraButton to true
-                    if(position.coords.accuracy > this.state.standardAccuracyValue){
+                    if(position.coords.accuracy > this.state.standardAccuracyValue){ //change fifty to this.state.standardAccuracyValue
                         this.setState({disableCameraButton: true,})
                         console.log('abooozegi true :' + this.state.disableCameraButton);
                     }
