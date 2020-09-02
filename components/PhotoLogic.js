@@ -131,21 +131,6 @@ export default function PhotoLogic ({ props, navigation }) {
         
     };
 
-    //This method passes coordinates and time to watermark
-    let returnCordPrintedOnImage = () => {
-        return (
-            <View >
-                <Text style={{fontSize: 15, color: '#E6E4E4'}}>
-                    {capturedImageState.capturedImageLatitude + ', ' + capturedImageState.capturedImageLongitude}
-                
-                </Text>
-                <Text style={{fontSize: 15, color: '#E6E4E4'}}>
-                    { capturedImageState.capturedImageDate + " "+ capturedImageState.capturedImageDateTime}
-                    
-                </Text>
-        </View>
-        )
-    }
 
     // function to create water mark
     function createWaterMark (){
