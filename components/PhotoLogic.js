@@ -7,6 +7,7 @@ import {
     Image,
     Text,
     PermissionsAndroid,
+    ActivityIndicator,
     Platform,
     Pressable,
 } from 'react-native';
@@ -17,8 +18,6 @@ import FlashOff from 'react-native-vector-icons/Ionicons';
 import Video from 'react-native-vector-icons/Feather';
 import GPSLocationLogic from './GPSLocationLogic';
 import { TextInput } from 'react-native-gesture-handler';
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
 import CameraRoll from "@react-native-community/cameraroll";
 import ImageMaker, { ImageFormat } from "react-native-image-marker";
 import Marker from 'react-native-image-marker';
@@ -35,7 +34,6 @@ export default function PhotoLogic ({ props, navigation }) {
     // states to hold data from GPSLocation file
     const[state, setState] = useState({
         permissionEnable : true,
-        standardValue: 6,
         disableCameraView: '',
         accuracyValue: 0,
     });
@@ -58,6 +56,7 @@ export default function PhotoLogic ({ props, navigation }) {
         loading: null,  
         saveFormat: ImageFormat.png,
         base64: false,
+        markResult: ' ',
     })
     
     /**
@@ -115,19 +114,23 @@ export default function PhotoLogic ({ props, navigation }) {
             base64: true,
             };
             const data = await camera.takePictureAsync(options);
+            console.log("the data bas64 being used = " +data.base64)
           
             setCamState({
+                pathBase64: data.base64,
                 path: data.uri,
                 pathStatus: true,
-                pathBase64: data.base64,
+               
             });
             { console.log('this is the path' + camState.path)}
             { console.log('this is the data.uri' + data.uri)}
-            // //save photo
-            // savePicture(data.uri);
+            //This method creates water mark on image captured
+            { console.log('WATERMARK')}
+             createWaterMark();
         }
         
     };
+
 
     // function to create water mark
     function createWaterMark (){
@@ -137,9 +140,11 @@ export default function PhotoLogic ({ props, navigation }) {
         
         Marker.markText({
         src: camState.path,
-        text: 'GPS location is here',
+        text: capturedImageState.capturedImageLatitude +" " + capturedImageState.capturedImageLongitude +'\n'+
+                 capturedImageState.capturedImageDate + ","+ capturedImageState.capturedImageDateTime,
+
         position: 'bottomCenter',
-        color: '#FF0000',
+        color: '#E6E4E4',
         fontName: 'Arial-BoldItalicMT',
         fontSize: 44,
         shadowStyle: {
@@ -148,23 +153,17 @@ export default function PhotoLogic ({ props, navigation }) {
             radius: 20.9,
             color: '#ff00ff'
         },
-        textBackgroundStyle: {
-            type: 'stretchX',
-            paddingX: 10,
-            paddingY: 10,
-            color: '#0f0'
-        },
         scale: 1,
         saveFormat: capturedImageState.saveFormat,
         quality :100
-        }).then ((path) => {
-            setCamState({
-                path: capturedImageState.saveFormat === ImageFormat.base64 ? path : Platform.OS ==='android'? 'file://' + path : path,
+        }).then ((res) => {
+            setCapturedImageSate({
                 loading: false,
-                
+                markResult: res,
             })
-            
-            console.log("water mark save to path")
+            //saves water mark path to cameraroll
+            savePicture(res);
+            console.log("water mark save to path" + res)
         }).catch(( err ) => {
             console.log(err)
             setCapturedImageSate({
@@ -206,6 +205,19 @@ export default function PhotoLogic ({ props, navigation }) {
         console.log('Image Saved in Election Watch folder');
         
     }
+
+    //this method navigate to evidence page with data from photo
+//    const  navigateToEvidenceScreen = () =>{
+//         navigation.navigate('EvidenceSubmission' ,
+//                         {
+//                         transferredImage: camState.pathBase64,
+//                         getLatitudeTransferred: capturedImageState.capturedImageLatitude,
+//                         getLongitudeTransferred: capturedImageState.capturedImageLongitude,
+//                         getDateTransferred: capturedImageState.capturedImageDate,
+//                         getTimeTransferred: capturedImageState.capturedImageDateTime,
+//                         })
+//     }
+    
     
 
     /**
@@ -279,22 +291,23 @@ export default function PhotoLogic ({ props, navigation }) {
                    
                    <View 
                    flexDirection='row' 
-                   pointerEvents={(state.disableCameraView)? 'auto': 'auto'} //change first auto to none to use accuracy detection
+                   pointerEvents={(state.disableCameraView)? 'none': 'auto'} //change first auto to none to use accuracy detection
                    opacity={(state.disableCameraView===false)? 1 : 0.5}
                    style={{
                       marginBottom: 25,
                    }}>
                        <Pressable
                            disabled={false}
-                           onPressIn={takePicture} 
-                           onPressOut={()=> {navigation.navigate('EvidenceSubmission' ,
-                           {
-                            transferredImage: camState.pathBase64,
-                            getLatitudeTransferred: capturedImageState.capturedImageLatitude,
-                            getLongitudeTransferred: capturedImageState.capturedImageLongitude,
-                            getDateTransferred: capturedImageState.capturedImageDate,
-                            getTimeTransferred: capturedImageState.capturedImageDateTime,
-                           })}}
+                        //    onPress={ takePicture }
+                           onPressIn={()=>{
+                                takePicture(); 
+                            }
+                           }
+                           onPressOut={()=>{
+                                // navigateToEvidenceScreen();
+                                navigation.navigate('EvidenceSubmission');
+                            }
+                           }
                            
                            style={styles.capture}>
 
@@ -318,7 +331,6 @@ export default function PhotoLogic ({ props, navigation }) {
                    </View>  
                 </View>
                  
-           
            </RNCamera>   
         );
     }
@@ -422,7 +434,7 @@ export default function PhotoLogic ({ props, navigation }) {
                     <Text style={{fontSize: 15, color: '#E6E4E4'}}>
                         { 'Date :' + capturedImageState.capturedImageDate + ' Time :' + capturedImageState.capturedImageDateTime}
                         {console.log('text on image did mount successfully')}
-                </Text>
+                     </Text>
                 </View>
 
             </View>
