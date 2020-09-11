@@ -1,17 +1,35 @@
 import React, {Component} from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, Image} from 'react-native';
-import PhotoLogic from './PhotoLogic';
-
+import ArrowBack from 'react-native-vector-icons/Ionicons';
+import  Trash from 'react-native-vector-icons/Ionicons';
 
 export default  function PhotoPreviewer({route, navigation}){
 
 
- const {otherParam} = route.params
+  let { transferredImageItem }= route.params
     return(
         <View style={styles.preview}>
-          <Text>
-          {JSON.stringify(otherParam)}
-          </Text>
+          <View style={{flexDirection: 'row'}}> 
+            <ArrowBack
+              name={'arrow-back-outline'}
+              size={23}
+              color="white"
+              style={{margin:15, alignContent: 'center'}}
+              onPress={()=> navigation.goBack()}
+            />
+            <Trash
+              name={'arrow-back-outline'}
+              size={23}
+              color="white"
+              style={{alignContent: 'flex-end'}}
+            />
+          </View>
+          
+          
+          <Image
+              style={{ width:400, height:400, resizeMode:'cover'}}   
+              source = {{ uri: "file://"+ transferredImageItem}} 
+          />
 
         </View>
     );
@@ -19,8 +37,6 @@ export default  function PhotoPreviewer({route, navigation}){
 const styles = StyleSheet.create({
   preview: {
     flex: 1,
-    justifyContent: 'flex-end',
-    alignItems: 'center',
     
   }, 
 })

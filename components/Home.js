@@ -14,7 +14,6 @@ import {
 import CopyRight from 'react-native-vector-icons/FontAwesome5';
 
 
-
 export default function Home ({ navigation }){
 
   
