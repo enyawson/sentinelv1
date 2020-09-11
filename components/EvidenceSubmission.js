@@ -10,60 +10,163 @@ import {
     TextInput,
     FlatList,
     Pressable,
+    Dimensions,
+    Modal,
     Button,
     Alert,
-
-   
+    Platform,
+    Keyboard,
 } from 'react-native';
 import globalStyle from '../components_styles/globalStyle';
-import { ScrollView, State } from 'react-native-gesture-handler';
+import { ScrollView, State, TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import SafeAreaView from 'react-native-safe-area-view';
 import { Picker } from '@react-native-community/picker';
 import Microphone from 'react-native-vector-icons/FontAwesome5';
 import  Add from 'react-native-vector-icons/Ionicons';
 import  Trash from 'react-native-vector-icons/Ionicons';
 import CameraRoll from "@react-native-community/cameraroll";
-import AsyncStorage from '@react-native-community/async-storage'
+import AsyncStorage from '@react-native-community/async-storage';
+import ArrowBack from 'react-native-vector-icons/Ionicons';
+
 
 
 export default function EvidenceSubmission ({route, navigation}){
-
     //Incidence
     const [state, setState]= useState({
         selectedIncidence: 'Please select incidence',
-        photos: [],
-        index: null,
+        photos:[],
     });
-    //Description
+    //state to hold description
     const [text, onChangeText] = useState({
         textInputted: '',
     })
+    //selected item with flatlist
+    const [selectedImage, setSelectedImage] = useState(null);
+    
 
-    //loading images from camera roll
+    //navigating value of image from photoLogic to this page
+
+    let { transferredImage }= route.params
+    console.log("transferred URI "+ transferredImage);
+    console.log('retrieved images'+ state.photos)
+    const { countImageAdded } = route.params
+    console.log ('Number of pictures taken (EvidenceSub. page) : '+ countImageAdded);
+    // const { getLatitudeTransferred } = route.params
+    // const { getLongitudeTransferred } = route.params
+    // const { getTimeTransferred } = route.params
+    // const { getDateTransferred } = route.params
+    // const { getTimeOfTransfer } = route.params
+
+    /**
+     * This method navigates to photo oreview
+     * @param {} path image retrieved from flatlist item in evidence page
+     */
+    const  navigateToPhotoPreview = (path) =>{
+        navigation.navigate('PhotoPreviewer',
+                        {
+                        transferredImageItem: path,
+                        
+                        })
+    }
+    
+
+   
+
+     //state to hold transferred image
+    // const[dataFromPhotoLogic, setRetrievedDataFromPhotoLogic  ] = useState([
+    //     {photo: transferredImage, key:dataFromPhotoLogic.map(function(e){return e.name;}).indexOf('photo')}
+    // ]);
+
+   // console.log('TRANSFERRED:' + transferredImage ) 
+
+
+
+   /**
+    * This method clears Storage and gallery on submit, to 
+    * allow new images into storage and gallery
+    * 
+    * */
+   const clearStorage= async() =>{
+    try{
+        await AsyncStorage.clear();
+
+    } catch(exception){
+        console.log('error clearing  items');
+    }
+    console.log('items cleared (Evidence Page)');
+
+    //clear gallery
+    setState({
+        photos: " "
+    })
+}
+  
+
+    //loading images from camera roll on component mount
     useEffect(()=> {
-        CameraRoll.getPhotos({
-            first: 20,
-            assetType: "All"
-        })
-        .then((data)=> {
-            const assets = data.edges
-            console.log("DATA EDGES" +assets)
-            const images = assets.map((asset) => asset.node.image);
-            setState({
-                photos: images
-            })
-            }, 
-            (error) => {
-                console.warn( error)
+        AsyncStorage.getItem('photos')
+            .then((photos) => {
+                const photo = photos ? JSON.parse(photos) : [];
+                photo.push(transferredImage);
+                AsyncStorage.setItem('photos', JSON.stringify(photo));
+            });  
+            const getData = async () => {
+                try {
+                    const value = await AsyncStorage.getItem('photos')
+                    if(value !==null){
+                        setState({
+                            photos: JSON.parse(value),
+                        })
+                        /*set transferred image variable to empty to allow
+                        the intake of a new one*/
+                        transferredImage = " ";
+                        console.log('emptied transferred image variable '+ transferredImage)
+                    }
+                }catch(e){
+                   console.log('error with async getData');
+                }  
             }
-        );
+             //Get the stored images from camera
+             getData();
+
+           
+        
+            
+        // dataFromPhotoLogic.push(transferredImage);
+        // console.log('KEY'+ dataFromPhotoLogic.key);
+        // console.log('this is the time in evidence '+ Date.now());
+        // CameraRoll.getPhotos({
+        //     first: 15,
+        //     toTime: getTimeOfTransfer,
+        //     assetType: "All",
+            
+           
+           
+        // })
+        // .then((data)=> {
+        //     const assets = data.edges
+        //    // console.log("DATA EDGES" +assets)
+        //    //const images = Array.apply(assets.map((asset) => asset.node.image));
+        //    console.log('this is my timestamp' + Date.now());
+
+          
+        //     setState({
+        //         photos: assets,
+        //     })
+        //     }, 
+        //     (error) => {
+        //         console.warn( error)
+        //     }
+            
+        // );
     }, []);
           
-
+ 
     return(
         <SafeAreaView style= {globalStyle.MainContainer}>
+       
         <StatusBar barStyle="light-content" backgroundColor="#174060"/>
-            <View flexDirection='column' flex={1} marginTop={30} 
+            <View flexDirection='column' flex={0.456} marginTop={30} 
             marginRight ={5}
             marginLeft ={5}
             borderWidth={0.5}
@@ -72,14 +175,24 @@ export default function EvidenceSubmission ({route, navigation}){
                 <View>
                     <FlatList
                         data = {state.photos}
-                        numColumns = {6}
-                        renderItem={ ({ item }) => 
-                        <Image
-                        style={{ width:'20%', height:75,margin:0.5, resizeMode:'cover'}}   
-                        source = {{ uri: item.uri}} 
-                         />
+                        keyExtractor={(item, index)=> index}
+                        renderItem={ ({ item}) => (  
+                           
+                          <TouchableOpacity onPress={() => navigateToPhotoPreview(item) }>
+                             <Image
+                                style={{ width:70, height:75,margin:0.5, resizeMode:'cover'}}   
+                                source = {{ uri: "file://"+ item}} 
+                                // source = {{ uri: item}} 
+                                //source = {{ uri: item.node.image.uri}} 
+                            />
+                          </TouchableOpacity>   
+                           
+                           )   
                         }
-                        keyExtractor={item => item.id}
+                        numColumns = {5}
+                       
+                       
+                        
                         // {state.photos.map((photo, i) => {
                         //     {console.log("PHOTO is :"+ photo)} 
                         //     {console.log("PHOTO TO BE VIEWED" + state.photos)}
@@ -94,8 +207,7 @@ export default function EvidenceSubmission ({route, navigation}){
                         // })}
                         
                    />
-                </View>
-                
+                </View>  
             </View>
             <TouchableOpacity style={styles.addPhotoButton}
                     onPress={()=>{navigation.goBack()}}>
@@ -183,7 +295,8 @@ export default function EvidenceSubmission ({route, navigation}){
                 </View>
             
                 <TouchableOpacity
-                    style={styles.button}>
+                    style={styles.button}
+                    onPress={clearStorage}>
                     <Text style={{color:'white', 
                         alignSelf:'center',
                         fontSize: 18,
@@ -192,8 +305,8 @@ export default function EvidenceSubmission ({route, navigation}){
                     </Text>
                 </TouchableOpacity>   
             </View>
-           
-        </SafeAreaView>
+        
+        </SafeAreaView> 
     );
 }
 
@@ -207,6 +320,7 @@ const styles = StyleSheet.create({
         color: "#E6E4E4",
         fontSize: 6,
         opacity: 1,
+
     },
     image: {
         width: 90,
@@ -244,6 +358,7 @@ const styles = StyleSheet.create({
         width: 100,
         height: 45,
         margin: 10,
+        marginTop: 20,
         borderRadius: 5,
         justifyContent: 'center',
         backgroundColor: '#1D5179',

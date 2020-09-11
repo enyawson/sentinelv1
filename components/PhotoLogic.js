@@ -10,6 +10,7 @@ import {
     ActivityIndicator,
     Platform,
     Pressable,
+   
 } from 'react-native';
 import { RNCamera } from 'react-native-camera';
 import Icon from 'react-native-vector-icons/FontAwesome5';
@@ -29,6 +30,7 @@ TouchableOpacity.defaultProps = { activeOpacity : 0.8};
 export default function PhotoLogic ({ props, navigation }) {
     const falseValue = 'false';
     const trueValue = 'true';
+ 
 
      
     // states to hold data from GPSLocation file
@@ -36,6 +38,7 @@ export default function PhotoLogic ({ props, navigation }) {
         permissionEnable : true,
         disableCameraView: '',
         accuracyValue: 0,
+
     });
 
     // states to hold data from Camera
@@ -44,20 +47,49 @@ export default function PhotoLogic ({ props, navigation }) {
         pathStatus: false,
         focusedScreen: null,
         pathBase64: null,
+        isRecording: false,
+        recordOptions: {
+            mute: false,
+            maxDuration: 5,
+            quality: RNCamera.Constants.VideoQuality['288p'],
+        },
+        ratio: '16:9',
+        zoom: 0,
+        timeForCapture: Date.now(),
+        count: 0,
+
     })
 
     // this state holds the coordinates of the image on capture
-    const[capturedImageState, setCapturedImageSate] = useState({
+    const[capturedImageState, setCapturedImageState] = useState({
         capturedImageLatitude: null,
         capturedImageLongitude: null,
         capturedImageDate: null,
         capturedImageDateTime: null,
         //state for watermark
-        loading: null,  
+        loading: null, 
+        loadingIconMark: null, 
         saveFormat: ImageFormat.png,
         base64: false,
         markResult: ' ',
+        uri: ' '
     })
+
+    
+    //toggle Zoom
+    function zoomOut(){
+        setCamState({
+            zoom: camState.zoom - 0.1 < 0 ? 0 : camState.zoom-0.1,
+        });
+    }
+    function zoomIn(){
+        setCamState({
+            zoom: camState.zoom + 0.1 > 1 ? 1 : state.zoom + 0.1,
+        });
+    }
+
+ 
+
     
     /**
      * This method handles the accuracy of the coordinates  from GPSLocation
@@ -81,7 +113,7 @@ export default function PhotoLogic ({ props, navigation }) {
             disableCameraView : setDisableCameraView, 
         }),
         //this sets the value of co-ordinates , date and time on the preview image
-         setCapturedImageSate({
+         setCapturedImageState({
              capturedImageLatitude: setPreviewImageLatitude,
              capturedImageLongitude: setPreviewImageLongitude,
              capturedImageDate: setPreviewImageDate,
@@ -108,13 +140,43 @@ export default function PhotoLogic ({ props, navigation }) {
     /**
      * This method takes photo on capture press.
      */
+      //function to save Image
+      async function savePicture(path){
+        let imageUri = path;
+        //if permission denied do this or save picture
+        if  (Platform.OS == "android" && !(await hasAndroidPermission() )){
+            //returns this if permission denied
+            return;
+            console.log('Image NOT Saved in Election Watch folder');
+        }
+        CameraRoll.save(imageUri, {type:'photo', album: 'ElectionWatchFolder'});
+        console.log('Image Saved in Election Watch folder');
+
+      
+        
+    }
+
+  //  this method navigate to evidence page with data from photo
+   const  navigateToEvidenceScreen = (path) =>{
+        navigation.navigate('EvidenceSubmission' ,
+                        {
+                        transferredImage: path,
+                        countImageAdded: camState.count,
+                        // getLatitudeTransferred: capturedImageState.capturedImageLatitude,
+                        // getLongitudeTransferred: capturedImageState.capturedImageLongitude,
+                        // getDateTransferred: capturedImageState.capturedImageDate,
+                        // getTimeTransferred: capturedImageState.capturedImageDateTime,
+                        // getTimeOfTransfer: camState.timeForCapture,
+                        })
+    }
+    
     const takePicture = async () => {
         if (camera){
             const options = {quality: 1, 
             base64: true,
             };
             const data = await camera.takePictureAsync(options);
-            console.log("the data bas64 being used = " +data.base64)
+            console.log("the data bas64 being used = " + data.uri)
           
             setCamState({
                 pathBase64: data.base64,
@@ -124,24 +186,49 @@ export default function PhotoLogic ({ props, navigation }) {
             });
             { console.log('this is the path' + camState.path)}
             { console.log('this is the data.uri' + data.uri)}
+             
+            //set image data to transferred image state
+           
+
             //This method creates water mark on image captured
             { console.log('WATERMARK')}
-             createWaterMark();
+             createWaterMark(data.uri);
+            
         }
+        //count number of pictures added
+        setCamState({
+            count: (camState.count) + 1,
+        })
         
+    }; 
+    const takeVideo = async () => {
+        const { isRecording } = camState;
+        if (camera && !isRecording) {
+            try {
+                const promise = camera.recordAsync(camState.recordOptions);
+                if (promise){
+                    setCamState({isRecording: true});
+                    const data = await promise;
+                    console.warn('takeVideo', data)
+                }
+             } catch (e){
+                 console.error(e);
+
+             }
+        }
     };
 
 
     // function to create water mark
-    function createWaterMark (){
-        setCapturedImageSate({
+    function createWaterMark (path){
+        setCapturedImageState({
             loading: true,
         })
         
         Marker.markText({
-        src: camState.path,
+        src: path,
         text: capturedImageState.capturedImageLatitude +" " + capturedImageState.capturedImageLongitude +'\n'+
-                 capturedImageState.capturedImageDate + ","+ capturedImageState.capturedImageDateTime,
+             capturedImageState.capturedImageDate + ","+ capturedImageState.capturedImageDateTime,
 
         position: 'bottomCenter',
         color: '#E6E4E4',
@@ -151,22 +238,29 @@ export default function PhotoLogic ({ props, navigation }) {
             dx: 10.5,
             dy: 20.8,
             radius: 20.9,
-            color: '#ff00ff'
+            
         },
         scale: 1,
         saveFormat: capturedImageState.saveFormat,
         quality :100
         }).then ((res) => {
-            setCapturedImageSate({
+            setCapturedImageState({
                 loading: false,
                 markResult: res,
             })
-            //saves water mark path to cameraroll
+            //create icon soft masters on image
+            //const imageUri = capturedImageState.markResult;
+            //createIconMark(res)
+            //saves water mark path to camera roll
+            const saveNewImage = capturedImageState.uri
             savePicture(res);
+            //This method transfers image data 
+            navigateToEvidenceScreen(res);
+
             console.log("water mark save to path" + res)
         }).catch(( err ) => {
             console.log(err)
-            setCapturedImageSate({
+            setCapturedImageState({
                 loading: false,
                 err
             })
@@ -174,6 +268,41 @@ export default function PhotoLogic ({ props, navigation }) {
         })
   
     }
+    //create icon mark on water marked image
+    function createIconMark(imageUri){
+        const iconUri = require("../assets/Softmasters_watermark_logo.png");
+        const  backgroundImage = imageUri;
+
+        setCamState({
+            loadingIconMark: true,
+        })
+
+        Marker.markImage({
+                src: backgroundImage,
+                markerSrc: iconUri, //icon uri
+                X: 50,  //left
+                Y: 150, //top
+                scale: 1,  //scale of background
+                markerScale: 0.5, // scale of icon
+                quality: 100, //quality of image
+                saveFormat: capturedImageState.saveFormat,
+        }).then((path) => {
+            setCapturedImageState({
+                uri: Platform.OS === 'android'? 'file://' + path : path,
+                loading: false
+            })
+            console.log("IMAGE water mark set ");
+        }).catch((err) => {
+            console.log(err, 'err')
+            setCapturedImageState({
+                loading:false,
+                err
+            })
+        })
+        
+    
+    }
+
     //requested Permissions to save data
     async function hasAndroidPermission() {
        
@@ -192,32 +321,7 @@ export default function PhotoLogic ({ props, navigation }) {
         return status == 'granted';
     }
 
-    //function to save Image
-    async function savePicture(path){
-        let imageUri = path;
-        //if permission denied do this or save picture
-        if  (Platform.OS == "android" && !(await hasAndroidPermission() )){
-            //returns this if permission denied
-            return;
-            console.log('Image NOT Saved in Election Watch folder');
-        }
-        CameraRoll.save(imageUri, {type:'photo', album: 'ElectionWatchFolder'});
-        console.log('Image Saved in Election Watch folder');
-        
-    }
-
-    //this method navigate to evidence page with data from photo
-//    const  navigateToEvidenceScreen = () =>{
-//         navigation.navigate('EvidenceSubmission' ,
-//                         {
-//                         transferredImage: camState.pathBase64,
-//                         getLatitudeTransferred: capturedImageState.capturedImageLatitude,
-//                         getLongitudeTransferred: capturedImageState.capturedImageLongitude,
-//                         getDateTransferred: capturedImageState.capturedImageDate,
-//                         getTimeTransferred: capturedImageState.capturedImageDateTime,
-//                         })
-//     }
-    
+  
     
 
     /**
@@ -236,7 +340,9 @@ export default function PhotoLogic ({ props, navigation }) {
              flashMode={RNCamera.Constants.FlashMode.off}
              autoFocus={RNCamera.Constants.AutoFocus.on}
              whiteBalance={RNCamera.Constants.WhiteBalance.auto}
-             zoom= {0}
+             zoom= {state.zoom}
+             focusDepth={state.depth}
+
               androidCameraPermissionOptions={{
                 title: 'Permission to use camera',
                 message: 'permission needed to use camera',
@@ -298,16 +404,16 @@ export default function PhotoLogic ({ props, navigation }) {
                    }}>
                        <Pressable
                            disabled={false}
-                        //    onPress={ takePicture }
-                           onPressIn={()=>{
-                                takePicture(); 
-                            }
-                           }
-                           onPressOut={()=>{
-                                // navigateToEvidenceScreen();
-                                navigation.navigate('EvidenceSubmission');
-                            }
-                           }
+                          onPress={ takePicture }
+                        //    onPressIn={()=>{
+                        //         takePicture(); 
+                        //     }
+                        //   }
+                        //    onPressOut={()=>{
+                        //     //navigateToEvidenceScreen();
+                        //      //navigation.navigate('EvidenceSubmission') 
+                        //     }
+                          // }
                            
                            style={styles.capture}>
 

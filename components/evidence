@@ -8,6 +8,7 @@ import {
     TouchableOpacity,
     StatusBar,
     TextInput,
+    FlatList,
     Pressable,
     Button,
     Alert,
@@ -15,7 +16,7 @@ import {
    
 } from 'react-native';
 import globalStyle from '../components_styles/globalStyle';
-import { ScrollView } from 'react-native-gesture-handler';
+import { ScrollView, State } from 'react-native-gesture-handler';
 import SafeAreaView from 'react-native-safe-area-view';
 import { Picker } from '@react-native-community/picker';
 import Microphone from 'react-native-vector-icons/FontAwesome5';
@@ -58,62 +59,17 @@ export default function EvidenceSubmission ({route, navigation}){
         );
     }, []);
           
-
-      
-       
-
-    //Component loads images when mounted
-  
-   
-    
-
-
-    //state to hold transferred image
-    // const[retrievedImages,setRetrievedImage] = useState([]);
-    
-    // //navigating value of image from photoLogic to this page
-
-    // const { transferredImage }= route.params
-    // const { getLatitudeTransferred } = route.params
-    // const { getLongitudeTransferred } = route.params
-    // const { getTimeTransferred } = route.params
-    // const { getDateTransferred } = route.params
-
-    // console.log('TRANSFERRED:' + transferredImage ) 
-
-    //save retrieved image in an array
-   
-    // ComponentDidMount= () => {
-    //     retrievedImages.push(transferredImage); //saving photos taken
-    //     storeData();
-    //     setRetrievedImage([...retrievedImages]);
-    // }
-    
-
-    // const storeData = async (retrievedImages) => {
-    //     try {
-    //         const jsonValue = JSON.stringify(retrievedImages)
-    //         await AsyncStorage.setItem('@storage_key', JSON.stringify(jsonValue))
-    //          Alert.alert('Photo added', 'Successful');
-    //     } catch (error) {
-    //         Alert.alert('Error', 'error adding')
-    //     }
-    // }
-    
-
-
+    /**
+     * This method on touch previews the image in the evidence gallery.
+     * @param uri  is the path to the temporary image stored.
+     */
+    const pressHandler = (uri) =>{
+        console.log("This is previews url from flatList "+uri);
+    }
 
     return(
         <SafeAreaView style= {globalStyle.MainContainer}>
         <StatusBar barStyle="light-content" backgroundColor="#174060"/>
-           {/* <TouchableOpacity style={styles.trashButton}>
-                    <Trash
-                       name={'trash-outline'}
-                       size={30}
-                       color="black"  
-                    />   
-            </TouchableOpacity> */}
-         
             <View flexDirection='column' flex={1} marginTop={30} 
             marginRight ={5}
             marginLeft ={5}
@@ -121,53 +77,39 @@ export default function EvidenceSubmission ({route, navigation}){
             borderRadius={3}
             borderColor='#7E7E7E'>
                 <View>
-                    <ScrollView>
-                        {state.photos.map((photo, i) => {
-                            {console.log("PHOTO TO BE VIEWED" + state.photos)}
-                                <Image 
-                                    key={i}
-                                    style={{ width:65, height:65,}}
-                                    source={{uri: photo.node.image.uri}}
-                                />
-                                {console.log("PHOTO is :"+ photo)}
+                    <FlatList
+                        data = {state.photos}
+                        numColumns = {6}
+                        keyExtractor={item => item.id}
+                        renderItem={ ({ item }) => {
+                             <TouchableOpacity
+                        onPress={()=> pressHandler(item.uri)}>
+                            <Image
+                            style={{ width:'20%', height:75,margin:0.5, resizeMode:'cover'}}   
+                            source = {{ uri: item.uri}} 
+                            />
+                        </TouchableOpacity>
+                        }
+                       
+                       
+                        }
+                       
+                        // {state.photos.map((photo, i) => {
+                        //     {console.log("PHOTO is :"+ photo)} 
+                        //     {console.log("PHOTO TO BE VIEWED" + state.photos)}
+                        //     return(
+                        //         <Image 
+                        //             key={i}
+                        //             style={{ width:65, height:65,}}
+                        //             source={{uri: photo.uri}}
+                        //         />
+                        //         );
                                 
-                        })}
-                    </ScrollView>
+                        // })}
+                        
+                   />
                 </View>
-                {/* <View
-                style={{width: 65,
-                height: 65,
-                borderRadius:3, 
-                borderWidth: 0.4,
-                borderColor:'#DCDCDC',
-                margin: 5,
-                shadowOpacity:0.3,
-                shadowColor:"#000",
-                backgroundColor:'#FFFFF0'}}>
-                    <View styles={[styles.contentContainer, styles.imageContainer]} >
-                        <ScrollView 
-                        horizontal={false}
-                        pagingEnabled={false}
-                        showsHorizontalScrollIndicator={true}>
-                            <View>
-                                <Image style={{width: 65, height: 65, borderTopRightRadius:3,borderTopLeftRadius:3}}
-                                source= { {uri: `data:image/jpeg;base64, ${transferredImage}`}}/>
-                                <View style={{position: 'absolute', left: 0, right: 0, top: 45}}>
-                                <View style={{flexDirection:'row',justifyContent:'center'}}>
-                                    <Text style={styles.text}>{getLatitudeTransferred}</Text>
-                                    <Text style={styles.text}>{getLongitudeTransferred}</Text>
-                                </View>
-                                <View style={{flexDirection:'row',justifyContent:'center'}}>
-                                    <Text style={styles.text}>{getDateTransferred},</Text>
-                                    <Text style={styles.text}> {getTimeTransferred}</Text>
-                                </View>
-
-                            </View>
-                               
-                            </View> 
-                        </ScrollView>
-                    </View> 
-                </View> */}
+                
             </View>
             <TouchableOpacity style={styles.addPhotoButton}
                     onPress={()=>{navigation.goBack()}}>
