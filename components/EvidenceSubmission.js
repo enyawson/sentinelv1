@@ -31,6 +31,14 @@ import ArrowBack from 'react-native-vector-icons/Ionicons';
 
 
 export default function EvidenceSubmission ({route, navigation}){
+
+    //navigating value of image from photoLogic to this page
+    let { transferredImage }= route.params
+    console.log("transferred URI "+ transferredImage);
+    //console.log('retrieved images'+ state.photos)
+    const { countImageAdded } = route.params
+    console.log ('Number of pictures taken (EvidenceSub. page) : '+ countImageAdded);
+
     //Incidence
     const [state, setState]= useState({
         selectedIncidence: 'Please select incidence',
@@ -42,50 +50,19 @@ export default function EvidenceSubmission ({route, navigation}){
     })
     //selected item with flatlist
     const [selectedImage, setSelectedImage] = useState(null);
+
     
-
-    //navigating value of image from photoLogic to this page
-
-    let { transferredImage }= route.params
-    console.log("transferred URI "+ transferredImage);
-    console.log('retrieved images'+ state.photos)
-    const { countImageAdded } = route.params
-    console.log ('Number of pictures taken (EvidenceSub. page) : '+ countImageAdded);
     // const { getLatitudeTransferred } = route.params
     // const { getLongitudeTransferred } = route.params
     // const { getTimeTransferred } = route.params
     // const { getDateTransferred } = route.params
     // const { getTimeOfTransfer } = route.params
 
-    /**
-     * This method navigates to photo oreview
-     * @param {} path image retrieved from flatlist item in evidence page
-     */
-    const  navigateToPhotoPreview = (path) =>{
-        navigation.navigate('PhotoPreviewer',
-                        {
-                        transferredImageItem: path,
-                        
-                        })
-    }
-    
 
-   
-
-     //state to hold transferred image
-    // const[dataFromPhotoLogic, setRetrievedDataFromPhotoLogic  ] = useState([
-    //     {photo: transferredImage, key:dataFromPhotoLogic.map(function(e){return e.name;}).indexOf('photo')}
-    // ]);
-
-   // console.log('TRANSFERRED:' + transferredImage ) 
-
-
-
-   /**
-    * This method clears Storage and gallery on submit, to 
-    * allow new images into storage and gallery
-    * 
-    * */
+/**
+* This method clears Storage and gallery on submit, to 
+* allow new images into storage and gallery
+*/
    const clearStorage= async() =>{
     try{
         await AsyncStorage.clear();
@@ -99,10 +76,10 @@ export default function EvidenceSubmission ({route, navigation}){
     setState({
         photos: " "
     })
-}
+    }
   
 
-    //loading images from camera roll on component mount
+//loading images from camera roll on component mount
     useEffect(()=> {
         AsyncStorage.getItem('photos')
             .then((photos) => {
@@ -119,7 +96,7 @@ export default function EvidenceSubmission ({route, navigation}){
                         })
                         /*set transferred image variable to empty to allow
                         the intake of a new one*/
-                        transferredImage = " ";
+                        setParams({transferredImage: " "});
                         console.log('emptied transferred image variable '+ transferredImage)
                     }
                 }catch(e){
@@ -128,39 +105,20 @@ export default function EvidenceSubmission ({route, navigation}){
             }
              //Get the stored images from camera
              getData();
-
-           
-        
-            
-        // dataFromPhotoLogic.push(transferredImage);
-        // console.log('KEY'+ dataFromPhotoLogic.key);
-        // console.log('this is the time in evidence '+ Date.now());
-        // CameraRoll.getPhotos({
-        //     first: 15,
-        //     toTime: getTimeOfTransfer,
-        //     assetType: "All",
-            
-           
-           
-        // })
-        // .then((data)=> {
-        //     const assets = data.edges
-        //    // console.log("DATA EDGES" +assets)
-        //    //const images = Array.apply(assets.map((asset) => asset.node.image));
-        //    console.log('this is my timestamp' + Date.now());
-
-          
-        //     setState({
-        //         photos: assets,
-        //     })
-        //     }, 
-        //     (error) => {
-        //         console.warn( error)
-        //     }
-            
-        // );
     }, []);
-          
+
+/**
+ * This method navigates to photo preview page
+ * @param path image retrieved from flat list item in evidence page
+ */
+    const  navigateToPhotoPreview = (path) =>{
+        navigation.navigate('PhotoPreviewer',
+        {
+            transferredImageItem: path,
+        
+        })      
+    }
+
  
     return(
         <SafeAreaView style= {globalStyle.MainContainer}>
@@ -174,7 +132,7 @@ export default function EvidenceSubmission ({route, navigation}){
             borderColor='#7E7E7E'>
                 <View>
                     <FlatList
-                        data = {state.photos}
+                        data= {state.photos.length > 0? state.photos : useEffect}
                         keyExtractor={(item, index)=> index}
                         renderItem={ ({ item}) => (  
                            
@@ -296,7 +254,8 @@ export default function EvidenceSubmission ({route, navigation}){
             
                 <TouchableOpacity
                     style={styles.button}
-                    onPress={clearStorage}>
+                    onPress={()=>clearStorage()}
+                    >
                     <Text style={{color:'white', 
                         alignSelf:'center',
                         fontSize: 18,

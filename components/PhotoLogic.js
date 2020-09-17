@@ -76,22 +76,7 @@ export default function PhotoLogic ({ props, navigation }) {
     })
 
     
-    //toggle Zoom
-    function zoomOut(){
-        setCamState({
-            zoom: camState.zoom - 0.1 < 0 ? 0 : camState.zoom-0.1,
-        });
-    }
-    function zoomIn(){
-        setCamState({
-            zoom: camState.zoom + 0.1 > 1 ? 1 : state.zoom + 0.1,
-        });
-    }
-
- 
-
-    
-    /**
+ /**
      * This method handles the accuracy of the coordinates  from GPSLocation
      */
    let handleData = (value) => {
@@ -122,26 +107,30 @@ export default function PhotoLogic ({ props, navigation }) {
        
         
     }
-    //console check of accuracyValue and disableCameraView
+//console check of accuracyValue and disableCameraView
     console.log ('yep: '+state.accuracyValue);
     console.log('tey: '+ state.disableCameraView);
 
-    // //if component did mount check the following
-    // componentDidMount() 
-    // {
-    //     navigation.addListener('willFocus', () => 
-    //     setCamState({focusedScreen: true,}) 
-    //     );
-    //     const { navigation } = AppRegistry.props;
-    //     navigation.addListener('willFocus', () => 
-    //     setCamState({focusedScreen: false,})
-    //     );
-    // }
-    /**
-     * This method takes photo on capture press.
-     */
-      //function to save Image
-      async function savePicture(path){
+//requested Permissions to save data
+    async function hasAndroidPermission() {
+
+        const permission = PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE;
+
+        //checks the permission response from the user (whether accepted or denied)
+        const hasPermission = await PermissionsAndroid.check(permission);
+        if (hasPermission){
+            return true;
+            //save image in album
+        }
+
+        //return status of storage permission
+        const status = await PermissionsAndroid.request(permission);
+        // this can be used when status is required to perform certain action
+        return status == 'granted';
+    }
+
+//function to save Image
+        async function savePicture(path){
         let imageUri = path;
         //if permission denied do this or save picture
         if  (Platform.OS == "android" && !(await hasAndroidPermission() )){
@@ -152,25 +141,115 @@ export default function PhotoLogic ({ props, navigation }) {
         CameraRoll.save(imageUri, {type:'photo', album: 'ElectionWatchFolder'});
         console.log('Image Saved in Election Watch folder');
 
-      
+        
         
     }
 
-  //  this method navigate to evidence page with data from photo
-   const  navigateToEvidenceScreen = (path) =>{
-        navigation.navigate('EvidenceSubmission' ,
-                        {
-                        transferredImage: path,
-                        countImageAdded: camState.count,
-                        // getLatitudeTransferred: capturedImageState.capturedImageLatitude,
-                        // getLongitudeTransferred: capturedImageState.capturedImageLongitude,
-                        // getDateTransferred: capturedImageState.capturedImageDate,
-                        // getTimeTransferred: capturedImageState.capturedImageDateTime,
-                        // getTimeOfTransfer: camState.timeForCapture,
-                        })
-    }
+// function to create water mark
+    function createWaterMark (path){
+    setCapturedImageState({
+        loading: true,
+    })
     
-    const takePicture = async () => {
+    Marker.markText({
+    src: path,
+    text: capturedImageState.capturedImageLatitude +" " + capturedImageState.capturedImageLongitude +'\n'+
+         capturedImageState.capturedImageDate + ","+ capturedImageState.capturedImageDateTime,
+
+    position: 'bottomCenter',
+    color: '#E6E4E4',
+    fontName: 'Arial-BoldItalicMT',
+    fontSize: 30,
+    shadowStyle: {
+        dx: 10.5,
+        dy: 20.8,
+        radius: 20.9,
+        
+    },
+    scale: 1,
+    saveFormat: capturedImageState.saveFormat,
+    quality :100
+    }).then ((res) => {
+        setCapturedImageState({
+            loading: false,
+            markResult: res,
+        })
+        //create icon soft masters on image
+        //const imageUri = capturedImageState.markResult;
+        //createIconMark(res)
+        //saves water mark path to camera roll
+        const saveNewImage = capturedImageState.uri
+        savePicture(res);
+        //This method transfers image data 
+        navigateToEvidenceScreen(res);
+
+        console.log("WATERMARK output of path" + res)
+    }).catch(( err ) => {
+        console.log(err)
+        setCapturedImageState({
+            loading: false,
+            err
+        })
+
+    })
+
+    }
+
+//create icon mark on water marked image
+    function createIconMark(imageUri){
+        const iconUri = require("../assets/Softmasters_watermark_logo.png");
+        const  backgroundImage = imageUri;
+
+        setCamState({
+            loadingIconMark: true,
+        })
+
+        Marker.markImage({
+                src: backgroundImage,
+                markerSrc: iconUri, //icon uri
+                X: 50,  //left
+                Y: 150, //top
+                scale: 1,  //scale of background
+                markerScale: 0.5, // scale of icon
+                quality: 100, //quality of image
+                saveFormat: capturedImageState.saveFormat,
+        }).then((path) => {
+            setCapturedImageState({
+                uri: Platform.OS === 'android'? 'file://' + path : path,
+                loading: false
+            })
+            console.log("IMAGE water mark set ");
+        }).catch((err) => {
+            console.log(err, 'err')
+            setCapturedImageState({
+                loading:false,
+                err
+            })
+        })
+        
+
+    }
+
+//  this method navigate to evidence page with data from photo
+    const  navigateToEvidenceScreen = (path) =>{
+    navigation.navigate('EvidenceSubmission' ,
+    {
+        transferredImage: path,
+        countImageAdded: camState.count,
+        // getLatitudeTransferred: capturedImageState.capturedImageLatitude,
+        // getLongitudeTransferred: capturedImageState.capturedImageLongitude,
+        // getDateTransferred: capturedImageState.capturedImageDate,
+        // getTimeTransferred: capturedImageState.capturedImageDateTime,
+        // getTimeOfTransfer: camState.timeForCapture,
+    })
+    console.log("NAVIGATION output of path " + path)
+    }
+
+/**
+ * This method takes photo on capture press.
+ * 
+ */
+    const  takePicture = async () => {
         if (camera){
             const options = {quality: 1, 
             base64: true,
@@ -178,13 +257,16 @@ export default function PhotoLogic ({ props, navigation }) {
             const data = await camera.takePictureAsync(options);
             console.log("the data bas64 being used = " + data.uri)
           
-            setCamState({
+           await setCamState({
                 pathBase64: data.base64,
                 path: data.uri,
                 pathStatus: true,
                
-            });
-            { console.log('this is the path' + camState.path)}
+            }
+           
+            );
+           { console.log('this is the path' + camState.path)}
+           
             { console.log('this is the data.uri' + data.uri)}
              
             //set image data to transferred image state
@@ -219,107 +301,7 @@ export default function PhotoLogic ({ props, navigation }) {
     };
 
 
-    // function to create water mark
-    function createWaterMark (path){
-        setCapturedImageState({
-            loading: true,
-        })
-        
-        Marker.markText({
-        src: path,
-        text: capturedImageState.capturedImageLatitude +" " + capturedImageState.capturedImageLongitude +'\n'+
-             capturedImageState.capturedImageDate + ","+ capturedImageState.capturedImageDateTime,
-
-        position: 'bottomCenter',
-        color: '#E6E4E4',
-        fontName: 'Arial-BoldItalicMT',
-        fontSize: 44,
-        shadowStyle: {
-            dx: 10.5,
-            dy: 20.8,
-            radius: 20.9,
-            
-        },
-        scale: 1,
-        saveFormat: capturedImageState.saveFormat,
-        quality :100
-        }).then ((res) => {
-            setCapturedImageState({
-                loading: false,
-                markResult: res,
-            })
-            //create icon soft masters on image
-            //const imageUri = capturedImageState.markResult;
-            //createIconMark(res)
-            //saves water mark path to camera roll
-            const saveNewImage = capturedImageState.uri
-            savePicture(res);
-            //This method transfers image data 
-            navigateToEvidenceScreen(res);
-
-            console.log("water mark save to path" + res)
-        }).catch(( err ) => {
-            console.log(err)
-            setCapturedImageState({
-                loading: false,
-                err
-            })
-
-        })
-  
-    }
-    //create icon mark on water marked image
-    function createIconMark(imageUri){
-        const iconUri = require("../assets/Softmasters_watermark_logo.png");
-        const  backgroundImage = imageUri;
-
-        setCamState({
-            loadingIconMark: true,
-        })
-
-        Marker.markImage({
-                src: backgroundImage,
-                markerSrc: iconUri, //icon uri
-                X: 50,  //left
-                Y: 150, //top
-                scale: 1,  //scale of background
-                markerScale: 0.5, // scale of icon
-                quality: 100, //quality of image
-                saveFormat: capturedImageState.saveFormat,
-        }).then((path) => {
-            setCapturedImageState({
-                uri: Platform.OS === 'android'? 'file://' + path : path,
-                loading: false
-            })
-            console.log("IMAGE water mark set ");
-        }).catch((err) => {
-            console.log(err, 'err')
-            setCapturedImageState({
-                loading:false,
-                err
-            })
-        })
-        
-    
-    }
-
-    //requested Permissions to save data
-    async function hasAndroidPermission() {
-       
-        const permission = PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE;
-
-        //checks the permission response from the user (whether accepted or denied)
-        const hasPermission = await PermissionsAndroid.check(permission);
-        if (hasPermission){
-            return true;
-            //save image in album
-        }
-
-        //return status of storage permission
-        const status = await PermissionsAndroid.request(permission);
-        // this can be used when status is required to perform certain action
-        return status == 'granted';
-    }
+ 
 
   
     
@@ -604,7 +586,7 @@ const styles = StyleSheet.create ({
         borderRadius: 100,
         elevation: 5,
         borderWidth : 1,
-        borderColor: 'red',
+        borderColor: 'gray',
     },
     cancel: {
         position: 'absolute',
