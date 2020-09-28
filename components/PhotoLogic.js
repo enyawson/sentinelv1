@@ -22,6 +22,8 @@ import { TextInput } from 'react-native-gesture-handler';
 import CameraRoll from "@react-native-community/cameraroll";
 import ImageMaker, { ImageFormat } from "react-native-image-marker";
 import Marker from 'react-native-image-marker';
+import AsyncStorage from '@react-native-community/async-storage';
+
 
 
 
@@ -180,8 +182,22 @@ export default function PhotoLogic ({ props, navigation }) {
         //saves water mark path to camera roll
         const saveNewImage = capturedImageState.uri
         savePicture(res);
-        //This method transfers image data 
-        navigateToEvidenceScreen(res);
+
+        // This method saves image asynchronous
+        AsyncStorage.getItem('photos')
+        .then((photos) => {
+            const photo = photos ? JSON.parse(photos) : [];
+            photo.push(res);
+            AsyncStorage.setItem('photos', JSON.stringify(photo));
+            console.log("ASYNC STORAGE WORKED : "+JSON.parse(photos)  )
+            //true if transferred image from camera is pushed to array
+           return () =>{
+               photo.clear();
+           }
+          
+        }); 
+        /*This method transfers image data*/
+        // navigateToEvidenceScreen(res);
 
         console.log("WATERMARK output of path" + res)
     }).catch(( err ) => {
@@ -190,10 +206,9 @@ export default function PhotoLogic ({ props, navigation }) {
             loading: false,
             err
         })
-
     })
-
-    }
+    
+}
 
 //create icon mark on water marked image
     function createIconMark(imageUri){
@@ -231,19 +246,19 @@ export default function PhotoLogic ({ props, navigation }) {
     }
 
 //  this method navigate to evidence page with data from photo
-    const  navigateToEvidenceScreen = (path) =>{
-    navigation.navigate('EvidenceSubmission' ,
-    {
-        transferredImage: path,
-        countImageAdded: camState.count,
-        // getLatitudeTransferred: capturedImageState.capturedImageLatitude,
-        // getLongitudeTransferred: capturedImageState.capturedImageLongitude,
-        // getDateTransferred: capturedImageState.capturedImageDate,
-        // getTimeTransferred: capturedImageState.capturedImageDateTime,
-        // getTimeOfTransfer: camState.timeForCapture,
-    })
-    console.log("NAVIGATION output of path " + path)
-    }
+    // const  navigateToEvidenceScreen = (path) =>{
+    // navigation.navigate('EvidenceSubmission' ,
+    // {
+    //     transferredImage: path,
+    //     countImageAdded: camState.count,
+    //     // getLatitudeTransferred: capturedImageState.capturedImageLatitude,
+    //     // getLongitudeTransferred: capturedImageState.capturedImageLongitude,
+    //     // getDateTransferred: capturedImageState.capturedImageDate,
+    //     // getTimeTransferred: capturedImageState.capturedImageDateTime,
+    //     // getTimeOfTransfer: camState.timeForCapture,
+    // })
+    // console.log("NAVIGATION output of path " + path)
+    // }
 
 /**
  * This method takes photo on capture press.
@@ -253,8 +268,11 @@ export default function PhotoLogic ({ props, navigation }) {
         if (camera){
             const options = {quality: 1, 
             base64: true,
+            pauseAfterCapture: true,
             };
             const data = await camera.takePictureAsync(options);
+            
+            
             console.log("the data bas64 being used = " + data.uri)
           
            await setCamState({
@@ -269,9 +287,15 @@ export default function PhotoLogic ({ props, navigation }) {
            
             { console.log('this is the data.uri' + data.uri)}
              
-            //set image data to transferred image state
+           /* show activity loader on image capture*/
+           if (options.pauseAfterCapture){
+            setTimeout(()=>{
+                camera.resumePreview();
+            },3000)
+            
+        }
+        
            
-
             //This method creates water mark on image captured
             { console.log('WATERMARK')}
              createWaterMark(data.uri);
@@ -281,6 +305,7 @@ export default function PhotoLogic ({ props, navigation }) {
         setCamState({
             count: (camState.count) + 1,
         })
+       
         
     }; 
     const takeVideo = async () => {
@@ -299,20 +324,13 @@ export default function PhotoLogic ({ props, navigation }) {
              }
         }
     };
-
-
- 
-
-  
     
 
     /**
      * This method calls camera to take picture
      */
   const  renderCamera = ()=>{
-    
         return(
-        
          <RNCamera
             ref={(ref) => {
                 camera = ref;
@@ -386,16 +404,16 @@ export default function PhotoLogic ({ props, navigation }) {
                    }}>
                        <Pressable
                            disabled={false}
-                          onPress={ takePicture }
-                        //    onPressIn={()=>{
-                        //         takePicture(); 
-                        //     }
-                        //   }
-                        //    onPressOut={()=>{
-                        //     //navigateToEvidenceScreen();
-                        //      //navigation.navigate('EvidenceSubmission') 
-                        //     }
-                          // }
+                         // onPress={ takePicture }
+                           onPressIn={()=>{
+                                takePicture(); 
+                            }
+                          }
+                           onPressOut={()=>{
+                             //navigateToEvidenceScreen(); 
+                            setTimeout(()=>navigation.navigate('EvidenceSubmission'),3400)
+                            }
+                           }
                            
                            style={styles.capture}>
 

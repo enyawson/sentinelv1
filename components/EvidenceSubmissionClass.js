@@ -9,13 +9,7 @@
 //     StatusBar,
 //     TextInput,
 //     FlatList,
-//     Pressable,
-//     Dimensions,
-//     Modal,
-//     Button,
-//     Alert,
-//     Platform,
-//     Keyboard,
+   
 // } from 'react-native';
 // import globalStyle from '../components_styles/globalStyle';
 // import { ScrollView, State, TouchableWithoutFeedback } from 'react-native-gesture-handler';
@@ -29,244 +23,182 @@
 // import ArrowBack from 'react-native-vector-icons/Ionicons';
 
 
-
 // export default class EvidenceSubmission extends React.Component{
-
-//     //navigating value of image from photoLogic to this page
-//     let { transferredImage }= route.params
-//     console.log("transferred URI "+ transferredImage);
-//     //console.log('retrieved images'+ state.photos)
-//     const { countImageAdded } = route.params
-//     console.log ('Number of pictures taken (EvidenceSub. page) : '+ countImageAdded);
-
-//     //Incidence
-//     const [state, setState]= useState({
-//         selectedIncidence: 'Please select incidence',
-//         photos:[],
-//     });
-//     //state to hold description
-//     const [text, onChangeText] = useState({
-//         textInputted: '',
-//     })
-//     //selected item with flatlist
-//     const [selectedImage, setSelectedImage] = useState(null);
-
-    
-//     // const { getLatitudeTransferred } = route.params
-//     // const { getLongitudeTransferred } = route.params
-//     // const { getTimeTransferred } = route.params
-//     // const { getDateTransferred } = route.params
-//     // const { getTimeOfTransfer } = route.params
-
-
-// /**
-// * This method clears Storage and gallery on submit, to 
-// * allow new images into storage and gallery
-// */
-//    const clearStorage= async() =>{
-//     try{
-//         await AsyncStorage.clear();
-
-//     } catch(exception){
-//         console.log('error clearing  items');
+//     constructor(props){
+//         super(props);
+//         this.state={
+//             selectedIncidence: 'Please select incidence',
+//             photos:[],
+//         };
 //     }
-//     console.log('items cleared (Evidence Page)');
+   
+// componentWillMount(){
 
-//     //clear gallery
-//     setState({
-//         photos: " "
-//     })
-//     }
-  
-
-// //loading images from camera roll on component mount
-//     useEffect(()=> {
-//         AsyncStorage.getItem('photos')
-//             .then((photos) => {
-//                 const photo = photos ? JSON.parse(photos) : [];
-//                 photo.push(transferredImage);
-//                 AsyncStorage.setItem('photos', JSON.stringify(photo));
-//             });  
-//             const getData = async () => {
-//                 try {
-//                     const value = await AsyncStorage.getItem('photos')
-//                     if(value !==null){
-//                         setState({
-//                             photos: JSON.parse(value),
-//                         })
-//                         /*set transferred image variable to empty to allow
-//                         the intake of a new one*/
-//                         setParams({transferredImage: " "});
-//                         console.log('emptied transferred image variable '+ transferredImage)
-//                     }
-//                 }catch(e){
-//                    console.log('error with async getData');
-//                 }  
-//             }
-//              //Get the stored images from camera
-//              getData();
-//     }, []);
+// }
 
 // /**
 //  * This method navigates to photo preview page
 //  * @param path image retrieved from flat list item in evidence page
 //  */
-//     const  navigateToPhotoPreview = (path) =>{
-//         navigation.navigate('PhotoPreviewer',
-//         {
-//             transferredImageItem: path,
-        
-//         })      
-//     }
-
- 
-//     return(
-//         <SafeAreaView style= {globalStyle.MainContainer}>
+//     navigateToPhotoPreview = (path) =>{
+//     navigation.navigate('PhotoPreviewer',
+//     {
+//         transferredImageItem: path,
+    
+//     })      
+// }
+    
+//     render(){
+//         return(
+//             <SafeAreaView style= {globalStyle.MainContainer}>
        
-//         <StatusBar barStyle="light-content" backgroundColor="#174060"/>
-//             <View flexDirection='column' flex={0.456} marginTop={30} 
-//             marginRight ={5}
-//             marginLeft ={5}
-//             borderWidth={0.5}
-//             borderRadius={3}
-//             borderColor='#7E7E7E'>
-//                 <View>
-//                     <FlatList
-//                         data= {state.photos.length > 0? state.photos : useEffect}
-//                         keyExtractor={(item, index)=> index}
-//                         renderItem={ ({ item}) => (  
-                           
-//                           <TouchableOpacity onPress={() => navigateToPhotoPreview(item) }>
-//                              <Image
-//                                 style={{ width:70, height:75,margin:0.5, resizeMode:'cover'}}   
-//                                 source = {{ uri: "file://"+ item}} 
-//                                 // source = {{ uri: item}} 
-//                                 //source = {{ uri: item.node.image.uri}} 
-//                             />
-//                           </TouchableOpacity>   
-                           
-//                            )   
-//                         }
-//                         numColumns = {5}
-                       
-                       
-                        
-//                         // {state.photos.map((photo, i) => {
-//                         //     {console.log("PHOTO is :"+ photo)} 
-//                         //     {console.log("PHOTO TO BE VIEWED" + state.photos)}
-//                         //     return(
-//                         //         <Image 
-//                         //             key={i}
-//                         //             style={{ width:65, height:65,}}
-//                         //             source={{uri: photo.uri}}
-//                         //         />
-//                         //         );
-                                
-//                         // })}
-                        
-//                    />
-//                 </View>  
-//             </View>
-//             <TouchableOpacity style={styles.addPhotoButton}
-//                     onPress={()=>{navigation.goBack()}}>
-//                     <Add
-//                        name={'add'}
-//                        size={30}
-//                        color="white"  
-//                     />   
-//             </TouchableOpacity>
-
-//             <View style={{justifyContent: 'center', margin:5 ,flex: 1.2}}>
-//                 <View style={{borderWidth: 1, 
-//                     borderColor:'#C4C4C4',
-//                     borderRadius:5,
-//                     width: 270, 
-//                     marginLeft: 5,
-//                     marginBottom: 0,
-//                     marginTop: 15}}>
-//                     <Picker
-//                         selectedValue ={state.selectedIncidence}
-//                         style={{height:45, width: 270, 
-//                         fontFamily:'roboto', 
-//                         fontStyle:'normal',
-//                         fontWeight:'normal'}}
-//                         onValueChange={(itemValue, itemIndex) =>
-//                             setState({selectedIncidence: itemValue})
-//                         }
-//                     >
-                        
-//                     <Picker.Item label="Non-Compliance" value="Gun Shot"/>
-//                     <Picker.Item label="Logistics" value="Stolen ballot boxes"/>
-//                     <Picker.Item label="Harassment" value="Misunderstanding leading"/>
-//                     <Picker.Item label="Interference" value="Faulty"/>
-//                     <Picker.Item label="Violence" value="Power"/>
-//                     <Picker.Item label="Delays" value="fight"/>
-//                     <Picker.Item label="Confusion" value="Late"/>
-//                     <Picker.Item label="Chaos" value="controlling"/>
-//                     <Picker.Item label="Power Failure" value="Standard"/>
-//                     </Picker>
-//                 </View>
-//                 <View marginBottom={0} marginLeft={5} marginTop={15}>
-//                     <Text style={styles.textStyle}>
-//                         Description
-//                     </Text>
-//                 </View>
-//                 <View style={{flexDirection:'row'}} >
+//             <StatusBar barStyle="light-content" backgroundColor="#174060"/>
+//                 <View flexDirection='column' flex={0.456} marginTop={30} 
+//                 marginRight ={5}
+//                 marginLeft ={5}
+//                 borderWidth={0.5}
+//                 borderRadius={3}
+//                 borderColor='#7E7E7E'>
 //                     <View>
-//                         <TextInput 
-//                             style={{height: 70, 
-//                             width: 270,
-//                             borderRadius: 8,
-//                             borderColor:'#C4C4C4',
-//                             borderWidth: 1, marginLeft: 5}}
-//                             onChangeText={(text) => setState({text})}
-//                             value={state.text}
-//                             multiline={true}
-//                             enablesReturnKeyAutomatically={true}>
-//                         </TextInput>
-//                     </View>
-//                         <TouchableOpacity style={styles.microphoneButton}>
-//                             <Microphone name="microphone" 
-//                             size={21} 
-//                             color='white'
-//                             /> 
-//                         </TouchableOpacity>
+//                         <FlatList
+//                             data= {this.state.photos.length > 0? this.state.photos : useEffect}
+//                             keyExtractor={(item, index)=> index}
+//                             renderItem={ ({ item}) => (  
+                               
+//                               <TouchableOpacity onPress={() => navigateToPhotoPreview(item) }>
+//                                  <Image
+//                                     style={{ width:70, height:75,margin:0.5, resizeMode:'cover'}}   
+//                                     source = {{ uri: "file://"+ item}} 
+//                                     // source = {{ uri: item}} 
+//                                     //source = {{ uri: item.node.image.uri}} 
+//                                 />
+//                               </TouchableOpacity>   
+                               
+//                                )   
+//                             }
+//                             numColumns = {5}
+                           
+                           
+                            
+//                             // {state.photos.map((photo, i) => {
+//                             //     {console.log("PHOTO is :"+ photo)} 
+//                             //     {console.log("PHOTO TO BE VIEWED" + state.photos)}
+//                             //     return(
+//                             //         <Image 
+//                             //             key={i}
+//                             //             style={{ width:65, height:65,}}
+//                             //             source={{uri: photo.uri}}
+//                             //         />
+//                             //         );
+                                    
+//                             // })}
+                            
+//                        />
+//                     </View>  
 //                 </View>
-//                 <View marginBottom={0} marginLeft={0} marginTop={15}  marginBottom={15} >
-//                     <View style={{flexDirection: 'row'}}>
-//                         <Text style={{margin:10,marginRight:20,
-//                                 fontFamily:'roboto', fontSize: 14,
-//                                 fontWeight:'bold', 
-//                                 }}>
-//                             Submit as
-//                         </Text>
-//                         <View style={styles.radioCircumference}>
-//                             <TouchableOpacity style={styles.radioButton}></TouchableOpacity>
-//                         </View>
-//                         <Text style={{marginLeft: 5, marginRight: 0, marginTop: 10}}>anonymous</Text>  
-//                         <Text style={{marginLeft: 10, marginRight: 10, marginTop: 10, fontWeight:'bold'}}> or </Text>
-//                         <View style={styles.radioCircumference}>
-//                             <TouchableOpacity style={styles.radioButton}></TouchableOpacity>
-//                         </View>
-//                         <Text style={{marginTop: 10,marginLeft: 5, marginRight: 0}}>Sign In</Text>                   
+//                 <TouchableOpacity style={styles.addPhotoButton}
+//                         onPress={()=>{navigation.goBack()}}>
+//                         <Add
+//                            name={'add'}
+//                            size={30}
+//                            color="white"  
+//                         />   
+//                 </TouchableOpacity>
+    
+//                 <View style={{justifyContent: 'center', margin:5 ,flex: 1.2}}>
+//                     <View style={{borderWidth: 1, 
+//                         borderColor:'#C4C4C4',
+//                         borderRadius:5,
+//                         width: 270, 
+//                         marginLeft: 5,
+//                         marginBottom: 0,
+//                         marginTop: 15}}>
+//                         <Picker
+//                             selectedValue ={this.state.selectedIncidence}
+//                             style={{height:45, width: 270, 
+//                             fontFamily:'roboto', 
+//                             fontStyle:'normal',
+//                             fontWeight:'normal'}}
+//                             onValueChange={(itemValue, itemIndex) =>
+//                                 this.setState({selectedIncidence: itemValue})
+//                             }
+//                         >
+                            
+//                         <Picker.Item label="Non-Compliance" value="Gun Shot"/>
+//                         <Picker.Item label="Logistics" value="Stolen ballot boxes"/>
+//                         <Picker.Item label="Harassment" value="Misunderstanding leading"/>
+//                         <Picker.Item label="Interference" value="Faulty"/>
+//                         <Picker.Item label="Violence" value="Power"/>
+//                         <Picker.Item label="Delays" value="fight"/>
+//                         <Picker.Item label="Confusion" value="Late"/>
+//                         <Picker.Item label="Chaos" value="controlling"/>
+//                         <Picker.Item label="Power Failure" value="Standard"/>
+//                         </Picker>
 //                     </View>
+//                     <View marginBottom={0} marginLeft={5} marginTop={15}>
+//                         <Text style={styles.textStyle}>
+//                             Description
+//                         </Text>
+//                     </View>
+//                     <View style={{flexDirection:'row'}} >
+//                         <View>
+//                             <TextInput 
+//                                 style={{height: 70, 
+//                                 width: 270,
+//                                 borderRadius: 8,
+//                                 borderColor:'#C4C4C4',
+//                                 borderWidth: 1, marginLeft: 5}}
+//                                 onChangeText={(text) => this.setState({text})}
+//                                 value={this.state.text}
+//                                 multiline={true}
+//                                 enablesReturnKeyAutomatically={true}>
+//                             </TextInput>
+//                         </View>
+//                             <TouchableOpacity style={styles.microphoneButton}>
+//                                 <Microphone name="microphone" 
+//                                 size={21} 
+//                                 color='white'
+//                                 /> 
+//                             </TouchableOpacity>
+//                     </View>
+//                     <View marginBottom={0} marginLeft={0} marginTop={15}  marginBottom={15} >
+//                         <View style={{flexDirection: 'row'}}>
+//                             <Text style={{margin:10,marginRight:20,
+//                                     fontFamily:'roboto', fontSize: 14,
+//                                     fontWeight:'bold', 
+//                                     }}>
+//                                 Submit as
+//                             </Text>
+//                             <View style={styles.radioCircumference}>
+//                                 <TouchableOpacity style={styles.radioButton}></TouchableOpacity>
+//                             </View>
+//                             <Text style={{marginLeft: 5, marginRight: 0, marginTop: 10}}>anonymous</Text>  
+//                             <Text style={{marginLeft: 10, marginRight: 10, marginTop: 10, fontWeight:'bold'}}> or </Text>
+//                             <View style={styles.radioCircumference}>
+//                                 <TouchableOpacity style={styles.radioButton}></TouchableOpacity>
+//                             </View>
+//                             <Text style={{marginTop: 10,marginLeft: 5, marginRight: 0}}>Sign In</Text>                   
+//                         </View>
+//                     </View>
+                
+//                     <TouchableOpacity
+//                         style={styles.button}
+//                         onPress={()=>clearStorage()}
+//                         >
+//                         <Text style={{color:'white', 
+//                             alignSelf:'center',
+//                             fontSize: 18,
+//                             }}>
+//                             Next
+//                         </Text>
+//                     </TouchableOpacity>   
 //                 </View>
             
-//                 <TouchableOpacity
-//                     style={styles.button}
-//                     onPress={()=>clearStorage()}
-//                     >
-//                     <Text style={{color:'white', 
-//                         alignSelf:'center',
-//                         fontSize: 18,
-//                         }}>
-//                         Next
-//                     </Text>
-//                 </TouchableOpacity>   
-//             </View>
-        
-//         </SafeAreaView> 
-//     );
+//             </SafeAreaView> 
+    
+//         );
+//     }
+   
 // }
 
 // const styles = StyleSheet.create({

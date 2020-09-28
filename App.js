@@ -12,6 +12,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
 import EvidenceSubmission from './components/EvidenceSubmission';
+import EvidenceSubmissionClass from './components/EvidenceSubmissionClass';
 import PhotoPreviewer from './components/PhotoPreviewer';
 
 
@@ -64,7 +65,9 @@ export default function App() {
           }
           
         }}/>
+         
       </Stack.Navigator>
+      
     </NavigationContainer>
   );
 }
