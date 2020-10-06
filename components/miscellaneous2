@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 
 import {
-    StyleSheet, View, KeyboardAvoidingView,Text, Image, TouchableOpacity,StatusBar,
-    TextInput, FlatList,ActivityIndicator, Platform
+    StyleSheet, View, Text, Image, TouchableOpacity,StatusBar,
+    TextInput, FlatList,ActivityIndicator,
 } from 'react-native';
 import globalStyle from '../components_styles/globalStyle';
 import { ScrollView, State, TouchableWithoutFeedback } from 'react-native-gesture-handler';
@@ -11,126 +11,130 @@ import { Picker } from '@react-native-community/picker';
 import Microphone from 'react-native-vector-icons/FontAwesome5';
 import  Add from 'react-native-vector-icons/Ionicons';
 import  Trash from 'react-native-vector-icons/Ionicons';
-import CameraRoll from "@react-native-community/cameraroll";
 import AsyncStorage from '@react-native-community/async-storage';
 import ArrowBack from 'react-native-vector-icons/Ionicons';
-import { set } from 'react-native-reanimated';
-import PhotoComponent from './PhotoLogic';
 
 
-export default function EvidenceSubmission ({route, navigation,navigation:{setParams}}){
 
-    const [selectedIncidence, setSelectedIncidence] = useState('select incidence');
-    const [description, setDescription] = useState("");
-    const [loading, setLoading] = useState(true);
-    const [photos, setPhotos] = useState([]);
-    console.log ("PHOTOS "+ photos)
+export default function EvidenceSubmission ({navigation}){
 
+//Incidence
+    const [state, setState]= useState({
+        selectedIncidence: 'Please select incidence',
+        photos:[],
+        check: false, // checks if captured image retrieved here is added to array.
+        description:''
 
-    /**navigated image */
-   // const { transferredImage } = route.params
+    });
+   
 
-   /*set the state of incident selected */
-    const setIncidence = (itemSelected) => {
-      setSelectedIncidence(itemSelected)
-      console.log("Incidence " + itemSelected)
-    }
+// //navigating value of image from photoLogic to this page
+    // let { transferredImage } = route.params
+    // console.log(" transferred URI "+ transferredImage);
+//console.log('retrieved images'+ state.photos)
+// const { countImageAdded } = route.params
+// console.log ('Number of pictures taken (EvidenceSub. page) : '+ countImageAdded);
 
-    const setInputtedText = (inputtedText) => {
-        setDescription(inputtedText)
-        console.log("InputtedText "+ inputtedText)
-    }
-
-    /**on loading end */
-    const _onLoadEnd = ()=> {
-        setLoading(false)
-    }
-    const _onLoadStart = ()=> {
-        setLoading(true)
-    }
     
-    /**
-    * This method clears Storage and gallery on submit, to 
-    * allow new images into storage and gallery
-    */
-    const clearStorage= async() =>{
+    // const { getLatitudeTransferred } = route.params
+    // const { getLongitudeTransferred } = route.params
+    // const { getTimeTransferred } = route.params
+    // const { getDateTransferred } = route.params
+    // const { getTimeOfTransfer } = route.params
+
+
+/**
+* This method clears Storage and gallery on submit, to 
+* allow new images into storage and gallery
+*/
+   const clearStorage= async() =>{
     try{
         await AsyncStorage.clear();
+
     } catch(exception){
         console.log('error clearing  items');
     }
+    console.log('items cleared (Evidence Page)');
+
+    }
+   
+
+   /*set the state of incident selected */
+  const setIncidence = (itemSelected) => {
+       setState({
+          selectedIncidence: itemSelected, 
+       })
+   }
+
+  const setDescription = (inputtedText) => {
+       setState({
+           description: inputtedText,
+       })
+   }
+//loading images from camera roll on component mount
+const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(()=> {
+        console.log('EVIDENCE USE_EFFECT, I AM MOUNTED');
         
-    //clear gallery
-        setPhotos("")
-        setDescription("")
-        setSelectedIncidence("")
-    }
-
-    /**save incidence type and description */
-    const saveIncidenceDescription = () => {
-    let  storedObject = {};
-    storedObject.incidenceValue = selectedIncidence;
-    storedObject.descriptionText = description;
-
-    try {
-        AsyncStorage.setItem('allTextValue', JSON.stringify(storedObject));
-        
-    }catch (error){
-        console.log('error with saving incidence and description');
-    }
-    }
-
-    /**Getting images from async storage */
-    function setTest(){
+        // AsyncStorage.getItem('photos')
+        //     .then((photos) => {
+        //         const photo = photos ? JSON.parse(photos) : [];
+        //         photo.push(transferredImage);
+        //         AsyncStorage.setItem('photos', JSON.stringify(photo));
+        //         setState({
+        //             check: true,
+        //         })
+        //         //true if transferred image from camera is pushed to array
+        //        return () =>{
+        //            photo.clear();
+        //        }
+        //     });  
+           
+        /*Get the stored captured images from async storage*/   
         const getData = async () => {
             try {
                 const value = await AsyncStorage.getItem('photos')
-                console.log('async values', value);
-                if(value !== null){
-                    setPhotos((JSON.parse(value)))
+                if(value !==null){
+                    setState({
+                        photos: (JSON.parse(value)).reverse(),
+                    })
+                    setIsLoading(false);
+                    
                 }
             }catch(e){
             console.log('error with async getData');
             }  
-       }
-       getData();
-    }
-
-    /** get incidence type and description*/
-    const  getIncidenceDescription = async () => {
-        try {
-            const infoValue = await AsyncStorage.getItem('allTextValue')
-            let resObject = JSON.parse(infoValue);
-            // console.log('resObject '+ resObject)
-            setDescription(resObject.descriptionText)
-            setSelectedIncidence(resObject.incidenceValue)
-            // console.log("Description" + resObject.descriptionText)
-        } catch (error){
-            console.log(error);
         }
-    }
-
-    /**component did mount , component will unmount */
-    useEffect(()=> {
-        console.log('EVIDENCE USE_EFFECT,  mounted');
+        getData();
+    //    const value = AsyncStorage.getItem('photos')
+    //                 if(value !==null){
+    //                     setState({
+    //                         photos: value,
+    //                     });
+    //                     setIsLoading(false);
+    //                     console.log("VALUE FROM ASYNC STORAGE "+ value)
+    //                 }
+                // }catch(e){
+                //    console.log('error with async getData');
+                // }  
            
-        /*Get the stored captured images from async storage*/   
-        setTimeout(function() {
-           setTest();
-        }, 3000)
-    
-
-        /*save description and incidence*/
-        saveIncidenceDescription();
-
-        /*get the saved description and incidence*/
-        getIncidenceDescription();
-
-        /**component will unmount */
-        return ()=> { 
-        }
-   
+            //  console.log("I HAVE THIS DATA STORED: " + getData());
+            //  setParams({
+            //      transferredImage: null
+            //  })
     }, []);
+
+    if(isLoading){
+        console.log("Is Loading State: "+ isLoading)
+        // return(
+        //     // <View>
+        //     //     <ActivityIndicator size="large" color="blue"/>
+        //     // </View>
+        // )
+        
+    }
+
 
   
 /**
@@ -148,6 +152,7 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
 
     return(
         <SafeAreaView style= {globalStyle.MainContainer}>
+       
         <StatusBar barStyle="light-content" backgroundColor="#174060"/>
             <View flexDirection='column' flex={0.456} marginTop={30} 
             marginRight ={5}
@@ -157,42 +162,25 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
             borderColor='#7E7E7E'>
                 <View>
                     <FlatList
-                        data= {photos}
+                        data= {state.photos}
                         keyExtractor={(item, index)=> index}
                         renderItem={ ({ item}) => (  
                           <TouchableOpacity onPress={() => navigateToPhotoPreview(item) }>
-                          
                              <Image
-                                onLoadStart={_onLoadStart}
-                                onLoadEnd={_onLoadEnd}
                                 style={{ width:70, height:75,margin:0.5, resizeMode:'cover'}}   
                                 source = {{ uri: "file://"+ item}} 
                                 // source = {{ uri: item}} 
                                 //source = {{ uri: item.node.image.uri}} 
                             />
-                            {loading && <ActivityIndicator
-                                size='small'
-                                color='#1D5179'
-                                style={styles.activityIndicator}
-                                animating={loading}
-                            /> }
-                             
-                           
                           </TouchableOpacity>   
                            )   
                         }
                         numColumns = {5}
-                    />
-                    {/* <Image
-                        style={{ width:70, height:75,margin:0.5, resizeMode:'cover'}}   
-                        source = {{ uri: "file://"+ photos}} 
-                        // source = {{ uri: item}} 
-                        //source = {{ uri: item.node.image.uri}} 
-                    /> */}
+                   />
                 </View>  
             </View>
             <TouchableOpacity style={styles.addPhotoButton}
-                    onPress={()=>{navigation.navigate("PhotoLogic")}}>
+                    onPress={()=>{navigation.goBack()}}>
                     <Add
                        name={'add'}
                        size={30}
@@ -209,25 +197,27 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
                     marginBottom: 0,
                     marginTop: 15}}>
                     <Picker
-                        selectedValue ={selectedIncidence}
+                        selectedValue ={state.selectedIncidence}
                         style={{height:45, width: 270, 
                         fontFamily:'roboto', 
                         fontStyle:'normal',
                         fontWeight:'normal'}}
                         onValueChange={(itemValue, itemIndex) =>
-                           setIncidence(itemValue)
+                            setIncidence({
+                                selectedIncidence: itemValue,
+                            })
                         }
                     >
-                    <Picker.Item label="select incidence type" value="" color="gray"/>    
-                    <Picker.Item label="Non-Compliance" value="non-Compliance"/>
-                    <Picker.Item label="Logistics" value="logistics"/>
-                    <Picker.Item label="Harassment" value="harassment"/>
-                    <Picker.Item label="Interference" value="interference"/>
-                    <Picker.Item label="Violence" value="violence"/>
-                    <Picker.Item label="Delays" value="delays"/>
-                    <Picker.Item label="Confusion" value="confusion"/>
-                    <Picker.Item label="Chaos" value="chaos" />
-                    <Picker.Item label="Power Failure" value="power failure"/>
+                        
+                    <Picker.Item label="Non-Compliance" value="Non-Compliance"/>
+                    <Picker.Item label="Logistics" value="Logistics"/>
+                    <Picker.Item label="Harassment" value="Harassment"/>
+                    <Picker.Item label="Interference" value="Interference"/>
+                    <Picker.Item label="Violence" value="Violence"/>
+                    <Picker.Item label="Delays" value="Delays"/>
+                    <Picker.Item label="Confusion" value="Confusion"/>
+                    <Picker.Item label="Chaos" value="Chaos" />
+                    <Picker.Item label="Power Failure" value="Power Failure"/>
                     </Picker>
                 </View>
                 <View marginBottom={0} marginLeft={5} marginTop={15}>
@@ -244,13 +234,13 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
                             borderColor:'#C4C4C4',
                             borderWidth: 1, marginLeft: 5}}
                             onChangeText={(text) => 
-                             setInputtedText(text)
+                                setDescription(text)
                           }
-                            value={description}
+                            value={state.text}
                             multiline={true}
                             enablesReturnKeyAutomatically={true}
                         >
-                          
+                            {state.description}
                         </TextInput>
                     </View>
                         <TouchableOpacity style={styles.microphoneButton}>
@@ -260,13 +250,14 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
                             /> 
                         </TouchableOpacity>
                 </View>
-                <View marginBottom={0} marginLeft={0} marginTop={30}  marginBottom={15} >
+                <View marginBottom={0} marginLeft={0} marginTop={15}  marginBottom={15} >
                     <View style={{flexDirection: 'row'}}>
-                        <Text style={{margin:10,marginRight:10,
-                                fontFamily:'roboto', fontSize: 14,
+                        <Text style={{margin:10,marginRight:20,
+                                fontFamily:'roboto', 
+                                fontSize: 14,
                                 fontWeight:'bold', 
                                 }}>
-                            Register to track
+                            Submit as
                         </Text>
                         <View style={styles.radioCircumference}>
                             <TouchableOpacity style={styles.radioButton}></TouchableOpacity>
@@ -298,13 +289,16 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
 }
 
 const styles = StyleSheet.create({
+
     imageContainer: {
         flexDirection: 'row',
+        
     },
     text:{
         color: "#E6E4E4",
         fontSize: 6,
         opacity: 1,
+
     },
     image: {
         width: 90,
@@ -316,7 +310,9 @@ const styles = StyleSheet.create({
     },
     contentContainer: {
         paddingVertical: 20,
-    },   
+      
+    },
+   
     moreIcon: {
         alignSelf: 'center',  
         justifyContent:'center',
@@ -387,14 +383,7 @@ const styles = StyleSheet.create({
         width:24, 
         height: 24,
         marginTop: 7,
-    },  
-    activityIndicator: {
-        color: 'blue',
-        position: 'absolute',
-        left: 10,
-        right: 10,
-        top: 10,
-        bottom: 0,
-        alignSelf:'center'
-    }
+    },
+
+    
 })

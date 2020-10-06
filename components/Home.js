@@ -237,12 +237,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     alignSelf: 'stretch',
-    marginTop: 30,
-    marginLeft: 30,
-    marginRight:30,
-    marginBottom: 30,
-   
-  
+    margin: 15,
     backgroundColor: '#f0f0f0',
   },
   text: {

@@ -92,9 +92,9 @@ export default function PhotoLogic ({ props, navigation }) {
          let setPreviewImageDate = value.date;
          let setPreviewImageDateTime = value.dateTime;
 
-         console.log('accuracy value on camera: ' +  setAccuracyValue); //text passed accuracy
-         console.log('disabled view : '+ setDisableCameraView)
-         console.log('coordinates appearing on preview: ' + value.longitude + ',' + value.latitude)
+        //  console.log('accuracy value on camera: ' +  setAccuracyValue); //text passed accuracy
+        //  console.log('disabled view : '+ setDisableCameraView)
+        //  console.log('coordinates appearing on preview: ' + value.longitude + ',' + value.latitude)
          setState({
             accuracyValue : setAccuracyValue,
             disableCameraView : setDisableCameraView, 
@@ -109,9 +109,9 @@ export default function PhotoLogic ({ props, navigation }) {
        
         
     }
-//console check of accuracyValue and disableCameraView
-    console.log ('yep: '+state.accuracyValue);
-    console.log('tey: '+ state.disableCameraView);
+    //console check of accuracyValue and disableCameraView
+    // console.log ('yep: '+state.accuracyValue);
+    // console.log('tey: '+ state.disableCameraView);
 
 //requested Permissions to save data
     async function hasAndroidPermission() {
@@ -138,7 +138,7 @@ export default function PhotoLogic ({ props, navigation }) {
         if  (Platform.OS == "android" && !(await hasAndroidPermission() )){
             //returns this if permission denied
             return;
-            console.log('Image NOT Saved in Election Watch folder');
+           
         }
         CameraRoll.save(imageUri, {type:'photo', album: 'ElectionWatchFolder'});
         console.log('Image Saved in Election Watch folder');
@@ -146,11 +146,24 @@ export default function PhotoLogic ({ props, navigation }) {
         
         
     }
+// This method saves image asynchronous
+const saveImage = async(res) => {
+        AsyncStorage.getItem('photos').then((photos) => {
+        const photo = photos ? JSON.parse(photos) : [];
+        photo.push(res);
+        AsyncStorage.setItem('photos', JSON.stringify(photo));
+        console.log("ASYNC STORAGE WORKED : "+JSON.parse(photos)  )
+    return () =>{
+    photo.clear();  
+    }
+
+    }); 
+}
 
 // function to create water mark
     function createWaterMark (path){
-    setCapturedImageState({
-        loading: true,
+        setCapturedImageState({
+            loading: true,
     })
     
     Marker.markText({
@@ -181,25 +194,10 @@ export default function PhotoLogic ({ props, navigation }) {
         //createIconMark(res)
         //saves water mark path to camera roll
         const saveNewImage = capturedImageState.uri
-        savePicture(res);
-
-        // This method saves image asynchronous
-        AsyncStorage.getItem('photos')
-        .then((photos) => {
-            const photo = photos ? JSON.parse(photos) : [];
-            photo.push(res);
-            AsyncStorage.setItem('photos', JSON.stringify(photo));
-            console.log("ASYNC STORAGE WORKED : "+JSON.parse(photos)  )
-            //true if transferred image from camera is pushed to array
-           return () =>{
-               photo.clear();
-           }
-          
-        }); 
+        saveImage(res);
         /*This method transfers image data*/
-        // navigateToEvidenceScreen(res);
-
-        console.log("WATERMARK output of path" + res)
+        //navigateToEvidenceScreen(res);
+        //console.log("WATERMARK output of path" + res)
     }).catch(( err ) => {
         console.log(err)
         setCapturedImageState({
@@ -246,67 +244,60 @@ export default function PhotoLogic ({ props, navigation }) {
     }
 
 //  this method navigate to evidence page with data from photo
-    // const  navigateToEvidenceScreen = (path) =>{
-    // navigation.navigate('EvidenceSubmission' ,
-    // {
-    //     transferredImage: path,
-    //     countImageAdded: camState.count,
-    //     // getLatitudeTransferred: capturedImageState.capturedImageLatitude,
-    //     // getLongitudeTransferred: capturedImageState.capturedImageLongitude,
-    //     // getDateTransferred: capturedImageState.capturedImageDate,
-    //     // getTimeTransferred: capturedImageState.capturedImageDateTime,
-    //     // getTimeOfTransfer: camState.timeForCapture,
-    // })
-    // console.log("NAVIGATION output of path " + path)
-    // }
+    const  navigateToEvidenceScreen = (path) =>{
+    navigation.navigate('EvidenceSubmission' ,
+    {
+        transferredImage: path,
+        //countImageAdded: camState.count,
+        // getLatitudeTransferred: capturedImageState.capturedImageLatitude,
+        // getLongitudeTransferred: capturedImageState.capturedImageLongitude,
+        // getDateTransferred: capturedImageState.capturedImageDate,
+        // getTimeTransferred: capturedImageState.capturedImageDateTime,
+        // getTimeOfTransfer: camState.timeForCapture,
+    })
+    console.log("NAVIGATION output of path " + path)
+    }
 
 /**
  * This method takes photo on capture press.
  * 
  */
-    const  takePicture = async () => {
+    const takePicture = async () => {
         if (camera){
             const options = {quality: 1, 
             base64: true,
-            pauseAfterCapture: true,
+            pauseAfterCapture: false
             };
             const data = await camera.takePictureAsync(options);
+
+            createWaterMark(data.uri);
             
-            
-            console.log("the data bas64 being used = " + data.uri)
-          
-           await setCamState({
+            //console.log("the data bas64 being used = " + data.uri)
+            setCamState({
                 pathBase64: data.base64,
                 path: data.uri,
-                pathStatus: true,
-               
+                pathStatus: true, 
             }
+         );
+        //    { console.log('this is the path' + camState.path)}
            
-            );
-           { console.log('this is the path' + camState.path)}
-           
-            { console.log('this is the data.uri' + data.uri)}
+        //     { console.log('this is the data.uri' + data.uri)}
              
            /* show activity loader on image capture*/
-           if (options.pauseAfterCapture){
-            setTimeout(()=>{
-                camera.resumePreview();
-            },3000)
-            
-        }
-        
-           
+        //    if (options.pauseAfterCapture){
+        //     setTimeout(()=>{
+        //         camera.resumePreview();
+        //     },3000)
+        //    }
             //This method creates water mark on image captured
-            { console.log('WATERMARK')}
-             createWaterMark(data.uri);
+            // { console.log('WATERMARK')}
             
+           
         }
         //count number of pictures added
         setCamState({
             count: (camState.count) + 1,
-        })
-       
-        
+        })   
     }; 
     const takeVideo = async () => {
         const { isRecording } = camState;
@@ -329,7 +320,7 @@ export default function PhotoLogic ({ props, navigation }) {
     /**
      * This method calls camera to take picture
      */
-  const  renderCamera = ()=>{
+  const renderCamera = ()=>{
         return(
          <RNCamera
             ref={(ref) => {
@@ -342,6 +333,7 @@ export default function PhotoLogic ({ props, navigation }) {
              whiteBalance={RNCamera.Constants.WhiteBalance.auto}
              zoom= {state.zoom}
              focusDepth={state.depth}
+             onPictureTaken={()=>navigation.navigate('EvidenceSubmission')}
 
               androidCameraPermissionOptions={{
                 title: 'Permission to use camera',
@@ -403,24 +395,25 @@ export default function PhotoLogic ({ props, navigation }) {
                       marginBottom: 25,
                    }}>
                        <Pressable
-                           disabled={false}
-                         // onPress={ takePicture }
-                           onPressIn={()=>{
-                                takePicture(); 
-                            }
-                          }
-                           onPressOut={()=>{
-                             //navigateToEvidenceScreen(); 
-                            setTimeout(()=>navigation.navigate('EvidenceSubmission'),3400)
-                            }
-                           }
-                           
-                           style={styles.capture}>
-
+                        disabled={false}
+                        onPress={ 
+                            takePicture
+                        }
+                        //    onPressIn={()=>{
+                        //         takePicture(); 
+                        //     }
+                        //   }
+                        //    onPressOut={()=>{
+                            
+                        //    
+                        //     //setTimeout(()=>navigation.navigate('EvidenceSubmission'),100)
+                        //     }
+                        //    }   
+                        style={styles.capture}>
                            <Icon
-                               name="camera"
-                               size={28}
-                               color="#1D5179"/>
+                            name="camera"
+                            size={28}
+                            color="#1D5179"/>
                         </Pressable>
 
                         <Pressable
@@ -440,8 +433,6 @@ export default function PhotoLogic ({ props, navigation }) {
            </RNCamera>   
         );
     }
-
-
     /**
      * This method calls the PreView
     */
@@ -459,7 +450,7 @@ export default function PhotoLogic ({ props, navigation }) {
                         size={23}
                         color="white"
                         style={{margin:15, alignContent: 'center'}}
-                        onPress={()=> navigation.popToTop('PhotoLogic')}
+                        onPress={()=> navigation.goBack()}
                     />
                    
                 </View>

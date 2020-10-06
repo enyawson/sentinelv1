@@ -41,18 +41,13 @@ export default class GPSLocationLogic extends Component{
                      }
                  )
                  if (granted === PermissionsAndroid.RESULTS.GRANTED){
-                     
                     that.getDateOfLocation();
                     that.getTimeOfLocation();
-                    that.callLocation(that);
-                   
-                    
-
+                    that.callLocation(that); 
                  }else{
                      alert("Permission alert")
                  }
                  }catch( err ){
-
                      Alert.alert("err", err);
                      console.warn(err)
                      }
@@ -108,12 +103,12 @@ export default class GPSLocationLogic extends Component{
                     const currentLatitude = JSON.stringify(position.coords.latitude);
                     const locationTime = this.state.date;
                     const locationAccuracy = position.coords.accuracy;
-                    console.log('I happened'); // console log
-                    console.log(position);  // console log
+                   // console.log('I happened'); // console log
+                   // console.log(position);  // console log
                     //this set the disableCameraButton to true
                     if(position.coords.accuracy > this.state.standardAccuracyValue){ //change fifty to this.state.standardAccuracyValue
                         this.setState({disableCameraButton: true,})
-                        console.log('abooozegi true :' + this.state.disableCameraButton);
+                        //console.log('abooozegi true :' + this.state.disableCameraButton);
                     }
                      
                     //setting state to re-render positions
@@ -129,7 +124,7 @@ export default class GPSLocationLogic extends Component{
                     accuracy and disableCameraButton is retrieved from this to 
                     create the logic of disabling camera button when below standardValue*/
                     that.props.customProp(this.state);
-                    console.log('hello'+ this.state);
+                    //console.log('hello'+ this.state);
                     
                 },
                 (error) => {
@@ -143,8 +138,8 @@ export default class GPSLocationLogic extends Component{
                     }
             );
                 that.watchID = Geolocation.watchPosition((position) => {
-                console.log('change in position'); //console log
-                console.log(position); //console log
+               //console.log('change in position'); //console log
+               // console.log(position); //console log
                 const currentLongitude = JSON.stringify(position.coords.longitude);
                 const currentLatitude = JSON.stringify(position.coords.latitude);
                 const locationTime =  this.state.date;
@@ -154,10 +149,10 @@ export default class GPSLocationLogic extends Component{
                  below or above standardValue*/
                 if(position.coords.accuracy > this.state.standardAccuracyValue){
                     this.setState({disableCameraButton: true,});
-                    console.log('abooozegi true :' + this.state.disableCameraButton);
+                    //console.log('abooozegi true :' + this.state.disableCameraButton);
                 }else{
                     this.setState({disableCameraButton: false,});
-                    console.log('abooozegi false :' + this.state.disableCameraButton);
+                    //console.log('abooozegi false :' + this.state.disableCameraButton);
                 }
 
                 that.setState({longitude: currentLongitude,
@@ -168,7 +163,7 @@ export default class GPSLocationLogic extends Component{
                 that.props.customProp(this.state);
 
                 //console test for state passed to photologic 
-                console.log('hello '+ this.state); 
+                //console.log('hello '+ this.state); 
                 
                            },
             (error) => {Alert.alert(error.message)},
@@ -180,12 +175,10 @@ export default class GPSLocationLogic extends Component{
              });
     }
 
-      //remove location updates on component unmount
-      componentWillUnmount(){
-       
+        //remove location updates on component unmount
+    componentWillUnmount(){
         Geolocation.clearWatch(this.watchID);
-        console.log('unmounted successfully'); // console log
-
+        console.log(' GPS class unmounted successfully'); // console log
         //this fixes react can't set state on an unmount
         this.setState = (state, callback) =>{
             return;

@@ -1,0 +1,95 @@
+    //    const value = AsyncStorage.getItem('photos')
+    //                 if(value !==null){
+    //                     setState({
+    //                         photos: value,
+    //                     });
+    //                     setIsLoading(false);
+    //                     console.log("VALUE FROM ASYNC STORAGE "+ value)
+    //                 }
+                // }catch(e){
+                //    console.log('error with async getData');
+                // }  
+           
+            //  console.log("I HAVE THIS DATA STORED: " + getData());
+            //  setParams({
+            //      transferredImage: null
+            //  })
+
+
+ // AsyncStorage.getItem('photos')
+        //     .then((photos) => {
+        //         const photo = photos ? JSON.parse(photos) : [];
+        //         photo.push(transferredImage);
+        //         AsyncStorage.setItem('photos', JSON.stringify(photo));
+        //         setState({
+        //             check: true,
+        //         })
+        //         //true if transferred image from camera is pushed to array
+        //        return () =>{
+        //            photo.clear();
+        //        }
+        //     });  
+           
+// const getData = async () => {
+    //     try {
+    //         const value = await AsyncStorage.getItem('photos')
+    //         if(value !==null){
+    //             setState({
+    //                 photos: JSON.parse(value),
+    //             })
+                
+    //         }
+    //     }catch(e){
+    //        console.log('error with async getData');
+    //     }  
+    // }
+   
+
+
+    //    const value = AsyncStorage.getItem('photos')
+    //                 if(value !==null){
+    //                     setState({
+    //                         photos: value,
+    //                     });
+    //                     setIsLoading(false);
+    //                     console.log("VALUE FROM ASYNC STORAGE "+ value)
+    //                 }
+                // }catch(e){
+                //    console.log('error with async getData');
+                // }  
+           
+            //  console.log("I HAVE THIS DATA STORED: " + getData());
+            //  setParams({
+            //      transferredImage: null
+            //  })
+
+            // //navigating value of image from photoLogic to this page
+    // let { transferredImage } = route.params
+    // console.log(" transferred URI "+ transferredImage);
+//console.log('retrieved images'+ state.photos)
+// const { countImageAdded } = route.params
+// console.log ('Number of pictures taken (EvidenceSub. page) : '+ countImageAdded);
+
+    
+    // const { getLatitudeTransferred } = route.params
+    // const { getLongitudeTransferred } = route.params
+    // const { getTimeTransferred } = route.params
+    // const { getDateTransferred } = route.params
+    // const { getTimeOfTransfer } = route.params
+
+
+
+    // const getData = async () => {
+    //     try {
+    //         const value = await AsyncStorage.getItem('photos')
+    //         if(value !==null){
+    //             setState({
+    //                 photos: JSON.parse(value),
+    //             })
+                
+    //         }
+    //     }catch(e){
+    //        console.log('error with async getData');
+    //     }  
+    // }
+

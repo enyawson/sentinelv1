@@ -29,12 +29,7 @@ export default function App() {
           headerShown: false
         }}
         />
-        <Stack.Screen 
-        name="PhotoLogic" 
-        component ={PhotoLogic}
-        options={{
-          headerShown: false
-        }}/>
+        
         <Stack.Screen 
         name="GPSLocationLogic" 
         component ={GPSLocationLogic}
@@ -64,6 +59,12 @@ export default function App() {
           fontFamily: 'roboto'
           }
           
+        }}/>
+        <Stack.Screen 
+        name="PhotoLogic" 
+        component ={PhotoLogic}
+        options={{
+          headerShown: false
         }}/>
          
       </Stack.Navigator>
