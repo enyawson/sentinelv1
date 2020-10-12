@@ -93,3 +93,38 @@
     //     }  
     // }
 
+  //    onPressIn={()=>{
+                        //         takePicture(); 
+                        //     }
+                        //   }
+                        //    onPressOut={()=>{
+                            
+                        //    
+                        //     //setTimeout(()=>navigation.navigate('EvidenceSubmission'),100)
+                        //     }
+                        //    }   
+
+  renderRecording = () =>{
+    const { isRecording } = camState;
+    const backgroundColor = isRecording ? 'white' : 'black';
+    const action = isRecording ? stopVideo : takeVideo;
+    const button = isRecording ? renderStopRecBtn(): renderRecBtn();
+    return (
+        <TouchableOpacity
+            onPress={()=> action()}>
+            {button}
+        </TouchableOpacity>
+        
+    );
+}
+  
+  
+  
+  
+  stopVideo = async () => {
+        await camera.stopRecording();
+        setCamState({isRecording: false});
+    }
+    renderRecBtn(){
+        return <Text> REC</Text>
+    }

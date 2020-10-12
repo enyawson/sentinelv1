@@ -32,15 +32,10 @@ export default class GPSLocationLogic extends Component{
             this.callLocation(that)
         }else{
             async function requestLocationPermission() {
+                const location = PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION ;
                try{
-                 const granted = await PermissionsAndroid.request(
-                     PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-                     {
-                         'title' : 'Location Access Required',
-                         'message': 'This App needs access to your location'
-                     }
-                 )
-                 if (granted === PermissionsAndroid.RESULTS.GRANTED){
+                const granted = await PermissionsAndroid.request(location)
+                if (granted === PermissionsAndroid.RESULTS.GRANTED){
                     that.getDateOfLocation();
                     that.getTimeOfLocation();
                     that.callLocation(that); 
@@ -52,7 +47,7 @@ export default class GPSLocationLogic extends Component{
                      console.warn(err)
                      }
             }
-            requestLocationPermission();
+             requestLocationPermission();
         }
     }
    

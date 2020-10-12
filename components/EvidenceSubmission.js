@@ -24,7 +24,7 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
     const [description, setDescription] = useState("");
     const [loading, setLoading] = useState(true);
     const [photos, setPhotos] = useState([]);
-    console.log ("PHOTOS "+ photos)
+   
 
 
     /**navigated image */
@@ -56,6 +56,7 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
     const clearStorage= async() =>{
     try{
         await AsyncStorage.clear();
+        console.log("Storage cleared")
     } catch(exception){
         console.log('error clearing  items');
     }
@@ -81,7 +82,7 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
     }
 
     /**Getting images from async storage */
-    function setTest(){
+   
         const getData = async () => {
             try {
                 const value = await AsyncStorage.getItem('photos')
@@ -91,9 +92,8 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
                 }
             }catch(e){
             console.log('error with async getData');
-            }  
-       }
-       getData();
+        }
+           
     }
 
     /** get incidence type and description*/
@@ -110,15 +110,15 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
         }
     }
 
+    /**save image in an array */
+
     /**component did mount , component will unmount */
     useEffect(()=> {
         console.log('EVIDENCE USE_EFFECT,  mounted');
            
         /*Get the stored captured images from async storage*/   
-        setTimeout(function() {
-           setTest();
-        }, 3000)
-    
+        
+        getData();
 
         /*save description and incidence*/
         saveIncidenceDescription();
@@ -161,7 +161,6 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
                         keyExtractor={(item, index)=> index}
                         renderItem={ ({ item}) => (  
                           <TouchableOpacity onPress={() => navigateToPhotoPreview(item) }>
-                          
                              <Image
                                 onLoadStart={_onLoadStart}
                                 onLoadEnd={_onLoadEnd}
@@ -170,12 +169,12 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
                                 // source = {{ uri: item}} 
                                 //source = {{ uri: item.node.image.uri}} 
                             />
-                            {loading && <ActivityIndicator
+                            {/* {loading && <ActivityIndicator
                                 size='small'
                                 color='#1D5179'
                                 style={styles.activityIndicator}
                                 animating={loading}
-                            /> }
+                            />} */}
                              
                            
                           </TouchableOpacity>   
@@ -192,7 +191,7 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
                 </View>  
             </View>
             <TouchableOpacity style={styles.addPhotoButton}
-                    onPress={()=>{navigation.navigate("PhotoLogic")}}>
+                    onPress={()=>{navigation.goBack()}}>
                     <Add
                        name={'add'}
                        size={30}

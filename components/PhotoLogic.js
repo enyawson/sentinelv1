@@ -1,4 +1,4 @@
-import React, { PureComponent, useState} from 'react';
+import React, { PureComponent, useState, useEffect} from 'react';
 import { 
     AppRegistry,
     StyleSheet, 
@@ -9,7 +9,7 @@ import {
     PermissionsAndroid,
     ActivityIndicator,
     Platform,
-    Pressable,
+    Pressable,ImageBackground
    
 } from 'react-native';
 import { RNCamera } from 'react-native-camera';
@@ -23,18 +23,20 @@ import CameraRoll from "@react-native-community/cameraroll";
 import ImageMaker, { ImageFormat } from "react-native-image-marker";
 import Marker from 'react-native-image-marker';
 import AsyncStorage from '@react-native-community/async-storage';
+import { red } from '@material-ui/core/colors';
 
+TouchableOpacity.defaultProps = { activeOpacity : 0.3};
 
-
-
-
-TouchableOpacity.defaultProps = { activeOpacity : 0.8};
 export default function PhotoLogic ({ props, navigation }) {
-    const falseValue = 'false';
-    const trueValue = 'true';
+    useEffect(() => {
+        console.log("Photo component is mounting")
+        return () => {
+            
+        }
+    }, [])
+    // const falseValue = 'false';
+    // const trueValue = 'true';
  
-
-     
     // states to hold data from GPSLocation file
     const[state, setState] = useState({
         permissionEnable : true,
@@ -42,10 +44,16 @@ export default function PhotoLogic ({ props, navigation }) {
         accuracyValue: 0,
 
     });
+    //checks if async storage is saved
+    const [imageSaved, setImageSaved] = useState(false)
+    const [imagePreview, setImagePreview] = useState("")
+    const [imageUri, setImageUri] = useState("");
+    const [imageState, setImageState] = useState('false')
+    const [renderingImage, setRenderingImage] =useState(false)
+    
 
     // states to hold data from Camera
-    const[camState, setCamState]= useState({
-        path : null,                        // path of image saved.
+    const [camState, setCamState]= useState({
         pathStatus: false,
         focusedScreen: null,
         pathBase64: null,
@@ -59,7 +67,6 @@ export default function PhotoLogic ({ props, navigation }) {
         zoom: 0,
         timeForCapture: Date.now(),
         count: 0,
-
     })
 
     // this state holds the coordinates of the image on capture
@@ -73,7 +80,6 @@ export default function PhotoLogic ({ props, navigation }) {
         loadingIconMark: null, 
         saveFormat: ImageFormat.png,
         base64: false,
-        markResult: ' ',
         uri: ' '
     })
 
@@ -132,7 +138,7 @@ export default function PhotoLogic ({ props, navigation }) {
     }
 
 //function to save Image
-        async function savePicture(path){
+async function savePicture(path){
         let imageUri = path;
         //if permission denied do this or save picture
         if  (Platform.OS == "android" && !(await hasAndroidPermission() )){
@@ -141,27 +147,76 @@ export default function PhotoLogic ({ props, navigation }) {
            
         }
         CameraRoll.save(imageUri, {type:'photo', album: 'ElectionWatchFolder'});
-        console.log('Image Saved in Election Watch folder');
+        console.log('Image Saved in Election Watch folder');      
+        
+}
 
-        
-        
+const saveImage2 = async (res) => {
+    let photos = await AsyncStorage.getItem('photos');
+    photos = photos ? JSON.parse(photos) : [];
+    if (res) {
+        photos.push(res);
+        await AsyncStorage.setItem('photos', JSON.stringify(photos), () => {
+            console.log('rendering status before turned off ,'+ renderingImage)
+            setRenderingImage(false);
+            console.log("renderingImage status after image saved "+ renderingImage)
+            
+            navigation.navigate('EvidenceSubmission');
+        });
+        console.log('ASYNC STORAGE WORKED'+ photos);
     }
+}
 // This method saves image asynchronous
 const saveImage = async(res) => {
+        // const value= await AsyncStorage.getItem('photo')
+        // const photo= await AsyncStorage.getItem('photos')
         AsyncStorage.getItem('photos').then((photos) => {
         const photo = photos ? JSON.parse(photos) : [];
         photo.push(res);
         AsyncStorage.setItem('photos', JSON.stringify(photo));
-        console.log("ASYNC STORAGE WORKED : "+JSON.parse(photos)  )
-    return () =>{
-    photo.clear();  
-    }
+        console.log("ASYNC STORAGE WORKED : "+photo)
+       
+        // /**Navigate to Evidence page */
+        //navigation.navigate('EvidenceSubmission')
 
+         /**boolean to resume camera before navigation */
+         setRenderingImage(false);
     }); 
 }
 
+// create water mark - 2
+const createNewWaterMark = (path) => new Promise((resolve, reject) => {
+    setRenderingImage(true)
+    setCapturedImageState({loading: true})
+    Marker.markText({
+        src: path,
+        text: capturedImageState.capturedImageLatitude +" " + capturedImageState.capturedImageLongitude +'\n'+
+            capturedImageState.capturedImageDate + ","+ capturedImageState.capturedImageDateTime,
+
+        position: 'bottomCenter',
+        color: '#E6E4E4',
+        fontName: 'Arial-BoldItalicMT',
+        fontSize: 30,
+        shadowStyle: {
+            dx: 10.5,
+            dy: 20.8,
+            radius: 20.9,
+            
+        },
+        scale: 1,
+        saveFormat: capturedImageState.saveFormat,
+        quality :100
+    })
+    .then(async (res) => {
+        console.log("renderingImage status after picture taken, "+ renderingImage)
+        saveImage2(res);
+        resolve(true)
+    })
+    .catch((err) => reject(err))
+})
+
 // function to create water mark
-    function createWaterMark (path){
+ const createWaterMark = async (path) => {
         setCapturedImageState({
             loading: true,
     })
@@ -169,7 +224,7 @@ const saveImage = async(res) => {
     Marker.markText({
     src: path,
     text: capturedImageState.capturedImageLatitude +" " + capturedImageState.capturedImageLongitude +'\n'+
-         capturedImageState.capturedImageDate + ","+ capturedImageState.capturedImageDateTime,
+        capturedImageState.capturedImageDate + ","+ capturedImageState.capturedImageDateTime,
 
     position: 'bottomCenter',
     color: '#E6E4E4',
@@ -184,39 +239,31 @@ const saveImage = async(res) => {
     scale: 1,
     saveFormat: capturedImageState.saveFormat,
     quality :100
-    }).then ((res) => {
-        setCapturedImageState({
-            loading: false,
-            markResult: res,
-        })
+    }).then (async (res) => {
+ 
         //create icon soft masters on image
         //const imageUri = capturedImageState.markResult;
         //createIconMark(res)
         //saves water mark path to camera roll
         const saveNewImage = capturedImageState.uri
-        saveImage(res);
-        /*This method transfers image data*/
-        //navigateToEvidenceScreen(res);
-        //console.log("WATERMARK output of path" + res)
+        /**save image in async photo stor */
+        await saveImage(res);
     }).catch(( err ) => {
         console.log(err)
         setCapturedImageState({
             loading: false,
             err
         })
-    })
-    
+    })   
 }
 
 //create icon mark on water marked image
-    function createIconMark(imageUri){
+function createIconMark(imageUri){
         const iconUri = require("../assets/Softmasters_watermark_logo.png");
         const  backgroundImage = imageUri;
-
         setCamState({
             loadingIconMark: true,
         })
-
         Marker.markImage({
                 src: backgroundImage,
                 markerSrc: iconUri, //icon uri
@@ -238,14 +285,12 @@ const saveImage = async(res) => {
                 loading:false,
                 err
             })
-        })
-        
-
-    }
+        })   
+}
 
 //  this method navigate to evidence page with data from photo
-    const  navigateToEvidenceScreen = (path) =>{
-    navigation.navigate('EvidenceSubmission' ,
+const  navigateToEvidenceScreen = (path) =>{
+    navigation.navigate('EvidenceSubmission',
     {
         transferredImage: path,
         //countImageAdded: camState.count,
@@ -255,51 +300,62 @@ const saveImage = async(res) => {
         // getTimeTransferred: capturedImageState.capturedImageDateTime,
         // getTimeOfTransfer: camState.timeForCapture,
     })
-    console.log("NAVIGATION output of path " + path)
-    }
+        console.log("NAVIGATION output of path " + path)
+}
 
 /**
- * This method takes photo on capture press.
+ * This method takes photo on capture.
  * 
  */
-    const takePicture = async () => {
-        if (camera){
-            const options = {quality: 1, 
-            base64: true,
-            pauseAfterCapture: false
-            };
-            const data = await camera.takePictureAsync(options);
+const takePicture = async () => {
+    if (camera){
+        const options = {quality: 1, 
+        base64: false,
+        pauseAfterCapture: false
+        };
+        const data = await camera.takePictureAsync(options);
+        //set image to state
+        setImageUri(data.uri);
+        // console.log("renderingImage status after picture taken, "+ renderingImage)
+        console.log("Image Captured : " + imageUri)
+        console.log("Image data.uri :, " + data.uri )
 
-            createWaterMark(data.uri);
-            
-            //console.log("the data bas64 being used = " + data.uri)
-            setCamState({
-                pathBase64: data.base64,
-                path: data.uri,
-                pathStatus: true, 
-            }
-         );
-        //    { console.log('this is the path' + camState.path)}
-           
-        //     { console.log('this is the data.uri' + data.uri)}
-             
-           /* show activity loader on image capture*/
-        //    if (options.pauseAfterCapture){
-        //     setTimeout(()=>{
-        //         camera.resumePreview();
-        //     },3000)
-        //    }
-            //This method creates water mark on image captured
-            // { console.log('WATERMARK')}
-            
-           
+        //set status of image state
+        if(imageUri){
+            setImageState(true)
+            console.log("image state"+ imageState)
         }
-        //count number of pictures added
-        setCamState({
-            count: (camState.count) + 1,
-        })   
-    }; 
-    const takeVideo = async () => {
+      
+        // if(camera.pauseAfterCapture){
+        //     console.log("camera paused state:" + camera.pausedAfterCapture)
+        //     setRenderingImage(true)
+        //     console.log("image rendering status: "+ renderingImage)
+        // }
+
+        //print date and time on image
+        const status  = await createNewWaterMark(data.uri);
+
+        console.log("Done creating a water and Status is: ", status);
+
+        // if (status) {
+        //     navigation.navigate('EvidenceSubmission');
+        // }
+
+        // if(renderingImage == false){
+        //     camera.resumePreview();
+        //     console.log("image rendering after paused status: "+ renderingImage)
+        // }
+    }
+    //count number of pictures added
+    setCamState({
+        count: (camState.count) + 1,
+    })  
+    
+}; 
+
+
+
+const takeVideo = async () => {
         const { isRecording } = camState;
         if (camera && !isRecording) {
             try {
@@ -307,243 +363,180 @@ const saveImage = async(res) => {
                 if (promise){
                     setCamState({isRecording: true});
                     const data = await promise;
-                    console.warn('takeVideo', data)
+                    console.log('Video Taken', data)
                 }
              } catch (e){
                  console.error(e);
 
              }
         }
-    };
-    
+};
 
-    /**
-     * This method calls camera to take picture
-     */
-  const renderCamera = ()=>{
-        return(
-         <RNCamera
-            ref={(ref) => {
-                camera = ref;
-            }}
-             style = {styles.preview}
-             type={RNCamera.Constants.Type.back}
-             flashMode={RNCamera.Constants.FlashMode.off}
-             autoFocus={RNCamera.Constants.AutoFocus.on}
-             whiteBalance={RNCamera.Constants.WhiteBalance.auto}
-             zoom= {state.zoom}
-             focusDepth={state.depth}
-             onPictureTaken={()=>navigation.navigate('EvidenceSubmission')}
+const renderRecording = () =>{
+    const { isRecording } = camState;
+    const backgroundColor = isRecording ? 'white' : 'black';
+    const action = isRecording ? stopVideo : takeVideo;
+    const button = isRecording ? renderStopRecBtn(): renderRecBtn();
+    return (
+        <TouchableOpacity
+            style={[styles.flipButton, {flex: 0.3, alignSelf: 'flex-end', backgroundColor,}]}
+            onPress={()=> action()}
+        >
+        {button}
+        </TouchableOpacity>
+        
+    );
+}
 
-              androidCameraPermissionOptions={{
-                title: 'Permission to use camera',
+const stopVideo = async () => {
+    await camera.stopRecording();
+    setCamState({isRecording: false});
+};
+
+const renderRecBtn =() => {
+    return <Text style={styles.flipText}>REC</Text>
+}
+
+const renderStopRecBtn = () => {
+    return <Text style={styles.flipText}>STOP</Text>
+}
+
+
+
+/**
+ * This method calls camera to take picture
+ */
+const renderCamera = ()=>{
+    return(
+        <RNCamera
+        ref={(ref) => {
+            camera = ref;
+        }}
+            style = {styles.preview}
+            type={RNCamera.Constants.Type.back}
+            flashMode={RNCamera.Constants.FlashMode.off}
+            autoFocus={RNCamera.Constants.AutoFocus.on}
+            whiteBalance={RNCamera.Constants.WhiteBalance.auto}
+            zoom= {state.zoom}
+            focusDepth={state.depth}
+           
+            androidCameraPermissionOptions={{
+            title: 'Permission to use camera',
+            message: 'permission needed to use camera',
+            buttonPositive: 'Ok',
+            buttonNegative: 'Cancel',
+            }}  
+            androidRecordAudioPermissionOptions={{
+                title: 'Permission to use audio recording',
                 message: 'permission needed to use camera',
                 buttonPositive: 'Ok',
                 buttonNegative: 'Cancel',
-             }}  
-             androidRecordAudioPermissionOptions={{
-                 title: 'Permission to use audio recording',
-                 message: 'permission needed to use camera',
-                 buttonPositive: 'Ok',
-                 buttonNegative: 'Cancel',
-             }}
-           >
-          
-            <View style={{alignItems:'flex-start',
-                flexDirection: 'row', 
-                justifyContent:'space-between', 
-                flex:4,
-                alignSelf: 'stretch'}}>
-                   <ArrowBack
-                        name={'arrow-back-outline'}
-                        size={23}
-                        color="white"
-                        style={{margin:15, alignContent: 'center'}}
-                        onPress={()=> navigation.goBack()}
-                    />
-                   <FlashOff
-                       name={'flash-off-outline'}
-                       size={23}
-                       color="white"
-                       style={{margin:15, alignContent: 'center'}}
-                    />   
-                   <Icon
-                       name={'map-marker-alt'}
-                       size={23}
-                       color="white"
-                       style={{margin:15, alignContent: 'center'}}
-                    />  
-                </View>
-               <View
-                    style={{alignSelf: 'stretch',
-                    flex: 0.35,
-                    alignContent:'center'}}>
-                    <GPSLocationLogic customProp={handleData} />
-                </View>  
-               <View style={{
-                       flex: 0., 
-                       flexDirection: 'row', 
-                       alignSelf:'stretch',
-                       justifyContent: 'center'
-                   }}>
-                   
-                   <View 
-                   flexDirection='row' 
-                   pointerEvents={(state.disableCameraView)? 'none': 'auto'} //change first auto to none to use accuracy detection
-                   opacity={(state.disableCameraView===false)? 1 : 0.5}
-                   style={{
-                      marginBottom: 25,
-                   }}>
-                       <Pressable
-                        disabled={false}
-                        onPress={ 
-                            takePicture
-                        }
-                        //    onPressIn={()=>{
-                        //         takePicture(); 
-                        //     }
-                        //   }
-                        //    onPressOut={()=>{
-                            
-                        //    
-                        //     //setTimeout(()=>navigation.navigate('EvidenceSubmission'),100)
-                        //     }
-                        //    }   
-                        style={styles.capture}>
-                           <Icon
-                            name="camera"
-                            size={28}
-                            color="#1D5179"/>
-                        </Pressable>
-
-                        <Pressable
-                               disabled={false}
-                            //    onPress={takePicture} 
-                               style={styles.alternateCaptureVideo} >
-
-                           <Video 
-                               name="video"
-                               size={28} 
-                               color="#f8f8ff"
-                           />
-                       </Pressable>  
-                   </View>  
-                </View>
-                 
-           </RNCamera>   
-        );
-    }
-    /**
-     * This method calls the PreView
-    */
-    const renderPreviewImage =()=>{
-        return(
-            <View>
-            <Modal
-            transparent = {true}
-            visible = {true}>
-                <View style={{alignItems:'flex-start',
-                 flexDirection: 'row', 
-                 justifyContent:'space-between', flex:1}}>
-                    <ArrowBack
-                        name={'arrow-back-outline'}
-                        size={23}
-                        color="white"
-                        style={{margin:15, alignContent: 'center'}}
-                        onPress={()=> navigation.goBack()}
-                    />
-                   
-                </View>
-
-                <View
-                    style={{ marginBottom: 15}}> 
-                    {/* <TouchableOpacity 
-                        disabled={false}
-                        onPress={()=>{
-                            setCamState({ path: null });
-                            renderCamera;
-                        }}
-                        style={styles.capture}>
-                        <Icon
-                            name="camera"
-                            size={28}
-                            color="#1D5179"
-                        />
-                    </TouchableOpacity> */}
-                </View>
-                
- 
-                <View style={{
-                        flex: 0.17, 
-                        flexDirection: 'row', 
-                        alignSelf:'stretch',
-                        marginTop: 0,
-                        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                        justifyContent: 'center'
-                    }}>
-                    
-                    <View flexDirection='row' >
-                        <TouchableOpacity
-                            disabled={false} 
-                            style={{alignSelf: 'center', 
-                            marginRight: 15,
-                            marginLeft: 10, }}>
-                            <Image style={{width: 30, height: 28, }}
-                            source = { require('../assets/imagesFolder.png') }/>
-                        </TouchableOpacity>
-
-                        <View style={{width: 0.5, height:35, backgroundColor:'white', alignSelf:'center', marginRight: 0}}/> 
-                        
-                        <TextInput style={{ width: 210, height: 50,
-                        fontSize:18,
-                        fontFamily:'roboto',
-                        margin:15,
-                        marginLeft: 5,
-                        alignSelf: 'center'}}
-                        placeholder=" Add a caption..."
-                        placeholderTextColor='#B5B5B5'
-                        maxLength={100}
-                        multiline={true}
-                        enablesReturnKeyAutomatically={true}>
-                        </TextInput>
-                   
-                        <TouchableOpacity 
-                            disabled={false}
-                            style={{alignSelf: 'center', marginLeft:0, }}>
-                            
-                            <Image style={{width: 49 , height: 39, borderRadius:5}}
-                            source = { require('../assets/send.png') }/>
-                        </TouchableOpacity>  
-                    </View>  
-
-                 </View>
-            </Modal>
-            
-            <View>
-                <Image
-                style={{width: Dimensions.get('window').width, height: Dimensions.get('window').height, resizeMode:'cover'}}
-                source={{uri: camState.path}}/>
-                <View style={{ position: 'absolute', top: 350, left: 0, right: 0, height: 300, alignItems: 'center', justifyContent: 'center'}}>
-                    <Text style={{fontSize: 15, color: '#E6E4E4'}}>
-                        {capturedImageState.capturedImageLatitude + ', ' + capturedImageState.capturedImageLongitude}
-                        {console.log('text on image did mount successfully')}
-                    </Text>
-                    <Text style={{fontSize: 15, color: '#E6E4E4'}}>
-                        { 'Date :' + capturedImageState.capturedImageDate + ' Time :' + capturedImageState.capturedImageDateTime}
-                        {console.log('text on image did mount successfully')}
-                     </Text>
-                </View>
-
+            }}
+            captureAudio={true}
+        >
+        
+        <View style={{alignItems:'flex-start',
+            flexDirection: 'row', 
+            justifyContent:'space-between', 
+            flex:4,
+            alignSelf: 'stretch'}}>
+                <ArrowBack
+                    name={'arrow-back-outline'}
+                    size={23}
+                    color="white"
+                    style={{margin:15, alignContent: 'center'}}
+                    onPress={()=> navigation.goBack()}
+                />
+                <FlashOff
+                    name={'flash-off-outline'}
+                    size={23}
+                    color="white"
+                    style={{margin:15, alignContent: 'center'}}
+                />   
+                <Icon
+                    name={'map-marker-alt'}
+                    size={23}
+                    color="white"
+                    style={{margin:15, alignContent: 'center'}}
+                />  
             </View>
+            <View
+                style={{alignSelf: 'stretch',
+                flex: 0.35,
+                alignContent:'center'}}>
+                <GPSLocationLogic customProp={handleData} />
+            </View>  
+            <View style={{
+                    flex: 0., 
+                    flexDirection: 'row', 
+                    alignSelf:'stretch',
+                    justifyContent: 'center',
+                    
+                }}>
+                
+                <View 
+                flexDirection='row' 
+                pointerEvents={(state.disableCameraView)? 'none': 'auto'} //change first auto to none to use accuracy detection
+                opacity={(state.disableCameraView===false)? 1 : 0.5}
+                style={{ marginBottom: 25, }}>
+                    {/* <View style={styles.overlapButtonView} > */}
+                        <TouchableOpacity
+                                style={styles.capture}
+                                onPress={takePicture}
+                            >
+                            <Icon name="camera" size={28} color= '#1D5179'/>
+                            </TouchableOpacity>
+                            {/* <TouchableOpacity
+                                style={styles.onPressCapture} 
+                                backgroundColor={'#ffff'}
+                                
+                                
+                            /> */}
+                            
+                    {/* </View> */}
+                    
+                    <TouchableOpacity
+                        disabled={false}
+                        onPress={()=> renderRecording()} 
+                        style={styles.alternateCaptureVideo} >
+                        <Video 
+                            name="video"
+                            size={28} 
+                            color="#f8f8ff"
+                        />
+                    </TouchableOpacity>  
+                </View>  
+            </View>
+                
+        </RNCamera>   
+    );
+}
+/**
+ * This method calls the PreView
+*/
+ const renderPreviewImage =()=>{
+        return(
+            <View >
 
-        </View>
+                <ImageBackground style={styles.preview}
+                source = {{uri:'file//'+imagePreview}}/>
+
+            </View>  
         );
-    }
+        
+}
 
     return (  
         <View style={styles.container}>
-            {/* { camState.path ? renderPreviewImage() : renderCamera() } */}
+            {/* { imagePreview? renderPreviewImage() : renderCamera() } */}
             { renderCamera() }
+              {renderingImage &&  
+                <ActivityIndicator
+                size='large'
+                color='#fff'
+                style={styles.activityIndicator}
+                animating={renderingImage}
+                />}
         </View>
     );
 }
@@ -554,8 +547,7 @@ const styles = StyleSheet.create ({
     container: {
         flex: 1,
         flexDirection: 'column',
-        backgroundColor:'#000'
-         
+        backgroundColor:'#000' 
     },
     preview: {
         flex: 1,
@@ -565,15 +557,48 @@ const styles = StyleSheet.create ({
         width: Dimensions.get('window').width,
         
     }, 
+    activityIndicator: {
+       
+        color: 'blue',
+        position: 'absolute',
+        left: 10,
+        right: 10,
+        top: 10,
+        bottom: 0,
+        alignSelf:'center'
+    },
     capture: {
         flex: 0,
-        backgroundColor: '#ffffff', 
+        backgroundColor: '#ffff', 
         padding: 15,
         alignSelf: 'center',
         margin: 10,
         alignContent:'center',
         borderRadius: 100,
         elevation: 5,
+        borderWidth: 1,
+        borderColor: '#1D5179'
+
+    },
+    onPressCapture: {
+        flex: 0,
+        backgroundColor: '#ffff', 
+        padding: 15,
+        alignSelf: 'center',
+        margin: 10,
+        alignContent:'center',
+        borderRadius: 100,
+       
+        borderWidth: 3,
+        elevation: 5,
+        width: 70,
+        height: 70,
+        position: 'absolute',
+        
+        
+    },
+    overlapButtonView: {
+        flexDirection: 'column',
     },
     alternateCapture:{
         flex: 0,
@@ -610,10 +635,24 @@ const styles = StyleSheet.create ({
         flexDirection: 'row',
     },
     turnViewOn: {
-        flexDirection: 'row',
-        
+        flexDirection: 'row', 
     },
-
+    flipText: {
+        color: 'white',
+        fontSize: 30,
+    },
+    flipButton:{
+        flex: 0.3,
+        height: 40,
+        marginHorizontal: 2,
+        marginBottom: 10,
+        marginTop: 8,
+        borderColor: 'white',
+        borderWidth: 1,
+        padding: 5,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
     
 });
 
