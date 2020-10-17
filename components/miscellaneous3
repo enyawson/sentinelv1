@@ -16,10 +16,8 @@ import { RNCamera } from 'react-native-camera';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import ArrowBack from 'react-native-vector-icons/Ionicons';
 import FlashOff from 'react-native-vector-icons/Ionicons';
-import Stop from 'react-native-vector-icons/Ionicons';
-import Play from 'react-native-vector-icons/Ionicons';
 import Video from 'react-native-vector-icons/Feather';
-import Pause from 'react-native-vector-icons/Ionicons';
+import Pause from 'react-native-vector-icons/Feather';
 import GPSLocationLogic from './GPSLocationLogic';
 import { TextInput } from 'react-native-gesture-handler';
 import CameraRoll from "@react-native-community/cameraroll";
@@ -31,7 +29,12 @@ import { red } from '@material-ui/core/colors';
 TouchableOpacity.defaultProps = { activeOpacity : 0.3};
 
 export default function PhotoLogic ({ props, navigation }) {
-  
+    useEffect(() => {
+        console.log("Photo component is mounting")
+        return () => {
+            
+        }
+    }, [])
     // const falseValue = 'false';
     // const trueValue = 'true';
  
@@ -40,15 +43,14 @@ export default function PhotoLogic ({ props, navigation }) {
         permissionEnable : true,
         disableCameraView: '',
         accuracyValue: 0,
-    });
 
+    });
     //checks if async storage is saved
     const [imageSaved, setImageSaved] = useState(false)
     const [imagePreview, setImagePreview] = useState("")
     const [imageUri, setImageUri] = useState("");
     const [imageState, setImageState] = useState('false')
     const [renderingImage, setRenderingImage] =useState(false)
-  
     
     //State of Video
     const [ isRecording, setIsRecording]=useState(false);
@@ -57,7 +59,6 @@ export default function PhotoLogic ({ props, navigation }) {
         toggleVideoButton: false,
         togglePauseButton: false,
         toggleResumeButton: false,
-        toggleCameraButton: false,
     })
 
     // states to hold data from Camera
@@ -90,25 +91,7 @@ export default function PhotoLogic ({ props, navigation }) {
         uri: ' '
     })
 
-    useEffect(() => {
-        console.log("Photo component is mounting");
-        console.log ('status of toggleVideoButton :'+ videoComponent.toggleVideoButton);
-        // console.log("ImageUri Value after mount Taking Photo " + imageUri);
-        // console.log("Video Uri after mount "+ videoUri);
-        console.log("ToggleVideoButton state "+ videoComponent.toggleVideoButton);
-        console.log("TogglePauseButton state "+ videoComponent.togglePauseButton);
-        return () => {
-            
-        }
-    }, [imageUri, videoComponent.toggleVideoButton, videoComponent.togglePauseButton])
     
-    //test function 
-    // const testFunc =()=> {
-    //     const testIt = !text;
-    //     setText(testIt);
-    //     console.log("Text Value After called" + testIt);
-
-    // }
  /**
      * This method handles the accuracy of the coordinates  from GPSLocation
      */
@@ -328,15 +311,6 @@ const  navigateToEvidenceScreen = (path) =>{
         console.log("NAVIGATION output of path " + path)
 }
 
-/**set video uri */
-const setStateOfVideoUri = (uriFromVideo)=> {
-    setVideoUri(uriFromVideo);
-}
-/** set state of image uri */
-const setStateOfImageUri = (dataUri)=>{
-    setImageUri(dataUri);
-    console.log("state of imageUri after Pic taken " + imageUri);
-}
 /**
  * This method takes photo on capture.
  * 
@@ -349,15 +323,36 @@ const takePicture = async () => {
         };
         const data = await camera.takePictureAsync(options);
         //set image path to state
-        setStateOfImageUri(data.uri);
+        setImageUri(data.uri);
+        // console.log("renderingImage status after picture taken, "+ renderingImage)
+        console.log("Image Captured : " + imageUri)
+        console.log("Image data.uri :, " + data.uri )
+
         //set status of image state
         if(imageUri){
             setImageState(true)
             console.log("image state"+ imageState)
         }
+      
+        // if(camera.pauseAfterCapture){
+        //     console.log("camera paused state:" + camera.pausedAfterCapture)
+        //     setRenderingImage(true)
+        //     console.log("image rendering status: "+ renderingImage)
+        // }
+
         //print date and time on image
         const status  = await createNewWaterMark(data.uri);
+
         console.log("Done creating a water and Status is: ", status);
+
+        // if (status) {
+        //     navigation.navigate('EvidenceSubmission');
+        // }
+
+        // if(renderingImage == false){
+        //     camera.resumePreview();
+        //     console.log("image rendering after paused status: "+ renderingImage)
+        // }
     }
     //count number of pictures added
     setCamState({
@@ -403,7 +398,7 @@ const renderRecording = () =>{
         console.log('isRecording status in takeVideo : '+ isRecording)
         renderRecBtn();
         
-    }
+    // }
     // const backgroundColor = isRecording ? 'white' : 'black';
     // const action = isRecording ? stopVideo() : takeVideo();
     // const button = isRecording ? renderStopRecBtn(): renderRecBtn();
@@ -427,71 +422,40 @@ const stopVideo = async () => {
     console.log('is Recording value after stop video :'+ isRecording)
 };
 
-// const renderRecBtn =() => {
-//     console.log("RECORDING.............")
-//     return (
-//         <View>
-//             <Text>
-//                Recording...... 
-//             </Text>
-//         </View>
-//     )
-// }
-
-// const renderStopRecBtn = () => {
-//     console.log("STOP VIDEO")
-//     return (
-//         <View>
-//             <Text>
-//                Stop
-//             </Text>
-//         </View>
-//     )
-// }
-
-/**On Press stop render video component is set to null */
-// const renderVideoComponentOff = ()=> {
-//     const newState = !videoComponent.toggleVideoButton;
-//     const toggleOnCamView = !videoComponent.toggleCameraButton;
-   
-//     setVideoComponent({
-   
-//         toggleVideoButton: newState,
-//         toggleCameraButton: toggleOnCamView,
-//     })
-//     console.log('toggleVideoComponentButton to false '+ videoComponent.toggleVideoButton)
-// }
-/**Function to change video icon views*/
-const renderVideoComponent = ()=> {
-    //set video state to true to turn display of camera button to none
-    const newState = !videoComponent.toggleVideoButton;
-    //turn camera button to true
-    let toggleCamView = !videoComponent.toggleCameraButton
-    setVideoComponent({
-       toggleVideoButton: newState,
-       toggleCameraButton: toggleCamView,
-   })
-   console.log('status of toggleVideoButton onclick :'+ videoComponent.toggleVideoButton)
-   
+const renderRecBtn =() => {
+    console.log("RECORDING.............")
+    return (
+        <View>
+            <Text>
+               Recording...... 
+            </Text>
+        </View>
+    )
 }
 
+const renderStopRecBtn = () => {
+    console.log("STOP VIDEO")
+    return (
+        <View>
+            <Text>
+               Stop
+            </Text>
+        </View>
+    )
+}
 
-/**Function to to turn off take picture Button */
-const renderPauseButton=()=>{
-     let togglePause = !videoComponent.togglePauseButton;
-
-     setVideoComponent({
-         togglePauseButton: togglePause,
-    })
-    console.log("status pause onclick : "+ videoComponent.togglePauseButton)
-    console.log("status of toggle pause "+ togglePause);
+const renderVideoComponent = ()=> {
+    const newState = !videoComponent.toggleVideoButton;
+    setVideoComponent({
+       toggleVideoButton: newState
+   })
 }
 
 /**
  * This method calls camera to take picture
  */
 const renderCamera = ()=>{
-    
+    // const {toggleVideoButton} = videoComponent;
     return(
         <RNCamera
         ref={(ref) => {
@@ -525,17 +489,13 @@ const renderCamera = ()=>{
             justifyContent:'space-between', 
             flex:4,
             alignSelf: 'stretch'}}>
-                <TouchableOpacity
-                onPress={()=> navigation.goBack()}>
-                   <ArrowBack
+                <ArrowBack
                     name={'arrow-back-outline'}
                     size={23}
                     color="white"
                     style={{margin:15, alignContent: 'center'}}
-                    
-                />  
-                </TouchableOpacity>
-               
+                    onPress={()=> navigation.goBack()}
+                />
                 <FlashOff
                     name={'flash-off-outline'}
                     size={23}
@@ -568,74 +528,42 @@ const renderCamera = ()=>{
                 pointerEvents={(state.disableCameraView)? 'none': 'auto'} //change first auto to none to use accuracy detection
                 opacity={(state.disableCameraView===false)? 1 : 0.5}
                 style={{ marginBottom: 25, }}>
-                {videoComponent.toggleCameraButton ==true? 
-                    <View>
-                        <View style={{display:'none'}}>
-                            <TouchableOpacity
-                                    style={styles.cameraCapture}
-                                    onPress={takePicture}
-                            >
-                                <Icon name="camera" size={28} color= '#1D5179'/>
-                            </TouchableOpacity>        
-                        </View>
-                        <View>
-                            {/* {videoComponent.togglePauseButton == true? 
-                                <View>
-
-                                </View>
-                                : */}
-                                
-                                    <TouchableOpacity
-                                        style={styles.stop}
-                                    >
-                                        <Stop 
-                                        name ="stop" 
-                                        size ={28} 
-                                        color = '#d0021b'
-                                        />
-                                    </TouchableOpacity>  
-                             
-
-                            {/* } */}
-                                  
-                         </View>
-                     </View>
-                    :
-                    <View>
+                    {/* <View style={styles.overlapButtonView} > */}
                         <TouchableOpacity
-                        style={styles.cameraCapture}
-                        onPress={takePicture}>
+                                style={styles.capture}
+                                onPress={takePicture}
+                        >
                             <Icon name="camera" size={28} color= '#1D5179'/>
-                        </TouchableOpacity>      
-                    </View>
-                
-                } 
+                        </TouchableOpacity>
+                        {/* <TouchableOpacity
+                            style={styles.onPressCapture} 
+                            backgroundColor={'#ffff'}
+                            
+                            
+                        /> */}
+                            
+                    {/* </View> */}
                     <View>
                         <TouchableOpacity
                         disabled={false}
-                        style={styles.video} >
-                            {videoComponent.toggleVideoButton? 
-                                <TouchableOpacity
-                                >
-                                    <Pause
-                                    name="pause"
-                                    size={28} 
-                                    color="#fff"
-                                    />
-                                </TouchableOpacity>
-                                :
-                                <TouchableOpacity
-                                     onPress= {()=> renderVideoComponent()}>
-                                    <Video 
+                        onPress={()=> renderVideoComponent()} 
+                        style={styles.alternateCaptureVideo} 
+                        >
+                            {/* {toggleVideoButton?  */}
+                                <Video 
                                     name="video"
                                     size={28} 
                                     color="#f8f8ff"
-                                    
-                                    /> 
-                                </TouchableOpacity>
-                                    
-                                
-                            }
+                                />
+                                : 
+                                {/* <Pause
+                                    name="pause"
+                                    size={28} 
+                                    color="#f8f8ff"
+                                />
+                                 */}
+                            {/* } */}
+   
                         </TouchableOpacity>  
                     </View>
                     
@@ -699,7 +627,7 @@ const styles = StyleSheet.create ({
         bottom: 0,
         alignSelf:'center'
     },
-    cameraCapture: {
+    capture: {
         flex: 0,
         backgroundColor: '#ffff', 
         padding: 15,
@@ -742,35 +670,11 @@ const styles = StyleSheet.create ({
         borderRadius: 100,
         elevation: 5,
     },
-    stop:{
+    alternateCaptureVideo:{
         flex: 0,
         backgroundColor: '#212121',
         padding: 15,
         alignSelf: 'center',
-        margin: 10,
-        alignContent:'center',
-        borderRadius: 100,
-        elevation: 5,
-        borderWidth : 1,
-        borderColor: 'gray',
-    },
-    video:{
-        flex: 0,
-        backgroundColor: '#212121',
-        padding: 15,
-        alignSelf: 'center',
-        margin: 10,
-        alignContent:'center',
-        borderRadius: 100,
-        elevation: 5,
-        borderWidth : 1,
-        borderColor: 'gray',
-    },
-    alternateStop:{
-        flex: 0,
-        backgroundColor: '#212121',
-        alignSelf: 'center',
-        padding: 12,
         margin: 10,
         alignContent:'center',
         borderRadius: 100,

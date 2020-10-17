@@ -12,8 +12,8 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
 import EvidenceSubmission from './components/EvidenceSubmission';
-import EvidenceSubmissionClass from './components/EvidenceSubmissionClass';
 import PhotoPreviewer from './components/PhotoPreviewer';
+import AudioRecorder from './components/AudioRecorder';
 
 
 const Stack = createStackNavigator();
@@ -63,6 +63,12 @@ export default function App() {
         <Stack.Screen 
         name="PhotoLogic" 
         component ={PhotoLogic}
+        options={{
+          headerShown: false
+        }}/>
+        <Stack.Screen 
+        name="AudioRecorder" 
+        component ={AudioRecorder}
         options={{
           headerShown: false
         }}/>

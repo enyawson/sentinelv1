@@ -15,7 +15,7 @@ import CameraRoll from "@react-native-community/cameraroll";
 import AsyncStorage from '@react-native-community/async-storage';
 import ArrowBack from 'react-native-vector-icons/Ionicons';
 import { set } from 'react-native-reanimated';
-import PhotoComponent from './PhotoLogic';
+
 
 
 export default function EvidenceSubmission ({route, navigation,navigation:{setParams}}){
@@ -252,7 +252,8 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
                           
                         </TextInput>
                     </View>
-                        <TouchableOpacity style={styles.microphoneButton}>
+                        <TouchableOpacity style={styles.microphoneButton}
+                        onPress={()=> navigation.navigate('AudioRecorder') } >
                             <Microphone name="microphone" 
                             size={21} 
                             color='white'

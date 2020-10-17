@@ -80,7 +80,8 @@ export default function Home ({ navigation }){
           </View>
           <View style={styles.buttonInRowContainer}>
                 <View style={styles.box} marginRight={35}>
-                  <TouchableOpacity>
+                  <TouchableOpacity
+                  onPress={()=> navigation.navigate('AudioRecorder')}>
                     <Image 
                     style={styles.imageInBox}
                     source = { require('../assets/microphone.png') } />

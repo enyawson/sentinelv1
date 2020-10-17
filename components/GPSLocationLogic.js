@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Geolocation, { stopObserving } from 'react-native-geolocation-service';
 import { AppRegistry,StyleSheet, Text, PermissionsAndroid, View, Image, Alert} from 'react-native';
+import Geocoder from 'react-native-geocoding';
 
 
 
@@ -19,6 +20,7 @@ export default class GPSLocationLogic extends Component{
         isWithInAccuracy: null, // receives the accuracy of the coordinates
         disableCameraButton: false,
         standardAccuracyValue: 4000,
+        streetAddress: '',
         
     };
 
@@ -33,7 +35,7 @@ export default class GPSLocationLogic extends Component{
         }else{
             async function requestLocationPermission() {
                 const location = PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION ;
-               try{
+              
                 const granted = await PermissionsAndroid.request(location)
                 if (granted === PermissionsAndroid.RESULTS.GRANTED){
                     that.getDateOfLocation();
@@ -42,10 +44,7 @@ export default class GPSLocationLogic extends Component{
                  }else{
                      alert("Permission alert")
                  }
-                 }catch( err ){
-                     Alert.alert("err", err);
-                     console.warn(err)
-                     }
+                 
             }
              requestLocationPermission();
         }
@@ -120,6 +119,8 @@ export default class GPSLocationLogic extends Component{
                     create the logic of disabling camera button when below standardValue*/
                     that.props.customProp(this.state);
                     //console.log('hello'+ this.state);
+
+                    this.getStreetData(currentLatitude, currentLongitude)
                     
                 },
                 (error) => {
@@ -168,6 +169,7 @@ export default class GPSLocationLogic extends Component{
                 enableHighAccuracy: true,
                 useSignificantChanges: true
              });
+
     }
 
         //remove location updates on component unmount
@@ -180,11 +182,28 @@ export default class GPSLocationLogic extends Component{
         };
     }
    
+    /**Get street address name */
+    getStreetData(lat, lng){
+        // Initialize the module 
+        Geocoder.init("AIzaSyB1nEal4lqDWdBz9mf79KUd0zGZdgArVfY");
+       
+        console.log("lat and lng" + lat + " " +lng);
+
+        Geocoder.from(lat, lng)
+        .then(json => {
+        	const addressComponent = json.results[0].formatted_address;
+            console.log("Street address " + addressComponent);
+            this.setState({
+                streetAddress: addressComponent
+            })
+        })
+        .catch(error => console.warn(error));
+     }
     
     render(){
         return (
             <View style={{flexDirection: 'column'}}>
-                <View style={styles.gpsContainer}>
+                {/* <View style={styles.gpsContainer}>
                    
                     <Text style={{fontSize: 16, color: 'white', marginLeft: 10}} >
                      {this.state.latitude} 
@@ -196,8 +215,13 @@ export default class GPSLocationLogic extends Component{
                      alignSelf:'center', marginLeft: 5, marginBottom:0}} >
                     acc:{Math.round(this.state.isWithInAccuracy).toFixed(3)} 
                     </Text>
+                </View> */}
+                <View>
+                    <Text style={{fontSize:16, color:'white', alignItems:'center',
+                    alignSelf:'center', marginLeft: 5, marginBottom:0}}>
+                    {this.state.streetAddress}</Text>
                 </View>
-                <View style={{marginBottom: 75, alignSelf: 'center'}}>
+                <View style={{marginBottom: 75, alignSelf: 'center',}}>
                     <Text style={{fontSize: 16, color: 'white', marginLeft: 5}} >
                     Date:{this.state.date} time: {this.state.dateTime}
                     </Text>
@@ -219,4 +243,4 @@ export default class GPSLocationLogic extends Component{
         },
     });
 
-AppRegistry.registerComponent('App', () => GPSLocationLogic);
+ AppRegistry.registerComponent('App', () => GPSLocationLogic);
