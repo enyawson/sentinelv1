@@ -17,6 +17,7 @@ import AudioRecorder from './components/AudioRecorder';
 import AudioRecorderPlayer from './components/AudioRecorderPlayer';
 import AudioRecorderActivityList from './components/AudioRecordingActivityList';
 import SubmitEvidenceForm from './components/SubmitEvidenceForm';
+import SignUp from './components/SignUp';
 
 
 const Stack = createStackNavigator();
@@ -94,6 +95,13 @@ export default function App() {
          }}
           }
         />  
+
+        <Stack.Screen 
+          name="SignUp" 
+          component ={SignUp}
+          options={{
+          headerShown: false
+        }}/> 
 
         
       </Stack.Navigator>

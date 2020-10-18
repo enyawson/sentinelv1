@@ -183,6 +183,128 @@
 
 
 
+ <View style={{ 
+                alignSelf: 'center', alignContent:'center', backgroundColor: 'red'}}>
+                    <TextInput 
+                        style={styles.textInputBoxStyle}
+                        onChangeText={(text) => 
+                        setFirstName(text)
+                        }
+                        value={''}
+                        multiline={false}
+                        placeholder={'first Name'}
+                        enablesReturnKeyAutomatically={true}
+                    > 
+                    </TextInput>
+            </View>
+            <View style={{ 
+                alignSelf: 'center', alignContent:'center'}}>
+                    <TextInput 
+                        style={styles.textInputBoxStyle}
+                        onChangeText={(text) => 
+                        setLastName(text)
+                        }
+                        value={''}
+                        multiline={false}
+                        placeholder={'Last Name'}
+                        enablesReturnKeyAutomatically={true}
+                    > 
+                    </TextInput>
+            </View>
+                <View>
+                    <TextInput 
+                        style={styles.textInputBoxStyle}
+                        onChangeText={(text) => 
+                        setPersonsEmail(text)
+                        }
+                        value={''}
+                        multiline={false}
+                        placeholder={'Email address'}
+                        enablesReturnKeyAutomatically={true}
+                    > 
+                    </TextInput>
+                </View>
+                
+            <View >
+                <TextInput 
+                    style={styles.textInputBoxStyle}
+                    onChangeText={(text) => 
+                    setPersonsContact(text)
+                    }
+                    value={''}
+                    multiline={false}
+                    placeholder={'Phone Number'}
+                    enablesReturnKeyAutomatically={true}
+                > 
+                </TextInput>
+            </View>
+            <View >
+                <TextInput 
+                    style={styles.textInputBoxStyle}
+                    onChangeText={(text) => 
+                    setSelectedCountry(text)
+                    }
+                    value={''}
+                    multiline={false}
+                    placeholder={'Country'}
+                    enablesReturnKeyAutomatically={true}
+                > 
+                </TextInput>
+            </View>
+            <View >
+                <TextInput 
+                    style={styles.textInputBoxStyle}
+                    onChangeText={(text) => 
+                    setAffiliate(text)
+                    }
+                    value={''}
+                    multiline={false}
+                    placeholder={'Affiliate'}
+                    enablesReturnKeyAutomatically={true}
+                > 
+                </TextInput>
+            </View>
+            <View>
+                <TextInput 
+                    style={styles.textInputBoxStyle}
+                    onChangeText={(text) => 
+                    setAffiliateCode(text)
+                    }
+                    value={''}
+                    multiline={false}
+                    placeholder={'Affiliate Code'}
+                    enablesReturnKeyAutomatically={true}
+                > 
+                    </TextInput>
+            </View>
+            
+            <View>
+                <TouchableOpacity style={styles.submitButton}
+                    onPress={()=> onFormSubmit()}>
+                    <Text style={{alignSelf:'center', color:'white'}}>
+                        continue
+                    </Text>
+                </TouchableOpacity>
+            </View>
+            
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -69,7 +69,8 @@ export default function Home ({ navigation }){
               </TouchableOpacity>
             </View>
             <View style={styles.box}>
-              <TouchableOpacity>
+              <TouchableOpacity
+               onPress={()=>navigation.navigate('SignUp')}>
                <Image style={styles.imageInBox}
                 source = { require('../assets/add.png') }/>
                 <Text style={styles.text}>Register</Text>
