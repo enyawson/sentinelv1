@@ -14,6 +14,9 @@ import { createStackNavigator } from '@react-navigation/stack';
 import EvidenceSubmission from './components/EvidenceSubmission';
 import PhotoPreviewer from './components/PhotoPreviewer';
 import AudioRecorder from './components/AudioRecorder';
+import AudioRecorderPlayer from './components/AudioRecorderPlayer';
+import AudioRecorderActivityList from './components/AudioRecordingActivityList';
+import SubmitEvidenceForm from './components/SubmitEvidenceForm';
 
 
 const Stack = createStackNavigator();
@@ -33,16 +36,6 @@ export default function App() {
         <Stack.Screen 
         name="GPSLocationLogic" 
         component ={GPSLocationLogic}
-        options={{
-          headerShown: false
-        }}/>
-        
-        <Stack.Screen 
-        name="PhotoPreviewer"
-        component={PhotoPreviewer}
-        options={{
-        headerShown: false
-        }}
         />
          <Stack.Screen 
         name="EvidenceSubmission" 
@@ -61,18 +54,48 @@ export default function App() {
           
         }}/>
         <Stack.Screen 
-        name="PhotoLogic" 
-        component ={PhotoLogic}
-        options={{
+          name="PhotoLogic" 
+          component ={PhotoLogic}
+          options={{
           headerShown: false
         }}/>
         <Stack.Screen 
-        name="AudioRecorder" 
-        component ={AudioRecorder}
-        options={{
+          name="AudioRecorder" 
+          component ={AudioRecorder}
+          options={{
           headerShown: false
         }}/>
-         
+         <Stack.Screen 
+          name="PhotoPreviewer" 
+          component ={PhotoPreviewer}
+          options={{
+          headerShown: false
+        }}/>
+        <Stack.Screen 
+          name="AudioRecorderPlayer" 
+          component ={AudioRecorderPlayer}
+          options={{
+          headerShown: false
+        }}/> 
+        <Stack.Screen 
+          name="SubmitEvidenceForm" 
+          component ={SubmitEvidenceForm}
+          options={{
+          title: 'Submit Evidence',
+          headerShown: true,
+          headerStyle: {
+          backgroundColor: '#1D5179',
+          },
+          headerTintColor: '#FFFFFF',
+          headerTitleStyle: {
+          fontWeight: 'normal',
+          marginLeft: 20,
+          fontFamily: 'roboto'
+         }}
+          }
+        />  
+
+        
       </Stack.Navigator>
       
     </NavigationContainer>

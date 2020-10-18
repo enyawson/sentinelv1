@@ -6,10 +6,11 @@ import { AppRegistry,
 import { SafeAreaView } from 'react-native-safe-area-context';
 import StartRecord from 'react-native-vector-icons/Ionicons';
 import StopRecord from 'react-native-vector-icons/Ionicons';
-import Arrow from 'react-native-vector-icons/Ionicons';
+import Arrow from 'react-native-vector-icons/FontAwesome5';
+import { Navigation } from '@material-ui/icons';
 
 export default class AudioRecorder extends Component{
-    constructor(props){
+    constructor(props,navigation){
         super();
         this.state = {
             audioUri: '',
@@ -19,6 +20,7 @@ export default class AudioRecorder extends Component{
 
         }
     }
+    
     componentDidMount (){
         this.startRecording();
         this.stopRecording();
@@ -37,17 +39,29 @@ export default class AudioRecorder extends Component{
                         isRecordingStart: false})
     }
     render(){
+       
         return(
             <SafeAreaView style= {styles.container}>
                 <StatusBar barStyle="light-content" backgroundColor="#174060"/>
+                 
+               
                 <View style={{flex:0.9, backgroundColor:'#1D5179', justifyContent:'center'
                     ,borderBottomRightRadius:5, borderBottomLeftRadius:5}}>
+                    <Arrow
+                        name={"long-arrow-alt-left"}
+                        size={25}
+                        color="white"
+                        style={{marginLeft:17, alignContent: 'center'}}
+                        onPress={()=> {
+                            this.props.navigation.goBack();
+                        }}                        
+                        />  
                     <Text style={{fontSize:20, fontStyle:'normal', color:'white', fontFamily:'roboto',
-                    alignSelf:'center', margin:20, marginTop:25}}>
+                        alignSelf:'center', margin:10, marginTop:10}}>
                         New Recording
                     </Text>
                     <Text style={{color:'white',justifyContent:'center',fontFamily:'roboto',alignSelf:'center'
-                    , marginTop: 0}}>
+                        ,marginBottom: 5, marginTop: 5}}>
                         07:50am
                     </Text>
                 </View>

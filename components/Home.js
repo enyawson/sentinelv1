@@ -9,17 +9,15 @@ import {
   Text,
   Image,
   TouchableOpacity,
-  BackHandler,
 } from 'react-native';
 import CopyRight from 'react-native-vector-icons/FontAwesome5';
 
 
 export default function Home ({ navigation }){
 
-  
+
     return (
       // Home page
-    
       <View style= { styles.MainContainer }>
         <View style={styles.headerContainer}>
         <View>
@@ -89,7 +87,8 @@ export default function Home ({ navigation }){
                   </TouchableOpacity>
                 </View>
                 <View style={styles.box}>
-                <TouchableOpacity>
+                <TouchableOpacity
+                  onPress={()=>navigation.navigate('SubmitEvidenceForm')}>
                     <Image 
                     style={styles.imageInBox}
                     source = { require('../assets/resultImage.png') } />

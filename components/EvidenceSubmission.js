@@ -18,6 +18,7 @@ import { set } from 'react-native-reanimated';
 
 
 
+
 export default function EvidenceSubmission ({route, navigation,navigation:{setParams}}){
 
     const [selectedIncidence, setSelectedIncidence] = useState('select incidence');
@@ -54,17 +55,24 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
     * allow new images into storage and gallery
     */
     const clearStorage= async() =>{
-    try{
-        await AsyncStorage.clear();
-        console.log("Storage cleared")
-    } catch(exception){
-        console.log('error clearing  items');
+        try{
+            await AsyncStorage.clear();
+            console.log("Storage cleared")
+        } catch(exception){
+            console.log('error clearing  items');
     }
         
     //clear gallery
         setPhotos("")
         setDescription("")
         setSelectedIncidence("")
+    }
+
+    const evidenceSubmit = () => {
+        //Clear storage
+        clearStorage();
+        // navigate to submit form
+        navigation.navigate('SubmitEvidenceForm');
     }
 
     /**save incidence type and description */
@@ -244,12 +252,11 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
                             borderWidth: 1, marginLeft: 5}}
                             onChangeText={(text) => 
                              setInputtedText(text)
-                          }
+                            }
                             value={description}
                             multiline={true}
                             enablesReturnKeyAutomatically={true}
-                        >
-                          
+                        > 
                         </TextInput>
                     </View>
                         <TouchableOpacity style={styles.microphoneButton}
@@ -282,7 +289,7 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
             
                 <TouchableOpacity
                     style={styles.button}
-                    onPress={()=>clearStorage()}
+                    onPress={()=>evidenceSubmit()}
                     >
                     <Text style={{color:'white', 
                         alignSelf:'center',
