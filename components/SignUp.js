@@ -15,7 +15,7 @@ export default function SignUp ({route, navigation,navigation:{setParams}}){
     const [countrySelected, setCountrySelected] = useState("");
     const [affiliate, setAffiliate] = useState("");
     const [affiliateCode, setAffiliateCode] = useState("");
-    const [onSubmit, setOnSubmit] = useState(false);
+    const [onContinue, setOnContinue] = useState(false);
 
     useEffect(() => {
             console.log('SignUp mounted');
@@ -46,9 +46,10 @@ export default function SignUp ({route, navigation,navigation:{setParams}}){
         setAffiliateCode(text);
     }
 
-    function onFormSubmit (){
+    const  onContinueForm = () =>{
         //set the onSubmit state to true
-        setOnSubmit(true);
+        setOnContinue(true);
+        navigation.navigate('VerificationCodeForm');
     }
 
     return(
@@ -81,7 +82,7 @@ export default function SignUp ({route, navigation,navigation:{setParams}}){
                             }
                             value={''}
                             multiline={false}
-                            placeholder={'first Name'}
+                            placeholder={'  first Name'}
                             enablesReturnKeyAutomatically={true}
                         > 
                         </TextInput>
@@ -94,7 +95,7 @@ export default function SignUp ({route, navigation,navigation:{setParams}}){
                             }
                             value={''}
                             multiline={false}
-                            placeholder={'Last Name'}
+                            placeholder={'  Last Name'}
                             enablesReturnKeyAutomatically={true}
                         > 
                         </TextInput>
@@ -107,7 +108,7 @@ export default function SignUp ({route, navigation,navigation:{setParams}}){
                             }
                             value={''}
                             multiline={false}
-                            placeholder={'Email address'}
+                            placeholder={'  Email address'}
                             enablesReturnKeyAutomatically={true}
                         > 
                         </TextInput>
@@ -121,7 +122,7 @@ export default function SignUp ({route, navigation,navigation:{setParams}}){
                             }
                             value={''}
                             multiline={false}
-                            placeholder={'Phone Number'}
+                            placeholder={'  Phone Number'}
                             enablesReturnKeyAutomatically={true}
                         > 
                         </TextInput>
@@ -135,7 +136,7 @@ export default function SignUp ({route, navigation,navigation:{setParams}}){
                             }
                             value={''}
                             multiline={false}
-                            placeholder={'Country'}
+                            placeholder={'  Country'}
                             enablesReturnKeyAutomatically={true}
                         > 
                         </TextInput>
@@ -148,7 +149,7 @@ export default function SignUp ({route, navigation,navigation:{setParams}}){
                             }
                             value={''}
                             multiline={false}
-                            placeholder={'Affiliate'}
+                            placeholder={'  Affiliate'}
                             enablesReturnKeyAutomatically={true}
                         > 
                         </TextInput>
@@ -161,14 +162,14 @@ export default function SignUp ({route, navigation,navigation:{setParams}}){
                             }
                             value={''}
                             multiline={false}
-                            placeholder={'Affiliate Code'}
+                            placeholder={'  Affiliate Code'}
                             enablesReturnKeyAutomatically={true} > 
                         </TextInput>
                     </View>
                 
                     <View>
                         <TouchableOpacity style={styles.submitButton}
-                            onPress={()=> onFormSubmit()}>
+                            onPress={()=> onContinueForm()}>
                             <Text style={{alignSelf:'center', color:'white'}}>
                                 continue
                             </Text>

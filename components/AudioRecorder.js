@@ -44,7 +44,6 @@ export default class AudioRecorder extends Component{
             <SafeAreaView style= {styles.container}>
                 <StatusBar barStyle="light-content" backgroundColor="#174060"/>
                  
-               
                 <View style={{flex:0.9, backgroundColor:'#1D5179', justifyContent:'center'
                     ,borderBottomRightRadius:5, borderBottomLeftRadius:5}}>
                     <Arrow

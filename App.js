@@ -18,6 +18,7 @@ import AudioRecorderPlayer from './components/AudioRecorderPlayer';
 import AudioRecorderActivityList from './components/AudioRecordingActivityList';
 import SubmitEvidenceForm from './components/SubmitEvidenceForm';
 import SignUp from './components/SignUp';
+import VerificationCodeForm from './components/VerificationCodeForm';
 
 
 const Stack = createStackNavigator();
@@ -99,6 +100,13 @@ export default function App() {
         <Stack.Screen 
           name="SignUp" 
           component ={SignUp}
+          options={{
+          headerShown: false
+        }}/> 
+
+        <Stack.Screen 
+          name="VerificationCodeForm" 
+          component ={VerificationCodeForm}
           options={{
           headerShown: false
         }}/> 
