@@ -23,8 +23,13 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
 
     const [selectedIncidence, setSelectedIncidence] = useState('select incidence');
     const [description, setDescription] = useState("");
+    const [timeFileTaken, setTimeFileTaken] = useState('4:50');
+    const [location, setLocation] = useState('30 Oyankele Street Accra')
+    const [locCoordinates,setLocCoordinates] = useState('5.65544, -4556644')
     const [loading, setLoading] = useState(true);
     const [photos, setPhotos] = useState([]);
+    const [dateFileTaken, setDateFileTaken] = useState('21/10/2020')
+    
     let dataToActivityList = [];
 
 
@@ -44,11 +49,11 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
         /*get the saved description and incidence*/
         getIncidenceDescription();
 
-        /**save data to be displayed on the activityList  in storage */
-        mainActivityListData();
+       
         /**component will unmount */
         return ()=> { 
         }
+
    
     }, []);
 
@@ -91,9 +96,13 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
         setSelectedIncidence("")
     }
 
-    const evidenceSubmit = () => {
-        //Clear storage
+    const evidenceSubmit = async () => {
+        /**Clears storage*/
         //clearStorage();
+        /**save data to be displayed on the activityList  in storage */
+        console.log("PHOTOS : "+ photos);
+        await removeDataStored();
+        await mainActivityListData();
         // navigate to submit form
         navigation.navigate('SubmitEvidenceForm');
     }
@@ -119,14 +128,14 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
             console.log('async values', value);
             if(value !== null){
                 setPhotos((JSON.parse(value)))
+                
             }
         }catch(e){
         console.log('error with async getData');
-    }
-           
+        }     
     }
 
-    /** get incidence type and description*/
+    /** This method gets incidence type and description*/
     const  getIncidenceDescription = async () => {
         try {
             const infoValue = await AsyncStorage.getItem('allTextValue')
@@ -140,6 +149,18 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
         }
     }
 
+    /**This method clears storage for photos submitted to receive new ones */
+    const removeDataStored = async () =>{
+        try{
+            await AsyncStorage.removeItem('photos');
+            await AsyncStorage.removeItem('activityListPicDetail');
+
+        }catch(e){
+            console.log('error')
+        }
+        console.log('removed photos, picture details')
+    }
+
     /** save image in an array 
      * evidence-files : consist of audio, videos, pictures
     */
@@ -148,18 +169,26 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
         newData.evidenceFiles = photos;
         newData.incidenceValue = selectedIncidence;
         newData.description = description;
+        newData.timeTaken = timeFileTaken;
+        newData.streetName = location;
+        newData.locationCord = locCoordinates;
+        newData.dateTaken = dateFileTaken;
         
         let data = await AsyncStorage.getItem('mainActivityData');
         data = data? JSON.parse(data) : [];
         
         data.push(newData);
         await AsyncStorage.setItem('mainActivityData', JSON.stringify(data), () => {    
+            console.log('MAIN ACTIVITY DATA '+ data);
+            console.log(data)
         });
-        console.log('MAIN ACTIVITY DATA '+ data);
-       
+      
+        //clear files and text on evidence page after submitting
+        setPhotos("")
+        setDescription("")
+        setSelectedIncidence("")
     }
     
-
    
 /**
  * This method navigates to photo preview page
@@ -193,7 +222,7 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
                                 onLoadStart={_onLoadStart}
                                 onLoadEnd={_onLoadEnd}
                                 style={{ width:70, height:75,margin:0.5, resizeMode:'cover'}}   
-                                source = {{ uri: "file://"+ item}} 
+                                source = {{ uri: "file://"+ item}}  source = {{ uri: "file://"+ item}} 
                                 // source = {{ uri: item}} 
                                 //source = {{ uri: item.node.image.uri}} 
                             />

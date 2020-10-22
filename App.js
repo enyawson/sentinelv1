@@ -21,6 +21,7 @@ import SignUp from './components/SignUp';
 import VerificationCodeForm from './components/VerificationCodeForm';
 import MainActivityList from './components/MainActivityList';
 import { MenuProvider } from 'react-native-popup-menu';
+import ActivityList from './components/ActivityList';
 
 
 const Stack = createStackNavigator();
@@ -117,6 +118,18 @@ export default function App() {
         <Stack.Screen 
           name="MainActivityList" 
           component ={MainActivityList}
+          options={{
+          headerShown: true,
+          title: '       Activities',
+          headerTitleStyle: {
+          fontWeight: 'normal',
+          marginLeft: 20,
+          fontFamily: 'roboto'
+         }
+        }}/> 
+        <Stack.Screen 
+          name="ActivityList" 
+          component ={ActivityList}
           options={{
           headerShown: true,
           title: '       Activities',

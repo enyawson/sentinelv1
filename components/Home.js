@@ -49,7 +49,7 @@ const turnPopUpOn =()=>{
                     style={{ marginRight: 10 }}/>
               </MenuTrigger>
               <MenuOptions customStyles={optionStyles}>
-                <MenuOption onSelect={()=>navigation.navigate('MainActivityList')} text='Activities'/>
+                <MenuOption onSelect={()=>navigation.navigate('ActivityList')} text='Activities'/>
                 <MenuOption onSelect={()=>alert('Save')} text='Log Out'/>
               </MenuOptions>
           </Menu>

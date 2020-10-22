@@ -197,13 +197,36 @@ export default class GPSLocationLogic extends Component{
                 streetAddress: addressComponent
             })
         })
-        .catch(error => console.warn(error));
+        .catch(error => console.log("error in network, affecting GPS location"));
      }
+
+     /**This method saves data in async storage
+      * @param  timeTaken The time pic was taken
+      * @param  dateTaken The date pic was taken
+      * @param  locationCord The coordinates of the location
+      * @param  streetName The the streetName of the location
+     */
+     activityListPicDetail = async ()=> {
+        let newData = {}
+        //newData.evidenceFiles = photos;
+        //newData.incidenceValue = selectedIncidence;
+        //newData.description = description;
+        newData.timeTaken = timeFileTaken;
+        newData.streetName = location;
+        newData.locationCord = locCoordinates;
+        newData.dateTaken = dateFileTaken;
+        
+        await AsyncStorage.setItem('activityListPicDetail', JSON.stringify(newData), () => {    
+            console.log('ACTIVITY_LIST_PIC_DETAIL '+ newData);
+            console.log(newData)
+        });
+      
+    }
     
     render(){
         return (
             <View style={{flexDirection: 'column'}}>
-                {/* <View style={styles.gpsContainer}>
+                <View style={styles.gpsContainer}>
                     <Text style={{fontSize: 16, color: 'white', marginLeft: 10}} >
                      {this.state.latitude} 
                     </Text>
@@ -214,7 +237,7 @@ export default class GPSLocationLogic extends Component{
                      alignSelf:'center', marginLeft: 5, marginBottom:0}} >
                     acc:{Math.round(this.state.isWithInAccuracy).toFixed(3)} 
                     </Text>
-                </View> */}
+                </View>
                 <View style={{flexDirection: 'row', alignSelf:'center'}}>
                     <Text style={{fontSize:16, color:'white', alignItems:'center',
                     alignSelf:'center', marginLeft:65,marginRight:65, marginBottom:0}}>

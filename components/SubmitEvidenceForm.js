@@ -36,6 +36,7 @@ export default function EvidenceSubmissionForm ({route, navigation,navigation:{s
     function onFormSubmit (){
         //set the onSubmit state to true
         setOnSubmit(true);
+        navigation.navigate('Home');
     }
 
     return(
