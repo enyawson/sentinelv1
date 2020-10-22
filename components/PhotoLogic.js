@@ -43,7 +43,7 @@ export default function PhotoLogic ({ props, navigation }) {
     });
 
     //checks if async storage is saved
-    const [imageSaved, setImageSaved] = useState(false)
+    const [imageWithIcon, setImageWithIcon] = useState(" ")
     const [imagePreview, setImagePreview] = useState("")
     const [imageUri, setImageUri] = useState("");
     const [imageState, setImageState] = useState('false')
@@ -100,7 +100,7 @@ export default function PhotoLogic ({ props, navigation }) {
         return () => {
             
         }
-    }, [imageUri, videoComponent.toggleVideoButton, videoComponent.togglePauseButton])
+    }, [imageUri, videoComponent.toggleVideoButton, videoComponent.togglePauseButton, imageWithIcon])
     
     //test function 
     // const testFunc =()=> {
@@ -215,6 +215,45 @@ const createNewWaterMark = (path) => new Promise((resolve, reject) => {
     setCapturedImageState({loading: true})
     Marker.markText({
         src: path,
+        text: "       "+ capturedImageState.capturedImageLatitude +" " + capturedImageState.capturedImageLongitude +'\n'+
+            "Date: "+ capturedImageState.capturedImageDate + " "+"Time: "+ capturedImageState.capturedImageDateTime,
+        X: 200,
+        Y: 800,
+        color: '#E6E4E4',
+        fontName: 'Arial-BoldItalicMT',
+        fontSize: 28,
+        shadowStyle: {
+            dx: 10.5,
+            dy: 20.8,
+            radius: 20.9,  
+        },
+        scale: 1,
+        saveFormat: capturedImageState.saveFormat,
+        quality :100
+    })
+    .then(async (res) => {
+        console.log("renderingImage status after picture taken, "+ renderingImage)
+        saveImage2(res);
+        savePicture(res);
+        resolve(true)
+    })
+    .catch((err) => reject(err))
+})
+
+//get image with printed logo 
+const getImageWithLogo= (uri) => {
+    setImageWithIcon (uri);
+    console.log("LOGO imprinted on Image")
+
+}
+// function to create water mark
+ const createWaterMark = async (path) => {
+        setCapturedImageState({
+            loading: true,
+    })
+    
+        Marker.markText({
+        src: path,
         text: capturedImageState.capturedImageLatitude +" " + capturedImageState.capturedImageLongitude +'\n'+
             capturedImageState.capturedImageDate + ","+ capturedImageState.capturedImageDateTime,
 
@@ -231,87 +270,60 @@ const createNewWaterMark = (path) => new Promise((resolve, reject) => {
         scale: 1,
         saveFormat: capturedImageState.saveFormat,
         quality :100
-    })
-    .then(async (res) => {
-        console.log("renderingImage status after picture taken, "+ renderingImage)
-        saveImage2(res);
-        resolve(true)
-    })
-    .catch((err) => reject(err))
-})
-
-// function to create water mark
- const createWaterMark = async (path) => {
-        setCapturedImageState({
-            loading: true,
-    })
+        }).then (async (res) => {
     
-    Marker.markText({
-    src: path,
-    text: capturedImageState.capturedImageLatitude +" " + capturedImageState.capturedImageLongitude +'\n'+
-        capturedImageState.capturedImageDate + ","+ capturedImageState.capturedImageDateTime,
-
-    position: 'bottomCenter',
-    color: '#E6E4E4',
-    fontName: 'Arial-BoldItalicMT',
-    fontSize: 30,
-    shadowStyle: {
-        dx: 10.5,
-        dy: 20.8,
-        radius: 20.9,
-        
-    },
-    scale: 1,
-    saveFormat: capturedImageState.saveFormat,
-    quality :100
-    }).then (async (res) => {
- 
-        //create icon soft masters on image
-        //const imageUri = capturedImageState.markResult;
-        //createIconMark(res)
-        //saves water mark path to camera roll
-        const saveNewImage = capturedImageState.uri
-        /**save image in async photo stor */
-        await saveImage(res);
-    }).catch(( err ) => {
-        console.log(err)
-        setCapturedImageState({
-            loading: false,
-            err
-        })
-    })   
-}
-
-//create icon mark on water marked image
-function createIconMark(imageUri){
-        const iconUri = require("../assets/Softmasters_watermark_logo.png");
-        const  backgroundImage = imageUri;
-        setCamState({
-            loadingIconMark: true,
-        })
-        Marker.markImage({
-                src: backgroundImage,
-                markerSrc: iconUri, //icon uri
-                X: 50,  //left
-                Y: 150, //top
-                scale: 1,  //scale of background
-                markerScale: 0.5, // scale of icon
-                quality: 100, //quality of image
-                saveFormat: capturedImageState.saveFormat,
-        }).then((path) => {
+            //create icon soft masters on image
+            //const imageUri = capturedImageState.markResult;
+            //createIconMark(res)
+            //saves water mark path to camera roll
+            const saveNewImage = capturedImageState.uri
+            /**save image in async photo stor */
+            await saveImage(res);
+        }).catch(( err ) => {
+            console.log(err)
             setCapturedImageState({
-                uri: Platform.OS === 'android'? 'file://' + path : path,
-                loading: false
-            })
-            console.log("IMAGE water mark set ");
-        }).catch((err) => {
-            console.log(err, 'err')
-            setCapturedImageState({
-                loading:false,
+                loading: false,
                 err
             })
         })   
 }
+
+//create icon mark on water marked image
+const createIconMark = (imageUri) => new Promise((resolve, reject) => {
+
+    const  backgroundImage = imageUri;
+    setCamState({
+        loadingIconMark: true,
+    })
+    Marker.markImage({
+            src: backgroundImage,
+            markerSrc: require('../assets/Softmasters_watermark_logo.png'), //icon uri
+            x: 200,
+            y: 100,
+            scale: 1,  //scale of background
+            markerScale: 0.2, // scale of icon
+            quality: 100, //quality of image
+            saveFormat: capturedImageState.saveFormat,
+    }).then(async (path) => {
+        setCapturedImageState({
+            uri: Platform.OS === 'android'? 'file://' + path : path,
+            loading: false
+        })
+        console.log("IMAGE water mark set " + path);
+        saveImage2(path);
+        savePicture(path);
+        getImageWithLogo(path);
+        resolve(true);
+    }).catch((err) => {
+        console.log(err, 'err')
+        reject(err)
+        setCapturedImageState({
+            loading:false,
+            err
+        })
+    })   
+})
+      
 
 //  this method navigate to evidence page with data from photo
 const  navigateToEvidenceScreen = (path) =>{
@@ -356,8 +368,9 @@ const takePicture = async () => {
             console.log("image state"+ imageState)
         }
         //print date and time on image
-        const status  = await createNewWaterMark(data.uri);
+        const status  = await  createNewWaterMark(data.uri);
         console.log("Done creating a water and Status is: ", status);
+       
     }
     //count number of pictures added
     setCamState({
@@ -386,7 +399,7 @@ const takeVideo = async () => {
                     console.log('video uri : '+ videoUri);
                     saveImage2(videoPath)
                 }
-             } catch (e){
+            } catch (e){
                  console.error(e);
 
              }

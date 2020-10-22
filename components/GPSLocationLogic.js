@@ -204,7 +204,6 @@ export default class GPSLocationLogic extends Component{
         return (
             <View style={{flexDirection: 'column'}}>
                 {/* <View style={styles.gpsContainer}>
-                   
                     <Text style={{fontSize: 16, color: 'white', marginLeft: 10}} >
                      {this.state.latitude} 
                     </Text>
@@ -216,9 +215,9 @@ export default class GPSLocationLogic extends Component{
                     acc:{Math.round(this.state.isWithInAccuracy).toFixed(3)} 
                     </Text>
                 </View> */}
-                <View>
+                <View style={{flexDirection: 'row', alignSelf:'center'}}>
                     <Text style={{fontSize:16, color:'white', alignItems:'center',
-                    alignSelf:'center', marginLeft: 5, marginBottom:0}}>
+                    alignSelf:'center', marginLeft:65,marginRight:65, marginBottom:0}}>
                     {this.state.streetAddress}</Text>
                 </View>
                 <View style={{marginBottom: 75, alignSelf: 'center',}}>

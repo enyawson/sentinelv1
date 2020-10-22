@@ -717,3 +717,114 @@ const styles = StyleSheet.create ({
 });
 
 AppRegistry.registerComponent('App', () => PhotoLogic);
+
+
+
+
+import React  from 'react';
+import {
+    AppRegistry, StyleSheet, Text,  View, StatusBar,
+    Image, TouchableOpacity} from 'react-native';
+import FlatList  from 'react-native-gesture-handler';
+
+import { SafeAreaView } from 'react-native-safe-area-context';
+import Arrow from 'react-native-vector-icons/FontAwesome5';
+import Play from 'react-native-vector-icons/Ionicons';
+
+/**This functional component is called when any individual audio file is clicked */
+
+export default class MainActivityList extends React.Component{
+    constructor(props,navigation){
+        super();
+        this.state = {
+            list :[
+                {incidence: 'gun Shot',
+                description: 'suddenly',
+                time: '4:50',
+                streetName: 'nowhere',
+                },
+                {incidence: 'late submission',
+                description: 'after',
+                time: '3:50',
+                streetName: 'Ga central',
+                },
+                {incidence: 'shortage of ballot papers',
+                description: 'got finished',
+                time: '5:50',
+                streetName: 'central Assin',
+                },
+            ]
+        
+        }
+    }
+    
+
+    
+    
+    render(){
+          return(
+            <View>
+                <FlatList
+                data= { this.state.list }
+                keyExtractor={item => item.streetName}
+                renderItemList = {({ item }) => (
+                    // <ListItem bottomDivider>
+                    //     <ListItem.content>
+                    //         <ListItem.Title>{item.description}</ListItem.Title>
+                    //         <ListItem.Title>{item.incidence}</ListItem.Title>
+                    //         <ListItem.Title>{item.streetName}</ListItem.Title>
+                    //     </ListItem.content>
+                    // </ListItem>
+                <View> 
+                    <View style={{flexDirection: 'row'}}>
+                            <Text>{item.description}</Text>
+                            <Text>{item.streetName}</Text>
+                            <Text>{item.time}</Text>
+                    </View>
+                </View>   
+                )}
+            /> 
+            </View>
+            
+        
+         );
+        }
+    }
+  
+
+const styles = StyleSheet.create ({
+    container: {
+        flex: 1,
+        flexDirection: 'column', 
+        color: '#F0F0F0',
+    },
+    recordImage: {
+        width: 300,
+        height: 300,
+        justifyContent: 'center',
+        alignSelf:'center',
+        marginTop: 0,
+    
+    },
+    startRecord:{
+        alignSelf: 'center',
+        alignContent:'center',
+        borderRadius: 100,
+        elevation: 7,
+        backgroundColor: '#cf352e'
+    },
+    recordButton: {
+        width: 0,
+        height: 0,
+        justifyContent: 'center',
+        alignSelf:'center',
+       
+      },
+    recorderTimer: {
+        flex: 0.9,
+        paddingTop: 0,
+        alignItems: 'center',
+        alignContent: 'center'
+    }
+});
+AppRegistry.registerComponent('App', () => MainActivityList);

@@ -19,12 +19,15 @@ import AudioRecorderActivityList from './components/AudioRecordingActivityList';
 import SubmitEvidenceForm from './components/SubmitEvidenceForm';
 import SignUp from './components/SignUp';
 import VerificationCodeForm from './components/VerificationCodeForm';
+import MainActivityList from './components/MainActivityList';
+import { MenuProvider } from 'react-native-popup-menu';
 
 
 const Stack = createStackNavigator();
 
 export default function App() {
   return (
+  <MenuProvider>
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen 
@@ -111,10 +114,25 @@ export default function App() {
           headerShown: false
         }}/> 
 
+        <Stack.Screen 
+          name="MainActivityList" 
+          component ={MainActivityList}
+          options={{
+          headerShown: true,
+          title: '       Activities',
+          headerTitleStyle: {
+          fontWeight: 'normal',
+          marginLeft: 20,
+          fontFamily: 'roboto'
+         }
+        }}/> 
+
         
       </Stack.Navigator>
       
     </NavigationContainer>
+  </MenuProvider>
+    
   );
 }
 

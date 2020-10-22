@@ -25,11 +25,34 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
     const [description, setDescription] = useState("");
     const [loading, setLoading] = useState(true);
     const [photos, setPhotos] = useState([]);
-   
+    let dataToActivityList = [];
 
 
     /**navigated image */
    // const { transferredImage } = route.params
+    /**component did mount , component will unmount */
+    useEffect(()=> {
+        console.log('EVIDENCE USE_EFFECT,  mounted');
+           
+        /*Get the stored captured images from async storage*/   
+        
+        getData();
+
+        /*save description and incidence*/
+        saveIncidenceDescription();
+
+        /*get the saved description and incidence*/
+        getIncidenceDescription();
+
+        /**save data to be displayed on the activityList  in storage */
+        mainActivityListData();
+        /**component will unmount */
+        return ()=> { 
+        }
+   
+    }, []);
+
+  
 
    /*set the state of incident selected */
     const setIncidence = (itemSelected) => {
@@ -70,7 +93,7 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
 
     const evidenceSubmit = () => {
         //Clear storage
-        clearStorage();
+        //clearStorage();
         // navigate to submit form
         navigation.navigate('SubmitEvidenceForm');
     }
@@ -90,17 +113,16 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
     }
 
     /**Getting images from async storage */
-   
-        const getData = async () => {
-            try {
-                const value = await AsyncStorage.getItem('photos')
-                console.log('async values', value);
-                if(value !== null){
-                    setPhotos((JSON.parse(value)))
-                }
-            }catch(e){
-            console.log('error with async getData');
-        }
+    const getData = async () => {
+        try {
+            const value = await AsyncStorage.getItem('photos')
+            console.log('async values', value);
+            if(value !== null){
+                setPhotos((JSON.parse(value)))
+            }
+        }catch(e){
+        console.log('error with async getData');
+    }
            
     }
 
@@ -109,38 +131,36 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
         try {
             const infoValue = await AsyncStorage.getItem('allTextValue')
             let resObject = JSON.parse(infoValue);
-            // console.log('resObject '+ resObject)
+            console.log('resObject '+ resObject)
             setDescription(resObject.descriptionText)
             setSelectedIncidence(resObject.incidenceValue)
-            // console.log("Description" + resObject.descriptionText)
+            console.log("Description" + resObject.descriptionText)
         } catch (error){
             console.log(error);
         }
     }
 
-    /**save image in an array */
-
-    /**component did mount , component will unmount */
-    useEffect(()=> {
-        console.log('EVIDENCE USE_EFFECT,  mounted');
-           
-        /*Get the stored captured images from async storage*/   
+    /** save image in an array 
+     * evidence-files : consist of audio, videos, pictures
+    */
+    const mainActivityListData = async ()=> {
+        let newData = {}
+        newData.evidenceFiles = photos;
+        newData.incidenceValue = selectedIncidence;
+        newData.description = description;
         
-        getData();
+        let data = await AsyncStorage.getItem('mainActivityData');
+        data = data? JSON.parse(data) : [];
+        
+        data.push(newData);
+        await AsyncStorage.setItem('mainActivityData', JSON.stringify(data), () => {    
+        });
+        console.log('MAIN ACTIVITY DATA '+ data);
+       
+    }
+    
 
-        /*save description and incidence*/
-        saveIncidenceDescription();
-
-        /*get the saved description and incidence*/
-        getIncidenceDescription();
-
-        /**component will unmount */
-        return ()=> { 
-        }
    
-    }, []);
-
-  
 /**
  * This method navigates to photo preview page
  * @param path image retrieved from flat list item in evidence page
@@ -186,7 +206,7 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
                              
                            
                           </TouchableOpacity>   
-                           )   
+                         )   
                         }
                         numColumns = {5}
                     />
@@ -289,8 +309,8 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
             
                 <TouchableOpacity
                     style={styles.button}
-                    onPress={()=>evidenceSubmit()}
-                    >
+                    onPress={()=> evidenceSubmit()}
+                >
                     <Text style={{color:'white', 
                         alignSelf:'center',
                         fontSize: 18,
