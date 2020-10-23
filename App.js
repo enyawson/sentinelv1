@@ -22,6 +22,7 @@ import VerificationCodeForm from './components/VerificationCodeForm';
 import MainActivityList from './components/MainActivityList';
 import { MenuProvider } from 'react-native-popup-menu';
 import ActivityList from './components/ActivityList';
+import ActivityPreview from './components/ActivityPreview';
 
 
 const Stack = createStackNavigator();
@@ -138,6 +139,24 @@ export default function App() {
           marginLeft: 20,
           fontFamily: 'roboto'
          }
+        }}/> 
+        <Stack.Screen 
+          name="ActivityPreview" 
+          component ={ActivityPreview}
+          options={{
+          
+          headerShown: true,
+          title:   <Text>Events </Text>,
+          headerStyle: {
+          backgroundColor: '#1D5179',
+          },
+          headerTintColor: '#FFFFFF',
+          headerTitleStyle: {
+          fontWeight: 'normal',
+          marginLeft: 20,
+          fontFamily: 'roboto',
+         },
+        
         }}/> 
 
         

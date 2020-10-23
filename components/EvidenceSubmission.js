@@ -23,14 +23,14 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
 
     const [selectedIncidence, setSelectedIncidence] = useState('select incidence');
     const [description, setDescription] = useState("");
-    const [timeFileTaken, setTimeFileTaken] = useState('4:50');
+   // const [timeFileTaken, setTimeFileTaken] = useState('4:50');
     const [location, setLocation] = useState('30 Oyankele Street Accra')
-    const [locCoordinates,setLocCoordinates] = useState('5.65544, -4556644')
+    //const [locCoordinates,setLocCoordinates] = useState('5.65544, -4556644')
     const [loading, setLoading] = useState(true);
     const [photos, setPhotos] = useState([]);
-    const [dateFileTaken, setDateFileTaken] = useState('21/10/2020')
+    //const [dateFileTaken, setDateFileTaken] = useState('21/10/2020')
     
-    let dataToActivityList = [];
+  
 
 
     /**navigated image */
@@ -169,10 +169,10 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
         newData.evidenceFiles = photos;
         newData.incidenceValue = selectedIncidence;
         newData.description = description;
-        newData.timeTaken = timeFileTaken;
+        //newData.timeTaken = timeFileTaken;
         newData.streetName = location;
-        newData.locationCord = locCoordinates;
-        newData.dateTaken = dateFileTaken;
+        //newData.locationCord = locCoordinates;
+        //newData.dateTaken = dateFileTaken;
         
         let data = await AsyncStorage.getItem('mainActivityData');
         data = data? JSON.parse(data) : [];

@@ -110,7 +110,7 @@ const turnPopUpOn =()=>{
                 </View>
                 <View style={styles.box}>
                 <TouchableOpacity
-                  onPress={()=>navigation.navigate('EvidenceSubmission')}>
+                  onPress={()=>navigation.navigate('ActivityPreview')}>
                     <Image 
                     style={styles.imageInBox}
                     source = { require('../assets/resultImage.png') } />

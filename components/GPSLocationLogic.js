@@ -211,10 +211,11 @@ export default class GPSLocationLogic extends Component{
         //newData.evidenceFiles = photos;
         //newData.incidenceValue = selectedIncidence;
         //newData.description = description;
-        newData.timeTaken = timeFileTaken;
-        newData.streetName = location;
-        newData.locationCord = locCoordinates;
-        newData.dateTaken = dateFileTaken;
+        newData.timeTaken = this.state.dateTime;
+        newData.streetName = this.state.streetAddress
+        newData.locationLat = this.state.latitude;
+        newData.locationLng = this.state.longitude;
+        newData.dateTaken = this.state.date;
         
         await AsyncStorage.setItem('activityListPicDetail', JSON.stringify(newData), () => {    
             console.log('ACTIVITY_LIST_PIC_DETAIL '+ newData);
