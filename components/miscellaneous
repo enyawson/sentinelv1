@@ -1,0 +1,726 @@
+    //    const value = AsyncStorage.getItem('photos')
+    //                 if(value !==null){
+    //                     setState({
+    //                         photos: value,
+    //                     });
+    //                     setIsLoading(false);
+    //                     console.log("VALUE FROM ASYNC STORAGE "+ value)
+    //                 }
+                // }catch(e){
+                //    console.log('error with async getData');
+                // }  
+           
+            //  console.log("I HAVE THIS DATA STORED: " + getData());
+            //  setParams({
+            //      transferredImage: null
+            //  })
+
+
+ // AsyncStorage.getItem('photos')
+        //     .then((photos) => {
+        //         const photo = photos ? JSON.parse(photos) : [];
+        //         photo.push(transferredImage);
+        //         AsyncStorage.setItem('photos', JSON.stringify(photo));
+        //         setState({
+        //             check: true,
+        //         })
+        //         //true if transferred image from camera is pushed to array
+        //        return () =>{
+        //            photo.clear();
+        //        }
+        //     });  
+           
+// const getData = async () => {
+    //     try {
+    //         const value = await AsyncStorage.getItem('photos')
+    //         if(value !==null){
+    //             setState({
+    //                 photos: JSON.parse(value),
+    //             })
+                
+    //         }
+    //     }catch(e){
+    //        console.log('error with async getData');
+    //     }  
+    // }
+   
+
+
+    //    const value = AsyncStorage.getItem('photos')
+    //                 if(value !==null){
+    //                     setState({
+    //                         photos: value,
+    //                     });
+    //                     setIsLoading(false);
+    //                     console.log("VALUE FROM ASYNC STORAGE "+ value)
+    //                 }
+                // }catch(e){
+                //    console.log('error with async getData');
+                // }  
+           
+            //  console.log("I HAVE THIS DATA STORED: " + getData());
+            //  setParams({
+            //      transferredImage: null
+            //  })
+
+            // //navigating value of image from photoLogic to this page
+    // let { transferredImage } = route.params
+    // console.log(" transferred URI "+ transferredImage);
+//console.log('retrieved images'+ state.photos)
+// const { countImageAdded } = route.params
+// console.log ('Number of pictures taken (EvidenceSub. page) : '+ countImageAdded);
+
+    
+    // const { getLatitudeTransferred } = route.params
+    // const { getLongitudeTransferred } = route.params
+    // const { getTimeTransferred } = route.params
+    // const { getDateTransferred } = route.params
+    // const { getTimeOfTransfer } = route.params
+
+
+
+    // const getData = async () => {
+    //     try {
+    //         const value = await AsyncStorage.getItem('photos')
+    //         if(value !==null){
+    //             setState({
+    //                 photos: JSON.parse(value),
+    //             })
+                
+    //         }
+    //     }catch(e){
+    //        console.log('error with async getData');
+    //     }  
+    // }
+
+  //    onPressIn={()=>{
+                        //         takePicture(); 
+                        //     }
+                        //   }
+                        //    onPressOut={()=>{
+                            
+                        //    
+                        //     //setTimeout(()=>navigation.navigate('EvidenceSubmission'),100)
+                        //     }
+                        //    }   
+
+  renderRecording = () =>{
+    const { isRecording } = camState;
+    const backgroundColor = isRecording ? 'white' : 'black';
+    const action = isRecording ? stopVideo : takeVideo;
+    const button = isRecording ? renderStopRecBtn(): renderRecBtn();
+    return (
+        <TouchableOpacity
+            onPress={()=> action()}>
+            {button}
+        </TouchableOpacity>
+        
+    );
+}
+  
+  
+  
+  
+  stopVideo = async () => {
+        await camera.stopRecording();
+        setCamState({isRecording: false});
+    }
+    renderRecBtn(){
+        return <Text> REC</Text>
+    }
+
+
+
+
+
+
+
+
+
+
+
+<View  style={{backgroundColor: 'gray' , flex: 1, }}>
+                    <Text>
+                        Telephone:
+                    </Text>
+                        <TextInput 
+                            style={styles.textInputBoxStyle}
+                            onChangeText={(text) => 
+                            setInputtedText(text)
+                            }
+                            value={nameState}
+                            multiline={false}
+                            enablesReturnKeyAutomatically={true}
+                        > 
+                        </TextInput>
+                </View>
+                <View  style={{backgroundColor: 'red' , flex: 1}}>
+                        <Text>
+                            Email:
+                        </Text>
+                            <TextInput 
+                                style={styles.textInputBoxStyle}
+                                onChangeText={(text) => 
+                                setInputtedText(text)
+                                }
+                                value={nameState}
+                                multiline={false}
+                                enablesReturnKeyAutomatically={true}
+                            > 
+                            </TextInput>
+                    </View>
+                <View  style={{backgroundColor: 'pink' , flex: 1}}>
+                    <TouchableOpacity>
+                        <Text>
+                            submit
+                        </Text>
+                    </TouchableOpacity>
+                </View>
+
+
+
+
+
+
+
+ <View style={{ 
+                alignSelf: 'center', alignContent:'center', backgroundColor: 'red'}}>
+                    <TextInput 
+                        style={styles.textInputBoxStyle}
+                        onChangeText={(text) => 
+                        setFirstName(text)
+                        }
+                        value={''}
+                        multiline={false}
+                        placeholder={'first Name'}
+                        enablesReturnKeyAutomatically={true}
+                    > 
+                    </TextInput>
+            </View>
+            <View style={{ 
+                alignSelf: 'center', alignContent:'center'}}>
+                    <TextInput 
+                        style={styles.textInputBoxStyle}
+                        onChangeText={(text) => 
+                        setLastName(text)
+                        }
+                        value={''}
+                        multiline={false}
+                        placeholder={'Last Name'}
+                        enablesReturnKeyAutomatically={true}
+                    > 
+                    </TextInput>
+            </View>
+                <View>
+                    <TextInput 
+                        style={styles.textInputBoxStyle}
+                        onChangeText={(text) => 
+                        setPersonsEmail(text)
+                        }
+                        value={''}
+                        multiline={false}
+                        placeholder={'Email address'}
+                        enablesReturnKeyAutomatically={true}
+                    > 
+                    </TextInput>
+                </View>
+                
+            <View >
+                <TextInput 
+                    style={styles.textInputBoxStyle}
+                    onChangeText={(text) => 
+                    setPersonsContact(text)
+                    }
+                    value={''}
+                    multiline={false}
+                    placeholder={'Phone Number'}
+                    enablesReturnKeyAutomatically={true}
+                > 
+                </TextInput>
+            </View>
+            <View >
+                <TextInput 
+                    style={styles.textInputBoxStyle}
+                    onChangeText={(text) => 
+                    setSelectedCountry(text)
+                    }
+                    value={''}
+                    multiline={false}
+                    placeholder={'Country'}
+                    enablesReturnKeyAutomatically={true}
+                > 
+                </TextInput>
+            </View>
+            <View >
+                <TextInput 
+                    style={styles.textInputBoxStyle}
+                    onChangeText={(text) => 
+                    setAffiliate(text)
+                    }
+                    value={''}
+                    multiline={false}
+                    placeholder={'Affiliate'}
+                    enablesReturnKeyAutomatically={true}
+                > 
+                </TextInput>
+            </View>
+            <View>
+                <TextInput 
+                    style={styles.textInputBoxStyle}
+                    onChangeText={(text) => 
+                    setAffiliateCode(text)
+                    }
+                    value={''}
+                    multiline={false}
+                    placeholder={'Affiliate Code'}
+                    enablesReturnKeyAutomatically={true}
+                > 
+                    </TextInput>
+            </View>
+            
+            <View>
+                <TouchableOpacity style={styles.submitButton}
+                    onPress={()=> onFormSubmit()}>
+                    <Text style={{alignSelf:'center', color:'white'}}>
+                        continue
+                    </Text>
+                </TouchableOpacity>
+            </View>
+            import React, { Component, useEffect, useState} from 'react';
+import {
+    StyleSheet, Text,  View, StatusBar,
+    Image, TouchableOpacity, Dimensions} from 'react-native';
+import { FlatList } from 'react-native-gesture-handler';
+import AsyncStorage from '@react-native-community/async-storage';
+
+
+
+/**This functional component is called when any individual audio file is clicked */
+
+export default function MainActivityList ({navigation, Route}){
+    
+    const [submittedIncidence, setSubmittedIncidence ] = useState([
+        {incidence: 'gun Shot',
+        description: 'Finished ballot papers',
+        time: '4:50',
+        streetName: 'St. Central Park',
+        date: '3/5/1998',
+        },
+        {incidence: 'Late Submission',
+        description: 'yeah they arrived late',
+        time: '4:50',
+        streetName: '29 Ameboe Street',
+        date: '3/5/1998',
+        },
+    ]
+    );
+    //Get the stored images to display
+    const [receivedFiles, setReceivedFiles] = useState([]);
+    
+    useEffect(() => {
+    
+            getData();
+
+        return () => {
+       
+        }
+
+    //get files to display
+    const receivedData  = async(value) =>
+    {
+        setReceivedFiles((JSON.parse(value)))
+    }
+
+     /**Get data to display from async storage */
+     const getData = async () => {
+        try {
+            const value = await AsyncStorage.getItem('mainActivityData')
+            console.log('Data to be displayed'+ AsyncStorage.getItem('mainActivityData'));
+            if(value !== null){
+               receivedsData(value)
+            }
+            console.log("DISPLAY DATA ; "+ receivedFiles)
+        }catch(e){
+        console.log('error with async getData');
+    }
+           
+    }
+
+    return(
+        <View style= {styles.container}>
+            <StatusBar barStyle="light-content" backgroundColor="#174060"/>
+                
+            <FlatList
+                data= {submittedIncidence}
+                keyExtractor={(item, index)=> index.toString()}
+                renderItem={ ({ item}) => (  
+                    
+                    <TouchableOpacity style={{flexDirection: 'row', margin: 5}}>
+                        <View>
+                            <Image 
+                            style={styles.imageInBox}
+                            source = {require('../assets/0ed1d28683ac1d158f80a4fea80629a1.jpg')}/>
+                        </View>
+                        
+                        <View style={styles.incidence}>
+                            <Text style={{fontSize:16, fontWeight:'500', fontFamily:'roboto'}}>{item.description}</Text>
+                            <Text style={{fontSize:12, marginBottom:5,}}>{item.streetName}</Text>
+                        </View>
+                        <View style={{right: 40,marginTop: 5}}>
+                            <Text>{item.time}</Text>
+                            <Text style={{right: 30}}>{item.date}</Text>
+                        </View>
+                        
+                    </TouchableOpacity>
+                        
+                        )   
+                    }
+                    
+                />
+            
+         </View>   
+            
+            
+     );
+}
+
+const styles = StyleSheet.create ({
+    container: {
+        flex: 1,
+        flexDirection: 'column', 
+        backgroundColor: '#FFFFFF',
+    },
+    imageInBox: {
+        width: 50,
+        height: 50,
+        justifyContent: 'center',
+        alignSelf:'center',
+        backgroundColor: '#7E7E7E'
+      },
+    incidence: {
+        backgroundColor:'#FFFFFF',
+        margin: 2.5,
+        borderBottomWidth:0.9,
+        borderBottomColor: '#7E7E7E',
+        width:290,
+        marginLeft: 10,
+        marginRight: 10,
+        justifyContent: 'center',
+    }
+});
+
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+import React from 'react';
+import {
+    StyleSheet, Text,  View, StatusBar,
+    Image, TouchableOpacity, Dimensions} from 'react-native';
+import { FlatList, ScrollView } from 'react-native-gesture-handler';
+import AsyncStorage from '@react-native-community/async-storage';
+
+
+
+/**This functional component is called when any individual audio file is clicked */
+
+export default class ActivityList extends React.Component{
+    
+    constructor(props,navigation){
+        super();
+        this.state = {
+            receivedFiles: [],
+            time: '4:50',
+            streetName: 'St. Central Park',
+            date: '3/5/1998',
+
+        }
+    }
+    
+    componentDidMount (){
+        this.getData();
+
+    }
+    componentWillUnmount (){
+
+    }
+  
+    // newData.evidenceFiles = photos;
+    // newData.incidenceValue = selectedIncidence;
+    // newData.description = description;
+    //newData.time = timeFileTaken;
+    //newData.streetName = location;
+    //newData.locationCord = locationCoordinates;
+
+    /**function to loop through array of object */
+
+
+     /**Get data to display from async storage */
+     getData =  async () => {
+        try {
+            const value = await AsyncStorage.getItem('mainActivityData')
+            //console.log('Data to be displayed'+ AsyncStorage.getItem('mainActivityData'));
+            this.setState(
+                {
+                    receivedFiles:  (JSON.parse(value)),
+                    
+                });
+               
+
+            if(value !== null){
+
+                const retrievedData = JSON.parse(value)
+                console.log('value received '+ retrievedData[2].incidenceValue )
+                console.log('array '+ (value))
+
+                 /**looping through array */
+                // for(let i=0; i<retrievedData.length; i++){
+                // console.log('value[' + (i +1)+']'+ retrievedData[3].evidenceFiles)
+                //  }
+                // console.log('value[1]'+ retrievedData[0].evidenceFiles[0])
+            }
+            receivedData(retrievedData);
+            
+        }catch(e){
+        console.log('error with async getData');
+        }      
+        console.log('YES got it : '+ this.state.receivedFiles);
+            
+    }
+
+        
+    // }
+
+
+     //get files to display
+      receivedData  = async(value) =>
+     { 
+        const data = value;
+        this.setState({
+               receivedFiles: value,
+        })
+        console.log ("VALUES ARE"+ data);
+     }
+ 
+    render(){
+         return(
+        <View style= {styles.container}>
+            <StatusBar barStyle="light-content" backgroundColor="#174060"/>
+           
+                <Image 
+                style={styles.PreviewImage}
+                source = { require('../assets/voting.jpg') }/>                
+            
+                
+            <FlatList
+                data= {this.state.receivedFiles.reverse()}
+                keyExtractor={(item, index)=> index.toString()}
+                renderItem={ ({ item}) => (  
+                    <View style={{flexDirection: 'row'}}> 
+                        <Image 
+                        style={styles.imageInBox}
+                        source = {{ uri: "file://"+ item.evidenceFiles[0]}} />
+                    </View>
+                    )   
+             }
+                    
+            />
+            
+         </View>   
+                
+     );
+    }
+   
+}
+
+const styles = StyleSheet.create ({
+    container: {
+        flex: 1,
+        flexDirection: 'column', 
+        backgroundColor: '#FFFFFF',
+    },
+    PreviewImage:{
+        width: 320,
+        height: 250,
+        backgroundColor:'#3F3F3F',
+        alignSelf:'center',
+        top: 10,
+        
+    },
+    imageInRow: {
+        width: 50,
+        height: 50,
+        justifyContent: 'center',
+        alignSelf:'center',
+        backgroundColor: '#7E7E7E',
+        margin :10
+      },
+    incidence: {
+        backgroundColor:'#FFFFFF',
+        margin: 2.5,
+        borderBottomWidth:0.9,
+        borderBottomColor: '#7E7E7E',
+        width:290,
+        marginLeft: 10,
+        marginRight: 10,
+        justifyContent: 'center',
+    }
+});
+
+
+
+
+
+
+
+    import React, { Component } from 'react';
+import { AppRegistry,
+    StyleSheet, Text, 
+    PermissionsAndroid, View, StatusBar,
+    Image, TouchableOpacity} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import StartRecord from 'react-native-vector-icons/Ionicons';
+import StopRecord from 'react-native-vector-icons/Ionicons';
+import Arrow from 'react-native-vector-icons/FontAwesome5';
+import Play from 'react-native-vector-icons/Ionicons';
+
+/**This functional component is called when any individual audio file is clicked */
+
+export default function AudioRecorderPlayer({navigation, Route}){
+    
+    const[audioUriState, setAudioUriState] = useState('');
+    const[isRecordingStart, setIsRecordingStart] = useState(false);
+    const[isRecordingStop, setIsRecordingStop] = useState(false);
+    const[isRecordingSaved, setIsRecordingSaved] = useState(false);
+           
+        
+    useEffect(() => {
+        effect
+       
+        return () => {
+            cleanup
+        }
+    }, [input])
+
+
+    
+    
+    return(
+        <SafeAreaView style= {styles.container}>
+            <StatusBar barStyle="light-content" backgroundColor="#174060"/>
+                
+            
+            <View style={{flex:0.9, backgroundColor:'#1D5179', justifyContent:'center'
+                ,borderBottomRightRadius:5, borderBottomLeftRadius:5}}>
+                <Arrow
+                    name={"long-arrow-alt-left"}
+                    size={25}
+                    color="white"
+                    style={{marginLeft:17, alignContent: 'center'}}
+                    />  
+                <Text style={{fontSize:20, fontStyle:'normal', color:'white', fontFamily:'roboto',
+                    alignSelf:'center', margin:10, marginTop:10}}>
+                    New Recording
+                </Text>
+                <Text style={{color:'white',justifyContent:'center',fontFamily:'roboto',alignSelf:'center'
+                    ,marginBottom: 5, marginTop: 5}}>
+                    07:50am
+                </Text>
+            </View>
+            <View style={{flex: 2, backgroundColor: ''}}>
+                <Image 
+                style={styles.recordImage}
+                source = { require('../assets/recordingImage.png') }
+                    backgroundColor={''}
+                />
+            </View>
+                
+            <View style={styles.recorderTimer}> 
+                <Text style={{fontSize: 18, paddingTop: 0}}>
+                    00:00:00
+                </Text>
+            </View>
+            < style={{flexDirection: 'row'}}>
+            <View  style={{flex: 0.7, backgroundColor:''}}>
+                <TouchableOpacity>
+                    <Play
+                    name={"play-back-outline"}
+                    size={25}
+                    color="white"
+                    style={{margin:10, alignContent: 'center'}}
+                    />   
+                </TouchableOpacity>  
+            </View>
+            <View  style={{flex: 0.7, backgroundColor:''}}>
+                <TouchableOpacity
+                    style={styles.startRecord}>
+                    <Play
+                    name={"play"}
+                    size={25}
+                    color="white"
+                    style={{margin:10, alignContent: 'center'}}
+                    />   
+                </TouchableOpacity>  
+            </View>
+
+            <View  style={{flex: 0.7, backgroundColor:''}}>
+                <TouchableOpacity>
+                    <Play
+                    name={"play-back-outline"}
+                    size={25}
+                    color="white"
+                    style={{margin:10, alignContent: 'center'}}
+                    />   
+                </TouchableOpacity>  
+            </View>
+
+                    
+        </SafeAreaView> 
+     );
+}
+
+const styles = StyleSheet.create ({
+    container: {
+        flex: 1,
+        flexDirection: 'column', 
+        color: '#F0F0F0',
+    },
+    recordImage: {
+        width: 300,
+        height: 300,
+        justifyContent: 'center',
+        alignSelf:'center',
+        marginTop: 0,
+    
+    },
+    startRecord:{
+        alignSelf: 'center',
+        alignContent:'center',
+        borderRadius: 100,
+        elevation: 7,
+        backgroundColor: '#cf352e'
+    },
+    recordButton: {
+        width: 0,
+        height: 0,
+        justifyContent: 'center',
+        alignSelf:'center',
+       
+      },
+    recorderTimer: {
+        flex: 0.9,
+        paddingTop: 0,
+        alignItems: 'center',
+        alignContent: 'center'
+    }
+});

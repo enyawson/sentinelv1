@@ -2,49 +2,68 @@
 /**
  *Home Screen
  */
-import React  from 'react';
+import React , { useState, useEffect }  from 'react';
 import {
   StyleSheet,
   View,
   Text,
   Image,
   TouchableOpacity,
-  BackHandler,
 } from 'react-native';
 import CopyRight from 'react-native-vector-icons/FontAwesome5';
+import  More from 'react-native-vector-icons/Ionicons';
+import {Menu,MenuProvider, MenuOptions, MenuOption, MenuTrigger, } from 'react-native-popup-menu';
+
 
 
 export default function Home ({ navigation }){
 
+  const [isopen, setOpened]=useState('false')
+
+useEffect(() => {
+
+  return () => {
   
+  }
+}, [])
+
+const turnPopUpOn =()=>{
+  setTurnPop(true);
+  console.log('pop up')
+}
+
+
     return (
       // Home page
-    
+      
       <View style= { styles.MainContainer }>
-        <View style={styles.headerContainer}>
-        <View>
+        <View style={{backgroundColor:'',flexDirection:'row',alignItems:'center',justifyContent:'center',marginTop:5}}>
           <Text style={styles.logoName}>Election Watch</Text>
+         
+          <Menu style={{backgroundColor:'', marginLeft:60, margin:20}}>
+              <MenuTrigger>
+                <More
+                    name={'ellipsis-vertical'} 
+                    size={24}
+                    color="black"
+                    style={{ marginRight: 10 }}/>
+              </MenuTrigger>
+              <MenuOptions customStyles={optionStyles}>
+                <MenuOption onSelect={()=>navigation.navigate('ActivityList')} text='Activities'/>
+                <MenuOption onSelect={()=>alert('Save')} text='Log Out'/>
+              </MenuOptions>
+          </Menu>
+       
         </View>
-          
-          <View style={{marginTop: 20}}>
-            {/* <TouchableOpacity
-              onPress={}>
-              <Icon
-              name={'ellipsis-vertical'} 
-              size={24}
-              color="black"
-              style={{ marginRight: 18 }}/>
-            </TouchableOpacity> */}
-            {/* <HomeMenuItem /> */}
+        
+          <View style={{alignSelf: 'center', marginTop: 0,}}>
+            <Image 
+            style={styles.image}
+            source = { require('../assets/voting.jpg') }>
+            </Image> 
           </View>
-          
-        </View>
-        <View style={{alignSelf: 'center', marginTop: 50,}}>
-          <Image 
-          style={styles.image}
-          source = { require('../assets/voting.jpg') }>
-          </Image> 
-        </View>
+        <View style={{marginTop: 10}}/>
+      
         <TouchableOpacity style={styles.alarmButton}>  
             <Text style={{
               color: 'white',
@@ -71,7 +90,8 @@ export default function Home ({ navigation }){
               </TouchableOpacity>
             </View>
             <View style={styles.box}>
-              <TouchableOpacity>
+              <TouchableOpacity
+               onPress={()=>navigation.navigate('SignUp')}>
                <Image style={styles.imageInBox}
                 source = { require('../assets/add.png') }/>
                 <Text style={styles.text}>Register</Text>
@@ -80,7 +100,8 @@ export default function Home ({ navigation }){
           </View>
           <View style={styles.buttonInRowContainer}>
                 <View style={styles.box} marginRight={35}>
-                  <TouchableOpacity>
+                  <TouchableOpacity
+                  onPress={()=> navigation.navigate('AudioRecorder')}>
                     <Image 
                     style={styles.imageInBox}
                     source = { require('../assets/microphone.png') } />
@@ -88,7 +109,8 @@ export default function Home ({ navigation }){
                   </TouchableOpacity>
                 </View>
                 <View style={styles.box}>
-                <TouchableOpacity>
+                <TouchableOpacity
+                  onPress={()=>navigation.navigate('ActivityPreview')}>
                     <Image 
                     style={styles.imageInBox}
                     source = { require('../assets/resultImage.png') } />
@@ -144,10 +166,13 @@ const styles = StyleSheet.create({
   logoName: {
     fontSize: 30,
     fontWeight: 'bold',
-    marginTop:12,
-    marginLeft: 86,
+    marginLeft:75,
+    margin: 0,
     color: '#ed7055',
-    alignItems: 'center'
+
+    
+    
+   
   },
   headerContainer: {
     flex: 0.45,
@@ -237,12 +262,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     alignSelf: 'stretch',
-    marginTop: 30,
-    marginLeft: 30,
-    marginRight:30,
-    marginBottom: 30,
-   
-  
+    margin: 30,
     backgroundColor: '#f0f0f0',
   },
   text: {
@@ -269,6 +289,26 @@ const styles = StyleSheet.create({
     color: '#ed7055'
   },
   
-  
-  
 });
+const optionStyles = {
+  optionTouchable: {
+    underlayColor: 'red',
+    activeOpacity: 40,
+  },
+  optionWrapper: {
+    margin: 5,
+    alignSelf: 'center',
+   
+    
+  },
+  optionText: {
+    color: 'black',
+    fontSize: 16,
+  },
+  optionsContainer: {
+    backgroundColor: 'white',
+    padding: 0,
+    width: 120,
+    height:100
+  },
+};

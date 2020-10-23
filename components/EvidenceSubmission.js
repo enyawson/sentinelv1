@@ -1,21 +1,8 @@
 import React, { useState, useEffect } from 'react';
 
 import {
-    StyleSheet, 
-    View, 
-    Text, 
-    Image, 
-    TouchableOpacity,
-    StatusBar,
-    TextInput,
-    FlatList,
-    Pressable,
-    Dimensions,
-    Modal,
-    Button,
-    Alert,
-    Platform,
-    Keyboard,
+    StyleSheet, View, KeyboardAvoidingView,Text, Image, TouchableOpacity,StatusBar,
+    TextInput, FlatList,ActivityIndicator, Platform
 } from 'react-native';
 import globalStyle from '../components_styles/globalStyle';
 import { ScrollView, State, TouchableWithoutFeedback } from 'react-native-gesture-handler';
@@ -27,144 +14,197 @@ import  Trash from 'react-native-vector-icons/Ionicons';
 import CameraRoll from "@react-native-community/cameraroll";
 import AsyncStorage from '@react-native-community/async-storage';
 import ArrowBack from 'react-native-vector-icons/Ionicons';
+import { set } from 'react-native-reanimated';
 
 
 
-export default function EvidenceSubmission ({route, navigation}){
-    //Incidence
-    const [state, setState]= useState({
-        selectedIncidence: 'Please select incidence',
-        photos:[],
-    });
-    //state to hold description
-    const [text, onChangeText] = useState({
-        textInputted: '',
-    })
-    //selected item with flatlist
-    const [selectedImage, setSelectedImage] = useState(null);
+
+export default function EvidenceSubmission ({route, navigation,navigation:{setParams}}){
+
+    const [selectedIncidence, setSelectedIncidence] = useState('select incidence');
+    const [description, setDescription] = useState("");
+   // const [timeFileTaken, setTimeFileTaken] = useState('4:50');
+    const [location, setLocation] = useState('30 Oyankele Street Accra')
+    //const [locCoordinates,setLocCoordinates] = useState('5.65544, -4556644')
+    const [loading, setLoading] = useState(true);
+    const [photos, setPhotos] = useState([]);
+    //const [dateFileTaken, setDateFileTaken] = useState('21/10/2020')
     
-
-    //navigating value of image from photoLogic to this page
-
-    let { transferredImage }= route.params
-    console.log("transferred URI "+ transferredImage);
-    console.log('retrieved images'+ state.photos)
-    const { countImageAdded } = route.params
-    console.log ('Number of pictures taken (EvidenceSub. page) : '+ countImageAdded);
-    // const { getLatitudeTransferred } = route.params
-    // const { getLongitudeTransferred } = route.params
-    // const { getTimeTransferred } = route.params
-    // const { getDateTransferred } = route.params
-    // const { getTimeOfTransfer } = route.params
-
-    /**
-     * This method navigates to photo oreview
-     * @param {} path image retrieved from flatlist item in evidence page
-     */
-    const  navigateToPhotoPreview = (path) =>{
-        navigation.navigate('PhotoPreviewer',
-                        {
-                        transferredImageItem: path,
-                        
-                        })
-    }
-    
-
-   
-
-     //state to hold transferred image
-    // const[dataFromPhotoLogic, setRetrievedDataFromPhotoLogic  ] = useState([
-    //     {photo: transferredImage, key:dataFromPhotoLogic.map(function(e){return e.name;}).indexOf('photo')}
-    // ]);
-
-   // console.log('TRANSFERRED:' + transferredImage ) 
-
-
-
-   /**
-    * This method clears Storage and gallery on submit, to 
-    * allow new images into storage and gallery
-    * 
-    * */
-   const clearStorage= async() =>{
-    try{
-        await AsyncStorage.clear();
-
-    } catch(exception){
-        console.log('error clearing  items');
-    }
-    console.log('items cleared (Evidence Page)');
-
-    //clear gallery
-    setState({
-        photos: " "
-    })
-}
   
 
-    //loading images from camera roll on component mount
+
+    /**navigated image */
+   // const { transferredImage } = route.params
+    /**component did mount , component will unmount */
     useEffect(()=> {
-        AsyncStorage.getItem('photos')
-            .then((photos) => {
-                const photo = photos ? JSON.parse(photos) : [];
-                photo.push(transferredImage);
-                AsyncStorage.setItem('photos', JSON.stringify(photo));
-            });  
-            const getData = async () => {
-                try {
-                    const value = await AsyncStorage.getItem('photos')
-                    if(value !==null){
-                        setState({
-                            photos: JSON.parse(value),
-                        })
-                        /*set transferred image variable to empty to allow
-                        the intake of a new one*/
-                        transferredImage = " ";
-                        console.log('emptied transferred image variable '+ transferredImage)
-                    }
-                }catch(e){
-                   console.log('error with async getData');
-                }  
-            }
-             //Get the stored images from camera
-             getData();
-
+        console.log('EVIDENCE USE_EFFECT,  mounted');
            
+        /*Get the stored captured images from async storage*/   
         
-            
-        // dataFromPhotoLogic.push(transferredImage);
-        // console.log('KEY'+ dataFromPhotoLogic.key);
-        // console.log('this is the time in evidence '+ Date.now());
-        // CameraRoll.getPhotos({
-        //     first: 15,
-        //     toTime: getTimeOfTransfer,
-        //     assetType: "All",
-            
-           
-           
-        // })
-        // .then((data)=> {
-        //     const assets = data.edges
-        //    // console.log("DATA EDGES" +assets)
-        //    //const images = Array.apply(assets.map((asset) => asset.node.image));
-        //    console.log('this is my timestamp' + Date.now());
+        getData();
 
-          
-        //     setState({
-        //         photos: assets,
-        //     })
-        //     }, 
-        //     (error) => {
-        //         console.warn( error)
-        //     }
-            
-        // );
+        /*save description and incidence*/
+        saveIncidenceDescription();
+
+        /*get the saved description and incidence*/
+        getIncidenceDescription();
+
+       
+        /**component will unmount */
+        return ()=> { 
+        }
+
+   
     }, []);
-          
- 
+
+  
+
+   /*set the state of incident selected */
+    const setIncidence = (itemSelected) => {
+      setSelectedIncidence(itemSelected)
+      console.log("Incidence " + itemSelected)
+    }
+
+    const setInputtedText = (inputtedText) => {
+        setDescription(inputtedText)
+        console.log("InputtedText "+ inputtedText)
+    }
+
+    /**on loading end */
+    const _onLoadEnd = ()=> {
+        setLoading(false)
+    }
+    const _onLoadStart = ()=> {
+        setLoading(true)
+    }
+    
+    /**
+    * This method clears Storage and gallery on submit, to 
+    * allow new images into storage and gallery
+    */
+    const clearStorage= async() =>{
+        try{
+            await AsyncStorage.clear();
+            console.log("Storage cleared")
+        } catch(exception){
+            console.log('error clearing  items');
+    }
+        
+    //clear gallery
+        setPhotos("")
+        setDescription("")
+        setSelectedIncidence("")
+    }
+
+    const evidenceSubmit = async () => {
+        /**Clears storage*/
+        //clearStorage();
+        /**save data to be displayed on the activityList  in storage */
+        console.log("PHOTOS : "+ photos);
+        await removeDataStored();
+        await mainActivityListData();
+        // navigate to submit form
+        navigation.navigate('SubmitEvidenceForm');
+    }
+
+    /**save incidence type and description */
+    const saveIncidenceDescription = () => {
+    let  storedObject = {};
+    storedObject.incidenceValue = selectedIncidence;
+    storedObject.descriptionText = description;
+
+    try {
+        AsyncStorage.setItem('allTextValue', JSON.stringify(storedObject));
+        
+    }catch (error){
+        console.log('error with saving incidence and description');
+    }
+    }
+
+    /**Getting images from async storage */
+    const getData = async () => {
+        try {
+            const value = await AsyncStorage.getItem('photos')
+            console.log('async values', value);
+            if(value !== null){
+                setPhotos((JSON.parse(value)))
+                
+            }
+        }catch(e){
+        console.log('error with async getData');
+        }     
+    }
+
+    /** This method gets incidence type and description*/
+    const  getIncidenceDescription = async () => {
+        try {
+            const infoValue = await AsyncStorage.getItem('allTextValue')
+            let resObject = JSON.parse(infoValue);
+            console.log('resObject '+ resObject)
+            setDescription(resObject.descriptionText)
+            setSelectedIncidence(resObject.incidenceValue)
+            console.log("Description" + resObject.descriptionText)
+        } catch (error){
+            console.log(error);
+        }
+    }
+
+    /**This method clears storage for photos submitted to receive new ones */
+    const removeDataStored = async () =>{
+        try{
+            await AsyncStorage.removeItem('photos');
+            await AsyncStorage.removeItem('activityListPicDetail');
+
+        }catch(e){
+            console.log('error')
+        }
+        console.log('removed photos, picture details')
+    }
+
+    /** save image in an array 
+     * evidence-files : consist of audio, videos, pictures
+    */
+    const mainActivityListData = async ()=> {
+        let newData = {}
+        newData.evidenceFiles = photos;
+        newData.incidenceValue = selectedIncidence;
+        newData.description = description;
+        //newData.timeTaken = timeFileTaken;
+        newData.streetName = location;
+        //newData.locationCord = locCoordinates;
+        //newData.dateTaken = dateFileTaken;
+        
+        let data = await AsyncStorage.getItem('mainActivityData');
+        data = data? JSON.parse(data) : [];
+        
+        data.push(newData);
+        await AsyncStorage.setItem('mainActivityData', JSON.stringify(data), () => {    
+            console.log('MAIN ACTIVITY DATA '+ data);
+            console.log(data)
+        });
+      
+        //clear files and text on evidence page after submitting
+        setPhotos("")
+        setDescription("")
+        setSelectedIncidence("")
+    }
+    
+   
+/**
+ * This method navigates to photo preview page
+ * @param path image retrieved from flat list item in evidence page
+ */
+    const  navigateToPhotoPreview = (path) =>{
+        navigation.navigate('PhotoPreviewer',
+        {
+            transferredImageItem: path,
+        
+        })      
+    }
+
+
     return(
         <SafeAreaView style= {globalStyle.MainContainer}>
-       
         <StatusBar barStyle="light-content" backgroundColor="#174060"/>
             <View flexDirection='column' flex={0.456} marginTop={30} 
             marginRight ={5}
@@ -174,39 +214,37 @@ export default function EvidenceSubmission ({route, navigation}){
             borderColor='#7E7E7E'>
                 <View>
                     <FlatList
-                        data = {state.photos}
+                        data= {photos}
                         keyExtractor={(item, index)=> index}
                         renderItem={ ({ item}) => (  
-                           
                           <TouchableOpacity onPress={() => navigateToPhotoPreview(item) }>
                              <Image
+                                onLoadStart={_onLoadStart}
+                                onLoadEnd={_onLoadEnd}
                                 style={{ width:70, height:75,margin:0.5, resizeMode:'cover'}}   
-                                source = {{ uri: "file://"+ item}} 
+                                source = {{ uri: "file://"+ item}}  source = {{ uri: "file://"+ item}} 
                                 // source = {{ uri: item}} 
                                 //source = {{ uri: item.node.image.uri}} 
                             />
-                          </TouchableOpacity>   
+                            {/* {loading && <ActivityIndicator
+                                size='small'
+                                color='#1D5179'
+                                style={styles.activityIndicator}
+                                animating={loading}
+                            />} */}
+                             
                            
-                           )   
+                          </TouchableOpacity>   
+                         )   
                         }
                         numColumns = {5}
-                       
-                       
-                        
-                        // {state.photos.map((photo, i) => {
-                        //     {console.log("PHOTO is :"+ photo)} 
-                        //     {console.log("PHOTO TO BE VIEWED" + state.photos)}
-                        //     return(
-                        //         <Image 
-                        //             key={i}
-                        //             style={{ width:65, height:65,}}
-                        //             source={{uri: photo.uri}}
-                        //         />
-                        //         );
-                                
-                        // })}
-                        
-                   />
+                    />
+                    {/* <Image
+                        style={{ width:70, height:75,margin:0.5, resizeMode:'cover'}}   
+                        source = {{ uri: "file://"+ photos}} 
+                        // source = {{ uri: item}} 
+                        //source = {{ uri: item.node.image.uri}} 
+                    /> */}
                 </View>  
             </View>
             <TouchableOpacity style={styles.addPhotoButton}
@@ -227,25 +265,25 @@ export default function EvidenceSubmission ({route, navigation}){
                     marginBottom: 0,
                     marginTop: 15}}>
                     <Picker
-                        selectedValue ={state.selectedIncidence}
+                        selectedValue ={selectedIncidence}
                         style={{height:45, width: 270, 
                         fontFamily:'roboto', 
                         fontStyle:'normal',
                         fontWeight:'normal'}}
                         onValueChange={(itemValue, itemIndex) =>
-                            setState({selectedIncidence: itemValue})
+                           setIncidence(itemValue)
                         }
                     >
-                        
-                    <Picker.Item label="Non-Compliance" value="Gun Shot"/>
-                    <Picker.Item label="Logistics" value="Stolen ballot boxes"/>
-                    <Picker.Item label="Harassment" value="Misunderstanding leading"/>
-                    <Picker.Item label="Interference" value="Faulty"/>
-                    <Picker.Item label="Violence" value="Power"/>
-                    <Picker.Item label="Delays" value="fight"/>
-                    <Picker.Item label="Confusion" value="Late"/>
-                    <Picker.Item label="Chaos" value="controlling"/>
-                    <Picker.Item label="Power Failure" value="Standard"/>
+                    <Picker.Item label="select incidence type" value="" color="gray"/>    
+                    <Picker.Item label="Non-Compliance" value="non-Compliance"/>
+                    <Picker.Item label="Logistics" value="logistics"/>
+                    <Picker.Item label="Harassment" value="harassment"/>
+                    <Picker.Item label="Interference" value="interference"/>
+                    <Picker.Item label="Violence" value="violence"/>
+                    <Picker.Item label="Delays" value="delays"/>
+                    <Picker.Item label="Confusion" value="confusion"/>
+                    <Picker.Item label="Chaos" value="chaos" />
+                    <Picker.Item label="Power Failure" value="power failure"/>
                     </Picker>
                 </View>
                 <View marginBottom={0} marginLeft={5} marginTop={15}>
@@ -261,26 +299,30 @@ export default function EvidenceSubmission ({route, navigation}){
                             borderRadius: 8,
                             borderColor:'#C4C4C4',
                             borderWidth: 1, marginLeft: 5}}
-                            onChangeText={(text) => setState({text})}
-                            value={state.text}
+                            onChangeText={(text) => 
+                             setInputtedText(text)
+                            }
+                            value={description}
                             multiline={true}
-                            enablesReturnKeyAutomatically={true}>
+                            enablesReturnKeyAutomatically={true}
+                        > 
                         </TextInput>
                     </View>
-                        <TouchableOpacity style={styles.microphoneButton}>
+                        <TouchableOpacity style={styles.microphoneButton}
+                        onPress={()=> navigation.navigate('AudioRecorder') } >
                             <Microphone name="microphone" 
                             size={21} 
                             color='white'
                             /> 
                         </TouchableOpacity>
                 </View>
-                <View marginBottom={0} marginLeft={0} marginTop={15}  marginBottom={15} >
+                <View marginBottom={0} marginLeft={0} marginTop={30}  marginBottom={15} >
                     <View style={{flexDirection: 'row'}}>
-                        <Text style={{margin:10,marginRight:20,
+                        <Text style={{margin:10,marginRight:10,
                                 fontFamily:'roboto', fontSize: 14,
                                 fontWeight:'bold', 
                                 }}>
-                            Submit as
+                            Register to track
                         </Text>
                         <View style={styles.radioCircumference}>
                             <TouchableOpacity style={styles.radioButton}></TouchableOpacity>
@@ -296,7 +338,8 @@ export default function EvidenceSubmission ({route, navigation}){
             
                 <TouchableOpacity
                     style={styles.button}
-                    onPress={clearStorage}>
+                    onPress={()=> evidenceSubmit()}
+                >
                     <Text style={{color:'white', 
                         alignSelf:'center',
                         fontSize: 18,
@@ -311,16 +354,13 @@ export default function EvidenceSubmission ({route, navigation}){
 }
 
 const styles = StyleSheet.create({
-
     imageContainer: {
         flexDirection: 'row',
-        
     },
     text:{
         color: "#E6E4E4",
         fontSize: 6,
         opacity: 1,
-
     },
     image: {
         width: 90,
@@ -332,9 +372,7 @@ const styles = StyleSheet.create({
     },
     contentContainer: {
         paddingVertical: 20,
-      
-    },
-   
+    },   
     moreIcon: {
         alignSelf: 'center',  
         justifyContent:'center',
@@ -405,7 +443,14 @@ const styles = StyleSheet.create({
         width:24, 
         height: 24,
         marginTop: 7,
-    },
-
-    
+    },  
+    activityIndicator: {
+        color: 'blue',
+        position: 'absolute',
+        left: 10,
+        right: 10,
+        top: 10,
+        bottom: 0,
+        alignSelf:'center'
+    }
 })
