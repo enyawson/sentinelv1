@@ -144,20 +144,9 @@ export default function App() {
           name="ActivityPreview" 
           component ={ActivityPreview}
           options={{
-          
-          headerShown: true,
-          title:   <Text>Events </Text>,
-          headerStyle: {
-          backgroundColor: '#1D5179',
-          },
-          headerTintColor: '#FFFFFF',
-          headerTitleStyle: {
-          fontWeight: 'normal',
-          marginLeft: 20,
-          fontFamily: 'roboto',
-         },
-        
+          headerShown: false
         }}/> 
+        
 
         
       </Stack.Navigator>

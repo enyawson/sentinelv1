@@ -26,6 +26,8 @@ import CameraRoll from "@react-native-community/cameraroll";
 import ImageMaker, { ImageFormat } from "react-native-image-marker";
 import Marker from 'react-native-image-marker';
 import AsyncStorage from '@react-native-community/async-storage';
+import Geocoder from 'react-native-geocoding';
+
 import { red } from '@material-ui/core/colors';
 
 TouchableOpacity.defaultProps = { activeOpacity : 0.3};
@@ -82,6 +84,7 @@ export default function PhotoLogic ({ props, navigation }) {
         capturedImageLongitude: null,
         capturedImageDate: null,
         capturedImageDateTime: null,
+        capturedStreetName: null,
         //state for watermark
         loading: null, 
         loadingIconMark: null, 
@@ -91,12 +94,12 @@ export default function PhotoLogic ({ props, navigation }) {
     })
 
     useEffect(() => {
-        console.log("Photo component is mounting");
-        console.log ('status of toggleVideoButton :'+ videoComponent.toggleVideoButton);
+        console.log("Photo component mounted");
+        //console.log ('status of toggleVideoButton :'+ videoComponent.toggleVideoButton);
         // console.log("ImageUri Value after mount Taking Photo " + imageUri);
         // console.log("Video Uri after mount "+ videoUri);
-        console.log("ToggleVideoButton state "+ videoComponent.toggleVideoButton);
-        console.log("TogglePauseButton state "+ videoComponent.togglePauseButton);
+            //console.log("ToggleVideoButton state "+ videoComponent.toggleVideoButton);
+            //console.log("TogglePauseButton state "+ videoComponent.togglePauseButton);
         return () => {
             
         }
@@ -137,8 +140,23 @@ export default function PhotoLogic ({ props, navigation }) {
              capturedImageDate: setPreviewImageDate,
              capturedImageDateTime: setPreviewImageDateTime,
          })
-       
+        //Get street name from coordinates
+        getStreetData(value.latitude, value.longitude);
+        //Save pictures details(time, date, street name) to async Storage
+        //activityListPicDetail();
+        let newData = {}
+        //newData.evidenceFiles = photos;
+        //newData.incidenceValue = selectedIncidence;
+        //newData.description = description;
+        newData.timeTaken = value.dateTime;
+        newData.streetName =  capturedImageState.capturedStreetName;
+        newData.locationLat =  value.latitude;
+        newData.locationLng = value.longitude;
+        newData.dateTaken =  value.date;
         
+        //store pic details in async storage
+       storePicDetails(newData);
+      
     }
     //console check of accuracyValue and disableCameraView
     // console.log ('yep: '+state.accuracyValue);
@@ -160,6 +178,58 @@ export default function PhotoLogic ({ props, navigation }) {
         const status = await PermissionsAndroid.request(permission);
         // this can be used when status is required to perform certain action
         return status == 'granted';
+    }
+  /**This method saves data in async storage
+      * @param  timeTaken The time pic was taken
+      * @param  dateTaken The date pic was taken
+      * @param  locationCord The coordinates of the location
+      * @param  streetName The the streetName of the location
+     */
+   const activityListPicDetail = async ()=> {
+        let newData = {}
+        //newData.evidenceFiles = photos;
+        //newData.incidenceValue = selectedIncidence;
+        //newData.description = description;
+        newData.timeTaken = capturedImageState.capturedImageDateTime;
+        newData.streetName =  capturedImageState.capturedStreetName;
+        newData.locationLat =  capturedImageState.capturedImageLatitude;
+        newData.locationLng = capturedImageState.capturedImageLongitude;
+        newData.dateTaken =  capturedImageState.capturedImageDate;
+        
+        //store pic details in async storage
+       storePicDetails(newData);
+      
+    }
+    /**this method saves pic details in async storage  */
+    const storePicDetails = async (newData) => {
+        try{
+            const jsonValue = JSON.stringify(newData);
+            await AsyncStorage.setItem('activityListPicDetail', jsonValue) 
+        } catch (e){
+            console.log('pic details not saved');
+        }
+        console.log('ACTIVITY_LIST_PIC_DETAIL '+ newData);
+        
+    }
+
+    /** this method gets street address name */
+    const getStreetData= (lat, lng) =>{
+        // Initialize the module 
+        Geocoder.init("AIzaSyB1nEal4lqDWdBz9mf79KUd0zGZdgArVfY");
+       
+        console.log("lat and lng" + lat + " " +lng);
+
+        Geocoder.from(lat, lng)
+        .then(json => {
+        	const addressComponent = json.results[0].formatted_address;
+            //console.log("Street address " + addressComponent);
+            setCapturedImageState({
+                capturedStreetName: addressComponent,
+            })
+            
+        })
+        .catch(error => console.log("error in network, affecting GPS location"));
+        console.log("Street address of State " + capturedImageState.capturedStreetName);
     }
 
 //function to save Image
@@ -393,10 +463,10 @@ const takeVideo = async () => {
                     
                     const videoPath = await data.uri
                    
-                    console.log("VideoPath after video capture : " + videoPath)
-                    console.log('Video Taken', data)
+                   // console.log("VideoPath after video capture : " + videoPath)
+                   // console.log('Video Taken', data)
                     setVideoUri( await videoPath);
-                    console.log('video uri : '+ videoUri);
+                    //console.log('video uri : '+ videoUri);
                     saveImage2(videoPath)
                 }
             } catch (e){
@@ -437,7 +507,7 @@ const renderRecording = () =>{
 const stopVideo = async () => {
     await camera.stopRecording();
     setIsRecording({isRecording: false});
-    console.log('is Recording value after stop video :'+ isRecording)
+   // console.log('is Recording value after stop video :'+ isRecording)
 };
 
 // const renderRecBtn =() => {
@@ -566,7 +636,7 @@ const renderCamera = ()=>{
                 style={{alignSelf: 'stretch',
                 flex: 0.35,
                 alignContent:'center'}}>
-                <GPSLocationLogic customProp={handleData} />
+                <GPSLocationLogic customProp={handleData}  streetName={capturedImageState.capturedStreetName}/>
             </View>  
             <View style={{
                     flex: 0., 

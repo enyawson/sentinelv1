@@ -75,8 +75,8 @@ export default class GPSLocationLogic extends Component{
         setInterval(() => {
             let hours = new Date().getHours(); //current hours
                 let min = new Date().getMinutes(); //current minutes
-                let sec = new Date().getSeconds(); //current getSeconds
-                const timeString = (hours + ':' + min + ':' + sec)
+                // let sec = new Date().getSeconds(); //current getSeconds
+                const timeString = (hours + ':' + min )
                 this.setState({
                     dateTime: timeString
                 });
@@ -120,7 +120,7 @@ export default class GPSLocationLogic extends Component{
                     that.props.customProp(this.state);
                     //console.log('hello'+ this.state);
 
-                    this.getStreetData(currentLatitude, currentLongitude)
+                    // this.getStreetData(currentLatitude, currentLongitude)
                     
                 },
                 (error) => {
@@ -169,6 +169,9 @@ export default class GPSLocationLogic extends Component{
                 enableHighAccuracy: true,
                 useSignificantChanges: true
              });
+             
+            //  //Save pictures details(time, date, street name)
+            //  this.activityListPicDetail();
 
     }
 
@@ -182,47 +185,47 @@ export default class GPSLocationLogic extends Component{
         };
     }
    
-    /**Get street address name */
-    getStreetData(lat, lng){
-        // Initialize the module 
-        Geocoder.init("AIzaSyB1nEal4lqDWdBz9mf79KUd0zGZdgArVfY");
+    // /**Get street address name */
+    // getStreetData(lat, lng){
+    //     // Initialize the module 
+    //     Geocoder.init("AIzaSyB1nEal4lqDWdBz9mf79KUd0zGZdgArVfY");
        
-        console.log("lat and lng" + lat + " " +lng);
+    //     console.log("lat and lng" + lat + " " +lng);
 
-        Geocoder.from(lat, lng)
-        .then(json => {
-        	const addressComponent = json.results[0].formatted_address;
-            console.log("Street address " + addressComponent);
-            this.setState({
-                streetAddress: addressComponent
-            })
-        })
-        .catch(error => console.log("error in network, affecting GPS location"));
-     }
+    //     Geocoder.from(lat, lng)
+    //     .then(json => {
+    //     	const addressComponent = json.results[0].formatted_address;
+    //        //console.log("Street address " + addressComponent);
+    //         this.setState({
+    //             streetAddress: addressComponent
+    //         })
+    //     })
+    //     .catch(error => console.log("error in network, affecting GPS location"));
+    // }
 
-     /**This method saves data in async storage
-      * @param  timeTaken The time pic was taken
-      * @param  dateTaken The date pic was taken
-      * @param  locationCord The coordinates of the location
-      * @param  streetName The the streetName of the location
-     */
-     activityListPicDetail = async ()=> {
-        let newData = {}
-        //newData.evidenceFiles = photos;
-        //newData.incidenceValue = selectedIncidence;
-        //newData.description = description;
-        newData.timeTaken = this.state.dateTime;
-        newData.streetName = this.state.streetAddress
-        newData.locationLat = this.state.latitude;
-        newData.locationLng = this.state.longitude;
-        newData.dateTaken = this.state.date;
+    //  /**This method saves data in async storage
+    //   * @param  timeTaken The time pic was taken
+    //   * @param  dateTaken The date pic was taken
+    //   * @param  locationCord The coordinates of the location
+    //   * @param  streetName The the streetName of the location
+    //  */
+    // activityListPicDetail = async ()=> {
+    //     let newData = {}
+    //     //newData.evidenceFiles = photos;
+    //     //newData.incidenceValue = selectedIncidence;
+    //     //newData.description = description;
+    //     newData.timeTaken = await this.state.dateTime;
+    //     newData.streetName =  this.state.streetAddress;
+    //     newData.locationLat =  await this.state.latitude;
+    //     newData.locationLng = await this.state.longitude;
+    //     newData.dateTaken = await this.state.date;
         
-        await AsyncStorage.setItem('activityListPicDetail', JSON.stringify(newData), () => {    
-            console.log('ACTIVITY_LIST_PIC_DETAIL '+ newData);
-            console.log(newData)
-        });
+    //     await AsyncStorage.setItem('activityListPicDetail', JSON.stringify(newData), () => {    
+    //         console.log('ACTIVITY_LIST_PIC_DETAIL '+ newData);
+    //         console.log(newData)
+    //     });
       
-    }
+    // }
     
     render(){
         return (
@@ -242,7 +245,7 @@ export default class GPSLocationLogic extends Component{
                 <View style={{flexDirection: 'row', alignSelf:'center'}}>
                     <Text style={{fontSize:16, color:'white', alignItems:'center',
                     alignSelf:'center', marginLeft:65,marginRight:65, marginBottom:0}}>
-                    {this.state.streetAddress}</Text>
+                    {this.props.streetName}</Text>
                 </View>
                 <View style={{marginBottom: 75, alignSelf: 'center',}}>
                     <Text style={{fontSize: 16, color: 'white', marginLeft: 5}} >

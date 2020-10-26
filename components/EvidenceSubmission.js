@@ -24,10 +24,11 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
     const [selectedIncidence, setSelectedIncidence] = useState('select incidence');
     const [description, setDescription] = useState("");
    // const [timeFileTaken, setTimeFileTaken] = useState('4:50');
-    const [location, setLocation] = useState('30 Oyankele Street Accra')
+    const [location, setLocation] = useState('')
     //const [locCoordinates,setLocCoordinates] = useState('5.65544, -4556644')
     const [loading, setLoading] = useState(true);
     const [photos, setPhotos] = useState([]);
+    const [picDetails, setPicDetails] = useState(" ");
     //const [dateFileTaken, setDateFileTaken] = useState('21/10/2020')
     
   
@@ -42,6 +43,7 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
         /*Get the stored captured images from async storage*/   
         
         getData();
+        getPicDetails();
 
         /*save description and incidence*/
         saveIncidenceDescription();
@@ -121,18 +123,34 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
     }
     }
 
-    /**Getting images from async storage */
+    /**Get Photos , picture details from async storage */
     const getData = async () => {
         try {
             const value = await AsyncStorage.getItem('photos')
-            console.log('async values', value);
+            console.log('async Photo values', value);
             if(value !== null){
-                setPhotos((JSON.parse(value)))
-                
+                setPhotos((JSON.parse(value)));
             }
         }catch(e){
         console.log('error with async getData');
         }     
+        console.log("photos state "+ photos)
+    }
+    const getPicDetails = async () => {
+        try {
+            const picDetailsValue = await AsyncStorage.getItem('activityListPicDetail')
+            const value = JSON.parse(picDetailsValue);
+            console.log('async PicDetail values,'+ picDetailsValue);
+            console.log("Time on Pic "+ value.locationLat);
+            if(value !== null){
+                setPicDetails(value);
+            }
+        }catch(e){
+        console.log('error with async getData');
+        }     
+       
+        console.log('state picDetails '+ picDetails);
+        console.log('one of it '+ picDetails.locationLat);
     }
 
     /** This method gets incidence type and description*/
@@ -161,16 +179,22 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
         console.log('removed photos, picture details')
     }
 
+
+
     /** save image in an array 
      * evidence-files : consist of audio, videos, pictures
     */
     const mainActivityListData = async ()=> {
         let newData = {}
+
         newData.evidenceFiles = photos;
         newData.incidenceValue = selectedIncidence;
         newData.description = description;
         //newData.timeTaken = timeFileTaken;
-        newData.streetName = location;
+        //newData.streetName = location;
+        //picture details 
+        newData.picDetail = picDetails;
+       
         //newData.locationCord = locCoordinates;
         //newData.dateTaken = dateFileTaken;
         
@@ -179,10 +203,10 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
         
         data.push(newData);
         await AsyncStorage.setItem('mainActivityData', JSON.stringify(data), () => {    
-            console.log('MAIN ACTIVITY DATA '+ data);
-            console.log(data)
+            // console.log('MAIN ACTIVITY DATA '+ data);
+            // console.log(data)
         });
-      
+        
         //clear files and text on evidence page after submitting
         setPhotos("")
         setDescription("")
