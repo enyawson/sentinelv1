@@ -20,11 +20,12 @@ export default class ActivityList extends React.Component{
        // console.log({...props});
 
         this.state = {
-            receivedFiles: [],
+            receivedFiles: '',
             time: '4:50',
             streetName: 'St. Central Park',
             date: '3/5/1998',
             itemsEvidenceFiles: [],
+            initialViewState: false //boolean to check the state of the preview image
 
         }
     }
@@ -90,20 +91,34 @@ export default class ActivityList extends React.Component{
 
         
     // }
+    //toggle view state 
+    toggleView =()=> {
+        setState({
+            initialViewState: true,
+        })
+    }
 
-
+     initialStateOfView =(value)=>{
+            const data = value;
+             this.setState({
+            receivedFiles: data,
+            initialViewState: true,
+                
+        })
+    }
     //get files to display
-    receivedData  = async(value) =>
+    receivedData  = (value) =>
     { 
         const data = value;
         this.setState({
+            initialViewState: true,
             receivedFiles: value,
         })
-        console.log ("VALUES ARE"+ data);
+        console.log ("VALUES ARE"+ value);
     }
  
     render () {
-        console.log("FILES "+ this.state.receivedFiles)
+      
         // const { navigation } = this.props;
         // const itemIndex = navigation.getParam('itemIndex', 'NO-ID');
        
@@ -111,15 +126,15 @@ export default class ActivityList extends React.Component{
         
         // console.log("INDEX " + itemIndex);
          console.log(itemIndex);
-         console.log("ITEMS PHOTOS"+ itemIndex.evidenceFiles[0])
+         console.log("ITEMS PHOTOS")
         // console.log("time "+itemIndex.picDetail.timeTaken)
         // console.log("date "+itemIndex.picDetail.dateTaken)
         // console.log("incidence "+itemIndex.incidenceValue)
         // console.log("des "+itemIndex.description)
         const { itemIndex } = this.props.route.params;
-        this.setState({
-            itemsEvidenceFiles: itemIndex,
-        })
+        console.log(itemIndex)
+        console.log("file:/"+itemIndex.evidenceFiles[0]);
+       
        
         
         
@@ -161,23 +176,36 @@ export default class ActivityList extends React.Component{
                 </View>
             </View>
                 <View style={{background: 'red', margin: 10}}>
+                {this.receivedFiles==null? 
+                    
                     <Image 
                     style={styles.previewImage}
-                    source = { require('../assets/voting.jpg') }/>
+                    source = { { uri: "file://"+itemIndex.evidenceFiles[0]}}/>
+                    :
+                    <Image 
+                    style={styles.previewImage}
+                    source = { { uri: "file://"+this.state.receivedFiles}}/>
+                    
+                }
+                    
 
                 </View>
                
                 <View style={{marginLeft:10,marginRight: 10, backgroundColor:'', marginLeft:20, marginRight:20}}>
                     <FlatList
-                    data= {this.state.itemsEvidenceFiles}
+                    data= {itemIndex.evidenceFiles}
                     keyExtractor={(item, index)=> index.toString()}
                     horizontal={true}
                     renderItem={ ({ item }) => (  
-                        <View style={{flexDirection: 'row'}}> 
+                        <TouchableOpacity 
+                            onPress={()=> this.receivedData(item)}>
+                            <View style={{flexDirection: 'row'}}>                
                             <Image 
                             style={styles.imageInBox}
-                            source = {{ uri: "file://"+ item.evidenceFiles}} />
+                            source = {{ uri: "file://"+itemIndex.evidenceFiles[0]}} />
                         </View>
+                        </TouchableOpacity>
+                        
                     )} 
                     />
                 </View>
@@ -234,6 +262,7 @@ const styles = StyleSheet.create ({
         width: 340,
         height: 250,
         alignSelf: 'center',
+       
       },
     incidence: {
         backgroundColor:'#FFFFFF',

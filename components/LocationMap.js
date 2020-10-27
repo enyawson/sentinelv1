@@ -22,7 +22,6 @@ export default class LocationMap extends React.Component{
   render(){
     return(
       <View style={styles.container}>
-     
         <MapView
        provider={PROVIDER_GOOGLE} // remove if not using Google Maps
        style={styles.map}
