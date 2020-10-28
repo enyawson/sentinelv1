@@ -109,8 +109,8 @@ export default class ActivityList extends React.Component{
                     <TouchableOpacity style={{flexDirection: 'row', margin: 5}}
                         onPress={()=> {this.props.navigation.navigate( 'ActivityPreview', {itemIndex: item}
                         )
-                            let value = item.evidenceFiles[0]
-                            console.log("INDEX OF IMAGE " + value)
+                            // let value = item.evidenceFiles[0]
+                            // console.log("INDEX OF IMAGE " + value)
                         }
                        
                         }>

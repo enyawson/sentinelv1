@@ -106,7 +106,7 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
         await removeDataStored();
         await mainActivityListData();
         // navigate to submit form
-        navigation.navigate('SubmitEvidenceForm');
+        navigation.navigate('Home');
     }
 
     /**save incidence type and description */
@@ -246,7 +246,8 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
                                 onLoadStart={_onLoadStart}
                                 onLoadEnd={_onLoadEnd}
                                 style={{ width:70, height:75,margin:0.5, resizeMode:'cover'}}   
-                                source = {{ uri: "file://"+ item}}  source = {{ uri: "file://"+ item}} 
+                                source = {{ uri: "file://"+ item}} 
+                              
                                 // source = {{ uri: item}} 
                                 //source = {{ uri: item.node.image.uri}} 
                             />
@@ -287,9 +288,9 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
                     width: 270, 
                     marginLeft: 5,
                     marginBottom: 0,
-                    marginTop: 15}}>
+                    marginTop: 10}}>
                     <Picker
-                        selectedValue ={selectedIncidence}
+                        selectedValue={selectedIncidence}
                         style={{height:45, width: 270, 
                         fontFamily:'roboto', 
                         fontStyle:'normal',
@@ -298,7 +299,7 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
                            setIncidence(itemValue)
                         }
                     >
-                    <Picker.Item label="select incidence type" value="" color="gray"/>    
+                    <Picker.Item label="select incidence type" value="" color="#898989" />    
                     <Picker.Item label="Non-Compliance" value="non-Compliance"/>
                     <Picker.Item label="Logistics" value="logistics"/>
                     <Picker.Item label="Harassment" value="harassment"/>
@@ -310,7 +311,7 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
                     <Picker.Item label="Power Failure" value="power failure"/>
                     </Picker>
                 </View>
-                <View marginBottom={0} marginLeft={5} marginTop={15}>
+                <View marginBottom={0} marginLeft={5} marginTop={30}>
                     <Text style={styles.textStyle}>
                         Description
                     </Text>
@@ -326,8 +327,11 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
                             onChangeText={(text) => 
                              setInputtedText(text)
                             }
+                            textAlignVertical={'top'}
                             value={description}
                             multiline={true}
+                            placeholder={' enter text'}
+                            fontSize={14}
                             enablesReturnKeyAutomatically={true}
                         > 
                         </TextInput>
@@ -340,30 +344,48 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
                             /> 
                         </TouchableOpacity>
                 </View>
-                <View marginBottom={0} marginLeft={0} marginTop={30}  marginBottom={15} >
-                    <View style={{flexDirection: 'row'}}>
-                        <Text style={{margin:10,marginRight:10,
-                                fontFamily:'roboto', fontSize: 14,
-                                fontWeight:'bold', 
-                                }}>
-                            Register to track
+                <View marginBottom={0} marginLeft={10}marginTop={30}  marginBottom={20} >
+                    <View style={{flexDirection: 'row', }}>
+                        <Text style={{
+                            fontFamily:'roboto', fontSize: 16, marginRight: 5, marginLeft: 0,
+                            fontWeight:'500', color:'#1D5179',
+                            }}
+                            onPress={()=>navigation.navigate('SignUp')}>
+                            Register 
                         </Text>
-                        <View style={styles.radioCircumference}>
+                        <Text style={{
+                            fontFamily:'roboto', fontSize: 16,marginLeft:5,
+                            fontWeight:'500',color:'#898989'
+                            }}>
+                            and 
+                        </Text>
+                        <Text style={{
+                            fontFamily:'roboto', fontSize: 16,marginLeft:5,
+                            fontWeight:'500',color:'#1D5179'
+                            }}>
+                            Sign In 
+                        </Text>
+                        <Text style={{
+                            fontFamily:'roboto', fontSize: 16,marginLeft:5,
+                            fontWeight:'500',color:'#898989'
+                            }}>
+                            to get feedback
+                        </Text>
+                        {/* <View style={styles.radioCircumference}>
                             <TouchableOpacity style={styles.radioButton}></TouchableOpacity>
                         </View>
                         <Text style={{marginLeft: 5, marginRight: 0, marginTop: 10}}>anonymous</Text>  
                         <Text style={{marginLeft: 10, marginRight: 10, marginTop: 10, fontWeight:'bold'}}> or </Text>
                         <View style={styles.radioCircumference}>
                             <TouchableOpacity style={styles.radioButton}></TouchableOpacity>
-                        </View>
-                        <Text style={{marginTop: 10,marginLeft: 5, marginRight: 0}}>Sign In</Text>                   
+                        </View> */}
+                        {/* <Text style={{marginTop: 10,marginLeft: 5, marginRight: 0}}>Sign In</Text>                    */}
                     </View>
                 </View>
             
                 <TouchableOpacity
                     style={styles.button}
-                    onPress={()=> evidenceSubmit()}
-                >
+                    onPress={()=> evidenceSubmit()}>
                     <Text style={{color:'white', 
                         alignSelf:'center',
                         fontSize: 18,
@@ -420,7 +442,7 @@ const styles = StyleSheet.create({
         width: 100,
         height: 45,
         margin: 10,
-        marginTop: 20,
+        marginTop: 30,
         borderRadius: 5,
         justifyContent: 'center',
         backgroundColor: '#1D5179',

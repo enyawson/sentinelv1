@@ -23,6 +23,8 @@ import MainActivityList from './components/MainActivityList';
 import { MenuProvider } from 'react-native-popup-menu';
 import ActivityList from './components/ActivityList';
 import ActivityPreview from './components/ActivityPreview';
+import VoteTally from './components/VoteTally';
+import EnterResult from './components/EnterResult'
 
 
 const Stack = createStackNavigator();
@@ -146,7 +148,29 @@ export default function App() {
           options={{
           headerShown: false
         }}/> 
-        
+         <Stack.Screen 
+          name="VoteTally"
+          component ={VoteTally}
+          options={{
+          headerShown: false
+        }}/> 
+        <Stack.Screen 
+          name="EnterResult" 
+          component ={EnterResult}
+          options={{
+          title: 'Enter Result',
+          headerShown: true,
+          headerStyle: {
+          backgroundColor: '#1D5179',
+          },
+          headerTintColor: '#FFFFFF',
+          headerTitleStyle: {
+          fontWeight: 'normal',
+          alignSelf:'center',
+          fontFamily: 'roboto'
+         }}
+          }
+        />  
 
         
       </Stack.Navigator>

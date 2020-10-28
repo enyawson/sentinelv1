@@ -4,6 +4,7 @@ import {
     StyleSheet, View, KeyboardAvoidingView,Text, Image, TouchableOpacity,StatusBar,
     TextInput, FlatList,ActivityIndicator, Platform
 } from 'react-native';
+import ArrowBack from 'react-native-vector-icons/Ionicons';
 
 
 export default function VerificationCodeForm ({route, navigation,navigation:{setParams}}){
@@ -27,7 +28,8 @@ export default function VerificationCodeForm ({route, navigation,navigation:{set
 
     function onFormSubmit (){
         //set the onSubmit state to true
-        setOnSubmit(true);
+        //setOnSubmit(true);
+        navigation.navigate('Home');
     }
 
     return(
@@ -35,30 +37,42 @@ export default function VerificationCodeForm ({route, navigation,navigation:{set
         <View style={styles.container}>
          <StatusBar barStyle="light-content" backgroundColor="#174060"/>
                 <View style={{flex:0.55, backgroundColor: '#1D5179'}}>
-                    <Text style={{fontFamily:'roboto',
-                    fontSize:35, marginTop: 10,marginLeft: 30,marginRight: 30,
-                     fontWeight:'bold', 
-                     color: 'white', alignSelf: 'center'}}>
-                        ELECTION WATCH
-                    </Text>
-                       
-                    <Text style={{fontFamily:'roboto',
-                    fontSize:26,
-                     fontWeight:'bold', 
-                     color: 'white', marginLeft: 35, marginTop:5}}>
-                         Verification code
-                    </Text>
-                    <Text style={{fontFamily:'roboto',
-                    fontSize:14,
-                     color: 'white', marginLeft: 35, marginTop:0}}>
-                        A verification code has been sent to your 054 138 6626
-                        phone number, please enter it
-                    </Text>
+
+    
+                <View style={{flexDirection: 'row'}}>
+                    <ArrowBack
+                        name={'arrow-back-outline'}
+                        size={23}
+                        color="white"
+                        style={{paddingLeft:10,paddingTop:15, alignContent: 'center' }}
+                        onPress={()=> {navigation.goBack()}}
+                        />  
+                    
+                        <Text style={{fontFamily:'roboto',
+                        fontSize:35, marginTop: 10,marginLeft: 10,marginRight: 30,
+                        fontWeight:'bold', 
+                        color: 'white', alignSelf: 'center'}}>
+                            ELECTION WATCH
+                        </Text>
+                    </View>
+                         <Text style={{fontFamily:'roboto',
+                        fontSize:26,
+                        fontWeight:'bold', 
+                        color: 'white', marginLeft: 45, marginTop:0, }}>
+                            Verification code
+                        </Text>
+                        <Text style={{fontFamily:'roboto',
+                        fontSize:14,
+                        color: 'white', marginLeft: 45, marginRight:10}}>
+                            A verification code has been sent to your 054 138 6626
+                            phone number, please enter it
+                        </Text>
+                   
                 </View>
 
                 <View style={styles.contentContainer}>
-                    <View style={{marginTop: 50,marginBottom: 0}}>
-                        <View style={{flexDirection: 'row',alignSelf:'center', marginTop: 70}}>
+                    <View style={{marginTop: 100,  justifyContent:'flex-end'}}>
+                        {/* <View style={{flexDirection: 'row',alignSelf:'center', marginTop: 70}}>
                             <TextInput 
                                 style={styles.codeInput}
                                 onChangeText={(text) => 
@@ -114,9 +128,9 @@ export default function VerificationCodeForm ({route, navigation,navigation:{set
                                 enablesReturnKeyAutomatically={true} > 
                             </TextInput>
                             
-                        </View>
+                        </View> */}
                     
-                        <View style={{alignSelf:'center'}}>
+                        <View style={{alignSelf:'center', marginTop: 30}}>
                             <TextInput 
                                 style={styles.textInputBoxStyle}
                                 onChangeText={(text) => 
@@ -146,27 +160,28 @@ export default function VerificationCodeForm ({route, navigation,navigation:{set
                             </Text>
                         </View>
                         
-                        <View style={{flexDirection:'row', alignSelf: 'center', marginTop: 25}}>
+                        {/* <View style={{flexDirection:'row', alignSelf: 'center', marginTop: 25}}>
                             <Image 
                             style={styles.imageInBox}
                             source = { require('../assets/voiceCall.png') } />
                             <Text style={{marginLeft: 5}}>try voice call</Text>
-                        </View>
-                       
-                        
-                        <Text style={{fontFamily:'roboto',
+                        </View> */}
+                        <View style={{flex: 2, marginTop: 30, justifyContent:'flex-end'}}>
+                            <Text style={{fontFamily:'roboto',
                             fontSize:18,
                             fontWeight:'700', 
                             color: 'rgba(117, 115, 115, 0.6)', alignSelf: 'center', marginTop: 60,}}>
                             by
-                        </Text>
-                        <Text style={{fontFamily:'roboto',
+                            </Text>
+                            <Text style={{fontFamily:'roboto',
                             fontSize:24,
                             fontWeight:'bold', 
                             color: '#EE7155', alignSelf: 'center', marginBottom:30,}}>
                             SOFTMASTERS
-                        </Text>
+                            </Text>
+                         </View>
                     </View>
+                   
                 </View>
                     
         </View>
@@ -188,6 +203,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 15,
+    
     },
 
     text: {

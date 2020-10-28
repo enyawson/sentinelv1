@@ -18,7 +18,7 @@ import {Menu,MenuProvider, MenuOptions, MenuOption, MenuTrigger, } from 'react-n
 
 export default function Home ({ navigation }){
 
-  const [isopen, setOpened]=useState('false')
+  const [isOpen, setOpened]=useState('false')
 
 useEffect(() => {
 
@@ -110,7 +110,7 @@ const turnPopUpOn =()=>{
                 </View>
                 <View style={styles.box}>
                 <TouchableOpacity
-                  onPress={()=>navigation.navigate('ActivityPreview')}>
+                  onPress={()=>navigation.navigate('EnterResult')}>
                     <Image 
                     style={styles.imageInBox}
                     source = { require('../assets/resultImage.png') } />
@@ -118,7 +118,7 @@ const turnPopUpOn =()=>{
                 </TouchableOpacity>
                 </View>    
           </View>
-      <View style={styles.bottomContainer}> 
+      <View style={styles.bottomContainer}>
             <TouchableOpacity>
                 <Text>Locate</Text>
             </TouchableOpacity>
@@ -156,6 +156,7 @@ const styles = StyleSheet.create({
   MainContainer: {
     flex: 1,
     backgroundColor:'#f0f0f0',
+    alignSelf: 'center'
   },
   logo: {
     width: 55,
@@ -262,7 +263,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     alignSelf: 'stretch',
-    margin: 30,
+    marginTop:15,
+    marginLeft:15,
+    marginBottom:15,
+    marginRight: 15,
     backgroundColor: '#f0f0f0',
   },
   text: {

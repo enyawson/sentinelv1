@@ -6,6 +6,7 @@ import { FlatList, ScrollView } from 'react-native-gesture-handler';
 import AsyncStorage from '@react-native-community/async-storage';
 import ArrowBack from 'react-native-vector-icons/Ionicons';
 import LocationMap from './LocationMap';
+import { ThreeDRotationSharp } from '@material-ui/icons';
 
 
 
@@ -17,10 +18,11 @@ export default class ActivityList extends React.Component{
     
     constructor(props,navigation){
         super(props);
-       // console.log({...props});
+      // console.log({...props});
 
         this.state = {
-            receivedFiles: '',
+            imageClicked: '',
+            imageClickedState: false,
             time: '4:50',
             streetName: 'St. Central Park',
             date: '3/5/1998',
@@ -31,14 +33,26 @@ export default class ActivityList extends React.Component{
     }
     
     componentDidMount (){
-        this.getData();
+        //this.getData();
         // this.getItemParam();
+        
        
 
 
     }
     componentWillUnmount (){
 
+    }
+
+    componentDidUpdate(prevProps, prevState){
+        if(prevState.imageClicked !== this.state.imageClicked){
+            console.log("imageClick state changed");
+            console.log("new selected is : "+ this.state.imageClicked);
+        }
+        if (prevState.imageClickedState !==this.state.imageClickedState){
+            console.log("imageClickState state changed");
+            console.log("new selected is : "+ this.state.imageClickedState);
+        }  
     }
     //get item itemIndex on each activity click
     // getItemParam(){
@@ -71,8 +85,8 @@ export default class ActivityList extends React.Component{
             if(value !== null){
 
                 const retrievedData = JSON.parse(value)
-                console.log('value received '+ retrievedData[2].incidenceValue )
-                console.log('array '+ (value))
+                //console.log('value received '+ retrievedData[2].incidenceValue )
+               // console.log('array '+ (value))
 
                  /**looping through array */
                 // for(let i=0; i<retrievedData.length; i++){
@@ -85,7 +99,7 @@ export default class ActivityList extends React.Component{
         }catch(e){
         console.log('error with async getData');
         }      
-        console.log('YES got it : '+ this.state.receivedFiles);
+        //console.log('YES got it : '+ this.state.receivedFiles);
             
     }
 
@@ -109,24 +123,29 @@ export default class ActivityList extends React.Component{
     //get files to display
     receivedData  = (value) =>
     { 
-        const data = value;
+        let data = value;
+        console.log ("ITEM SELECTED "+ data);
+        console.log ("ITEM STATE "+ this.state.imageClickedState);
+
+        
         this.setState({
-            initialViewState: true,
-            receivedFiles: value,
+            imageClicked: data,
+            imageClickedState: true,
         })
-        console.log ("VALUES ARE"+ value);
+        
+        // //console.log("RECEIVED FILES "+ this.state.receivedFiles + initialViewState)
+        // console.log("ITEM CLICKED STATE : "+ this.state.imageClickedState);
     }
  
     render () {
-      
         // const { navigation } = this.props;
         // const itemIndex = navigation.getParam('itemIndex', 'NO-ID');
        
         // console.log("INDEX "+ itemIndex);
         
         // console.log("INDEX " + itemIndex);
-         console.log(itemIndex);
-         console.log("ITEMS PHOTOS")
+         //console.log(itemIndex);
+         //console.log("ITEMS PHOTOS")
         // console.log("time "+itemIndex.picDetail.timeTaken)
         // console.log("date "+itemIndex.picDetail.dateTaken)
         // console.log("incidence "+itemIndex.incidenceValue)
@@ -144,13 +163,12 @@ export default class ActivityList extends React.Component{
             <View style={{width:Dimensions.get('window').width, height: 60,
              backgroundColor:'#1D5179', elevation: 5, flexDirection: 'row',}}>
                 <TouchableOpacity
-                onPress={()=> this.props.navigation.goBack()}>
-                   <ArrowBack
+                    onPress={()=> this.props.navigation.goBack()}>
+                    <ArrowBack
                     name={'arrow-back-outline'}
                     size={23}
                     color="white"
-                    style={{margin:15, alignContent: 'center'}}
-                />  
+                    style={{margin:15, alignContent: 'center'}}/>  
                 </TouchableOpacity>
                 <View style={{flexDirection: 'column', justifyContent:'center', }}>
                 <Text style={{marginLeft:90, marginRight:0,marginTop: 10, fontFamily:'roboto',fontSize:18,color:'white'}}>{itemIndex.incidenceValue}</Text>
@@ -164,7 +182,7 @@ export default class ActivityList extends React.Component{
                             </Text>
                         </View>
                         <View style={{flexDirection: 'row'}}>
-                            <Text style={{fontSize:12,color:'white', top:0, marginLeft: 15,marginRight:5, }}>
+                            <Text style={{fontSize:12,color:'white', top:0, marginLeft: 0,marginRight:5, }}>
                                 Date: 
                             </Text>
                             <Text style={{fontSize:12,color:'white', top:0, marginRight:5, }}>
@@ -176,19 +194,17 @@ export default class ActivityList extends React.Component{
                 </View>
             </View>
                 <View style={{background: 'red', margin: 10}}>
-                {this.receivedFiles==null? 
-                    
+                {this.state.imageClickedState==false? 
                     <Image 
                     style={styles.previewImage}
                     source = { { uri: "file://"+itemIndex.evidenceFiles[0]}}/>
                     :
                     <Image 
                     style={styles.previewImage}
-                    source = { { uri: "file://"+this.state.receivedFiles}}/>
+                    source = { { uri: "file://"+this.state.imageClicked}}/>
                     
                 }
                     
-
                 </View>
                
                 <View style={{marginLeft:10,marginRight: 10, backgroundColor:'', marginLeft:20, marginRight:20}}>
@@ -198,12 +214,13 @@ export default class ActivityList extends React.Component{
                     horizontal={true}
                     renderItem={ ({ item }) => (  
                         <TouchableOpacity 
-                            onPress={()=> this.receivedData(item)}>
-                            <View style={{flexDirection: 'row'}}>                
-                            <Image 
-                            style={styles.imageInBox}
-                            source = {{ uri: "file://"+itemIndex.evidenceFiles[0]}} />
-                        </View>
+                            onPress={()=> {this.receivedData(item)}
+                            }>
+                            <View style={{flexDirection: 'row'}}>         
+                                <Image 
+                                style={styles.imageInBox}
+                                source = {{ uri: "file://"+item}} />
+                            </View>
                         </TouchableOpacity>
                         
                     )} 
@@ -217,21 +234,27 @@ export default class ActivityList extends React.Component{
                             value of incidence
                         </Text> */}
                 </View>
-                <View style={{flexDirection:'row', backgroundColor:'', marginTop:5, 
+                <View style={{flexDirection:'row', flex:0.5,backgroundColor:'', marginTop:5, 
                 marginLeft: 10, marginRight: 10, }}>
-                    <Text style={{fontFamily:'roboto',fontSize:16, fontWeight:'500', marginRight:5}}>
+                    <Text style={{fontFamily:'roboto',fontSize:16, fontWeight:'500', marginRight:0}}>
                         Description: 
                     </Text>
-                    <View style={{ alignSelf:'center',width:240, marginRight:5,borderWidth: 0, backgroundColor:''}}>
-                    <ScrollView 
-                    style={{width: 240, height:90}}>
-                         <Text style={{fontFamily:'roboto',fontSize:14, alignSelf:'center', marginLeft:5, alignSelf:'center', 
-                            color: '#7E7E7E'}}>
-                            {itemIndex.description}
-                            </Text>
-                    </ScrollView>  
+                    <View style={{ alignSelf:'center',flex:1, marginRight:0,borderWidth: 0, backgroundColor:''}}>
+                        <ScrollView 
+                        style={{flex:1}}>
+                            <Text style={{fontFamily:'roboto',fontSize:14, alignSelf:'center', marginLeft:5, alignSelf:'center', 
+                                color: '#7E7E7E'}}>
+                                {itemIndex.description}
+                                {/* BUILD SUCCESSFUL in 54s
+                                263 actionable tasks: 2 executed, 261 up-to-date
+                                info Connecting to the development server...
+                                info Starting the app on "03744098AJ014469"...
+                                Starting: Intent 
+                                PS D:\soft\s */}
+                                </Text>
+                        </ScrollView>  
                     </View>   
-                    </View>
+                 </View>
                         <Text style={{marginLeft:10}}>Location</Text>
                         <View style={{flex:2, backgroundColor:'',}}>
                         <LocationMap />

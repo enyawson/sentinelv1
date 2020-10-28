@@ -43,6 +43,7 @@ export default class LocationMap extends React.Component{
 const styles = StyleSheet.create({
   container: {
     ...StyleSheet.absoluteFillObject,
+    flex: 2,
     bottom: 10,
     marginLeft: 10,
     marginRight: 10,

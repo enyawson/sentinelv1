@@ -287,19 +287,23 @@ const createNewWaterMark = (path) => new Promise((resolve, reject) => {
         src: path,
         text: "       "+ capturedImageState.capturedImageLatitude +" " + capturedImageState.capturedImageLongitude +'\n'+
             "Date: "+ capturedImageState.capturedImageDate + " "+"Time: "+ capturedImageState.capturedImageDateTime,
-        X: 200,
-        Y: 800,
+        // X: 200,
+        // Y: 800,
+        position:'bottomCenter',
         color: '#E6E4E4',
         fontName: 'Arial-BoldItalicMT',
         fontSize: 28,
-        shadowStyle: {
-            dx: 10.5,
-            dy: 20.8,
-            radius: 20.9,  
-        },
+        // shadowStyle: {
+        //     dx: 10.5,
+        //     dy: 20.8,
+        //     radius: 20.9,  
+        // },
         scale: 1,
         saveFormat: capturedImageState.saveFormat,
-        quality :100
+        quality :100,
+        // textBackgroundStyle: {
+        //     paddingY: 10,
+        // }
     })
     .then(async (res) => {
         console.log("renderingImage status after picture taken, "+ renderingImage)
