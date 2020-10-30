@@ -98,7 +98,10 @@ export default function PhotoLogic ({ props, navigation }) {
         //console.log ('status of toggleVideoButton :'+ videoComponent.toggleVideoButton);
         // console.log("ImageUri Value after mount Taking Photo " + imageUri);
         // console.log("Video Uri after mount "+ videoUri);
-            //console.log("ToggleVideoButton state "+ videoComponent.toggleVideoButton);
+        console.log("ToggledVideoButton state onClick "+ videoComponent.toggleVideoButton);
+        console.log("ToggledCameraButton state onClick "+ videoComponent.toggleCameraButton);
+        console.log("ToggledPauseButton state onClick "+ videoComponent.togglePauseButton);
+
             //console.log("TogglePauseButton state "+ videoComponent.togglePauseButton);
         return () => {
             
@@ -206,7 +209,7 @@ export default function PhotoLogic ({ props, navigation }) {
             const jsonValue = JSON.stringify(newData);
             await AsyncStorage.setItem('activityListPicDetail', jsonValue) 
         } catch (e){
-            console.log('pic details not saved');
+       //     console.log('pic details not saved');
         }
         console.log('ACTIVITY_LIST_PIC_DETAIL '+ newData);
         
@@ -217,7 +220,7 @@ export default function PhotoLogic ({ props, navigation }) {
         // Initialize the module 
         Geocoder.init("AIzaSyB1nEal4lqDWdBz9mf79KUd0zGZdgArVfY");
        
-        console.log("lat and lng" + lat + " " +lng);
+       // console.log("lat and lng" + lat + " " +lng);
 
         Geocoder.from(lat, lng)
         .then(json => {
@@ -229,7 +232,7 @@ export default function PhotoLogic ({ props, navigation }) {
             
         })
         .catch(error => console.log("error in network, affecting GPS location"));
-        console.log("Street address of State " + capturedImageState.capturedStreetName);
+       // console.log("Street address of State " + capturedImageState.capturedStreetName);
     }
 
 //function to save Image
@@ -287,12 +290,12 @@ const createNewWaterMark = (path) => new Promise((resolve, reject) => {
         src: path,
         text: "       "+ capturedImageState.capturedImageLatitude +" " + capturedImageState.capturedImageLongitude +'\n'+
             "Date: "+ capturedImageState.capturedImageDate + " "+"Time: "+ capturedImageState.capturedImageDateTime,
-        // X: 200,
-        // Y: 800,
-        position:'bottomCenter',
+        X: 100,
+        Y: 800,
+        // position:'bottomCenter',
         color: '#E6E4E4',
         fontName: 'Arial-BoldItalicMT',
-        fontSize: 28,
+        fontSize: 50,
         // shadowStyle: {
         //     dx: 10.5,
         //     dy: 20.8,
@@ -301,9 +304,9 @@ const createNewWaterMark = (path) => new Promise((resolve, reject) => {
         scale: 1,
         saveFormat: capturedImageState.saveFormat,
         quality :100,
-        // textBackgroundStyle: {
-        //     paddingY: 10,
-        // }
+        textBackgroundStyle: {
+            paddingY: 10,
+        }
     })
     .then(async (res) => {
         console.log("renderingImage status after picture taken, "+ renderingImage)
@@ -456,7 +459,7 @@ const takePicture = async () => {
 
 
 const takeVideo = async () => {
-        
+    
         //console.log('is Recording takeVideo status : '+ isRecording)
         if (camera && !isRecording) {
             try {
@@ -548,20 +551,61 @@ const stopVideo = async () => {
 //     })
 //     console.log('toggleVideoComponentButton to false '+ videoComponent.toggleVideoButton)
 // }
-/**Function to change video icon views*/
+
+/**Function to change video icon views on click*/
 const renderVideoComponent = ()=> {
     //set video state to true to turn display of camera button to none
-    const newState = !videoComponent.toggleVideoButton;
+    // const newState = !videoComponent.toggleVideoButton;
+    const newState = true;
+
     //turn camera button to true
-    let toggleCamView = !videoComponent.toggleCameraButton
+    //const toggleCamView = !videoComponent.toggleCameraButton
+    const toggleCamView = true;
     setVideoComponent({
        toggleVideoButton: newState,
        toggleCameraButton: toggleCamView,
    })
-   console.log('status of toggleVideoButton onclick :'+ videoComponent.toggleVideoButton)
+  // console.log('status of toggleVideoButton onclick :'+ videoComponent.toggleVideoButton)
    
 }
-
+/**toggle stop button on click */ 
+const toggleStopButtonOnClick = ()=> {
+    //change the state of toggle video button to true
+    // const newState = !videoComponent.toggleVideoButton;
+    const newState = false;
+   
+    //change the state of toggle video button to true
+    // const toggleCamView =  !videoComponent.toggleCameraButton;
+    const toggleCamView =  false;
+   
+    //set changes in video component state
+    setVideoComponent({
+        toggleVideoButton: newState,
+        toggleCameraButton: toggleCamView,
+    })
+}
+/**toggle pause button on click */ 
+const togglePauseButtonOnClick = ()=> {
+    //change the state of toggle pause button to true
+    // const newState = !videoComponent.togglePauseButton;
+    const newState = true;
+    //set changes in video component state
+    setVideoComponent({
+        togglePauseButton: newState,
+        toggleVideoButton: true, // toggle videoButton to true
+        toggleCameraButton: true, // toggle cameraButton to true
+    })
+}
+/**toggle play button on click */ 
+const togglePlayButtonOnClick = ()=> {
+    const newState = false;
+    //set changes in video component state
+    setVideoComponent({
+        togglePauseButton: newState,
+        toggleVideoButton: true, // toggle videoButton to true
+        toggleCameraButton: true, // toggle cameraButton to true
+    })
+}
 
 /**Function to to turn off take picture Button */
 const renderPauseButton=()=>{
@@ -643,12 +687,11 @@ const renderCamera = ()=>{
                 <GPSLocationLogic customProp={handleData}  streetName={capturedImageState.capturedStreetName}/>
             </View>  
             <View style={{
-                    flex: 0., 
-                    flexDirection: 'row', 
-                    alignSelf:'stretch',
-                    justifyContent: 'center',
-                    
-                }}>
+                flex: 0., 
+                flexDirection: 'row', 
+                alignSelf:'stretch',
+                justifyContent: 'center',        
+            }}>
                 
                 <View 
                 flexDirection='row' 
@@ -674,6 +717,7 @@ const renderCamera = ()=>{
                                 
                                     <TouchableOpacity
                                         style={styles.stop}
+                                        onPress={()=>{toggleStopButtonOnClick()}}
                                     >
                                         <Stop 
                                         name ="stop" 
@@ -686,7 +730,7 @@ const renderCamera = ()=>{
                             {/* } */}
                                   
                          </View>
-                     </View>
+                    </View>
                     :
                     <View>
                         <TouchableOpacity
@@ -702,14 +746,26 @@ const renderCamera = ()=>{
                         disabled={false}
                         style={styles.video} >
                             {videoComponent.toggleVideoButton? 
-                                <TouchableOpacity
-                                >
-                                    <Pause
-                                    name="pause"
-                                    size={28} 
-                                    color="#fff"
-                                    />
-                                </TouchableOpacity>
+                                <View>
+                                {videoComponent.togglePauseButton && videoComponent.toggleVideoButton?
+                                    <TouchableOpacity
+                                    onPress={()=> togglePlayButtonOnClick()}>
+                                        <Play
+                                        name="play"
+                                        size={28} 
+                                        color="#fff"/>
+                                    </TouchableOpacity>
+                                     :
+                                    <TouchableOpacity 
+                                    onPress={()=> togglePauseButtonOnClick()}>
+                                        <Pause
+                                        name="pause"
+                                        size={28} 
+                                        color="#fff"/>
+                                    </TouchableOpacity>
+                                }  
+                                </View>
+                                
                                 :
                                 <TouchableOpacity
                                      onPress= {()=> renderVideoComponent()}>
@@ -717,11 +773,8 @@ const renderCamera = ()=>{
                                     name="video"
                                     size={28} 
                                     color="#f8f8ff"
-                                    
                                     /> 
                                 </TouchableOpacity>
-                                    
-                                
                             }
                         </TouchableOpacity>  
                     </View>

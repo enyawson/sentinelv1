@@ -154,9 +154,6 @@ export default class ActivityList extends React.Component{
         console.log(itemIndex)
         console.log("file:/"+itemIndex.evidenceFiles[0]);
        
-       
-        
-        
         return(
         <View style= {styles.container}>
             <StatusBar barStyle="light-content" backgroundColor="#174060"/>
@@ -201,8 +198,9 @@ export default class ActivityList extends React.Component{
                     :
                     <Image 
                     style={styles.previewImage}
-                    source = { { uri: "file://"+this.state.imageClicked}}/>
-                    
+                    source = { { uri: "file://"+this.state.imageClicked}}
+                        resizeMode={'contain'}
+                    /> 
                 }
                     
                 </View>

@@ -85,6 +85,25 @@ export default class EnterResult extends React.Component{
             //     name: 'Nima Pol:CC0014',
             // }
             ],
+            presidential:[
+                {
+                id: 1,
+                candidateImage: '',
+                candidateName: " ",
+                partyImage: " ",
+                partyName: " ",
+                result: " ",  
+            },
+            {
+                id: 1,
+                imageOfCandidate: ' ',
+                partyImage: '',
+                candidateName: '',
+                result: ' ' 
+              },
+           
+            ]
+            
         } 
     }
 
@@ -104,6 +123,11 @@ componentDidUpdate(){
     //     //set the onSubmit state to true
     //     setOnSubmit(true);
     // }
+    setResult(text){
+        this.setState({
+            result : text
+        });
+    }
 
     render()
     {
@@ -138,15 +162,16 @@ componentDidUpdate(){
                     resetValue={false}
                     textInputProps ={
                         {
-                            placeholder: "select polling station code",
+                            placeholder: "select polling station code or Name ",
                             underlineColorAndroid: "transparent",
                             fontSize:16,
+                            height: 40,
+                            
                             style: {
                                 padding:12,
                                 borderWidth: 1,
                                 borderColor: '#ccc',
                                 borderRadius: 10,
-                                
                             },
                             onTextChange: text => {
                                 //check if text is in  the list
@@ -163,14 +188,71 @@ componentDidUpdate(){
                     }
                     />
             </Fragment>
-    
-           
-                <View style={{ flex: 1, backgroundColor: 'blue',}}>
-                    
+                    {/* presidential and parliamentary result  */}
+                <View style={{ flex: 0.1,flexDirection:'row', backgroundColor: '', justifyContent:'center'}}>
+                    <TouchableOpacity style={styles.presidential}>
+                        <Text style={{alignSelf:'center', color:'gray'}}>
+                            PRESIDENTIAL
+                        </Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity style={styles.parliamentary}>
+                        <Text style={{alignSelf:'center', color:'gray'}}>
+                            PARLIAMENTARY
+                        </Text>
+                    </TouchableOpacity>
                 </View>
 
-                <View style={{flex:1,backgroundColor: 'yellow',}}>
+                <View style={{flex:1,backgroundColor: '',flexDirection:'column',margin:5 }}>
+                <View style={{backgroundColor:'', flexDirection:'row', flex:0.2,borderRadius:5,elevation:2}}>
+                    <View style={{backgroundColor: '#1D5179', width: 50,marginLeft: 5,justifyContent:'center'}}>
+                        <Text style={{alignSelf:'center', color: 'white', fontSize: 20}}>1</Text>
+                    </View>
+                    <View style={{backgroundColor: '', width: 100, height: 100,justifyContent:'center'}}>
+                        <View>
+                        <Image 
+                        style={styles.imageInBox}
+                        source = { require('../assets/politicalCandidate.png') } />
+                           <Text style={{alignSelf:'center', fontSize:12}}>
+                               name: candidate 
+                           </Text>
+                        </View>
+                    </View>
+                    <View style={{backgroundColor: '', width: 100, height: 100,justifyContent:'center'}}>
+                        <Image 
+                        style={styles.partyImage}                        source = { require('../assets/NDP_Ghana_logo.png') } />
+                           <Text style={{alignSelf:'center', fontSize:18}}>
+                               NDP
+                           </Text>
+                    </View>
+                    <View style={{backgroundColor: '', width: 100, height: 100,justifyContent:'center',marginRight: 5}}>
+                        <TextInput 
+                                style={{height: 40, 
+                                marginLeft: 5}}
+                                onChangeText={(text) => 
+                                this.setResult(text)
+                                }
+                                textAlignVertical={'top'}
+                                value={this.state.result}
+                                multiline={false}
+                                placeholder={' Enter result'}
+                                fontSize={14}
+                                enablesReturnKeyAutomatically={true}
+                            > 
+                        </TextInput>
+                    </View>
+
+                </View>
+                  
+                {/* <FlatList
+                data= {}
+                keyExtractor={(item, index)=> index.toString()}
+                renderItem={ ({ item }) => (  
                     
+                   <View>   </View>
+                )   
+                }
+                /> */}
                 </View>
             </View>
             
@@ -203,25 +285,43 @@ const styles = StyleSheet.create({
         fontWeight: 'bold', 
     }, 
     presidential:{
-        width: 300,
-        height: 40,
-        justifyContent: 'center',
+        width: 140,
+        height: 35,
+        alignSelf: 'center',
+        justifyContent:'center',
         borderRadius:5, 
         borderWidth: 1,
-        borderColor:'#1D5179',
-        backgroundColor: '#f0f0f0',
+        borderColor:'gray',
+        backgroundColor: '#ffffff',
+        marginLeft: 10,
+        marginRight:10,
 
 
     },
     parliamentary:{
-        width: 300,
-        height: 40,
-        backgroundColor: '#f0f0f0',
+        width: 140,
+        height: 35,
+        backgroundColor: '#ffffff',
         justifyContent: 'center',
+        alignSelf: 'center',
         borderRadius:5,  
         borderRadius:5, 
         borderWidth: 1,
-        borderColor:'#1D5179'
+        borderColor:'gray',
     },
+    imageInBox:{
+        width: 70,
+        height: 70,
+        justifyContent:'center',
+        alignSelf: 'center',
+    
+    },
+    partyImage:{
+        width: 60,
+        height: 60,
+        justifyContent:'center',
+        alignSelf: 'center',
+    
+    }
     
 })
