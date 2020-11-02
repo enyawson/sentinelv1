@@ -7,7 +7,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import ArrowBack from 'react-native-vector-icons/Ionicons';
 import LocationMap from './LocationMap';
 import { ThreeDRotationSharp } from '@material-ui/icons';
-
+import Play from 'react-native-vector-icons/Ionicons';
 
 
 
@@ -136,7 +136,36 @@ export default class ActivityList extends React.Component{
         // //console.log("RECEIVED FILES "+ this.state.receivedFiles + initialViewState)
         // console.log("ITEM CLICKED STATE : "+ this.state.imageClickedState);
     }
- 
+ /**This method checks for the extension of file (jpg or mp4) */
+ checkExtensionOfFile=(item)=>{
+    //set the state of extension 
+    let ext = item.split('.').pop();
+    //console.log("Extension "+ ext);
+    if (ext == 'jpg'){
+         return(
+            <Image
+            style={styles.imageInBox}   
+            source = {{ uri: "file://"+ item}}/>
+     )
+    } 
+    if (ext == 'mp4'){
+        return(
+            <View>
+                <Image
+                style={styles.imageInBox}  
+                source = {{ uri: "file://"+ item}}/>
+                <TouchableOpacity style={styles.playPhotoButton}>
+                        <Play
+                           name={'play-circle-outline'}
+                           size={35}
+                           color="#C0C0C0"  
+                        />   
+                </TouchableOpacity>
+            </View>
+            )
+            
+    }
+}
     render () {
         // const { navigation } = this.props;
         // const itemIndex = navigation.getParam('itemIndex', 'NO-ID');
@@ -168,60 +197,63 @@ export default class ActivityList extends React.Component{
                     style={{margin:15, alignContent: 'center'}}/>  
                 </TouchableOpacity>
                 <View style={{flexDirection: 'column', justifyContent:'center', }}>
-                <Text style={{marginLeft:90, marginRight:0,marginTop: 10, fontFamily:'roboto',fontSize:18,color:'white'}}>{itemIndex.incidenceValue}</Text>
+                    <Text style={{alignSelf:'center',marginLeft:40,marginTop: 10, fontFamily:'roboto',fontSize:18,color:'white'}}>
+                        INCIDENT: {itemIndex.incidenceValue.toUpperCase()}
+                    </Text>
                     <View style={{flexDirection: 'row',marginLeft:50, }}>
-                        <View style={{flexDirection: 'row',}}>
-                            <Text style={{fontSize:12,color:'white', top:0, marginRight:5, }}>
-                                Time: 
-                            </Text>
-                            <Text style={{fontSize:12,color:'white', top:0}}>
-                            {itemIndex.picDetail.timeTaken}
-                            </Text>
-                        </View>
-                        <View style={{flexDirection: 'row'}}>
-                            <Text style={{fontSize:12,color:'white', top:0, marginLeft: 0,marginRight:5, }}>
-                                Date: 
+                         <View style={{flexDirection: 'row'}}>
+                            <Text style={{fontSize:12,color:'white', top:0, marginLeft: 0,marginRight:2,fontWeight:'bold' }}>
+                                DATE: 
                             </Text>
                             <Text style={{fontSize:12,color:'white', top:0, marginRight:5, }}>
                                 {itemIndex.picDetail.dateTaken}
                             </Text>
                         </View>
+                        <View style={{flexDirection: 'row',}}>
+                            <Text style={{fontSize:12,color:'white', top:0, marginRight:2,fontWeight:'bold'  }}>
+                                TIME: 
+                            </Text>
+                            <Text style={{fontSize:12,color:'white', top:0}}>
+                            {itemIndex.picDetail.timeTaken}
+                            </Text>
+                        </View>
+                       
                     </View>
                   
                 </View>
             </View>
-                <View style={{background: 'red', margin: 10}}>
-                {this.state.imageClickedState==false? 
-                    <Image 
-                    style={styles.previewImage}
-                    source = { { uri: "file://"+itemIndex.evidenceFiles[0]}}/>
-                    :
-                    <Image 
-                    style={styles.previewImage}
-                    source = { { uri: "file://"+this.state.imageClicked}}
-                        resizeMode={'contain'}
-                    /> 
-                }
+                {/* <View style={{background: '', margin: 10}}>
+                    {this.state.imageClickedState==false? 
+                        <Image 
+                        style={styles.previewImage}
+                        source = { { uri: "file://"+itemIndex.evidenceFiles[0]}}/>
+                        :
+                        <Image 
+                        style={styles.previewImage}
+                        source = { { uri: "file://"+this.state.imageClicked}}
+                            resizeMode={'contain'}
+                        /> 
+                        used in onpress button on individual item
+                        onPress={()=> {this.receivedData(item)}
+                    }
                     
-                </View>
+                </View> */}
                
-                <View style={{marginLeft:10,marginRight: 10, backgroundColor:'', marginLeft:20, marginRight:20}}>
+                <View style={{flex: 1.2,marginRight: 5, backgroundColor:'', marginLeft:5,
+                 marginTop: 10, borderWidth:0.5,padding:2, alignSelf: 'center'}}>
                     <FlatList
                     data= {itemIndex.evidenceFiles}
                     keyExtractor={(item, index)=> index.toString()}
-                    horizontal={true}
+                    horizontal={false}
                     renderItem={ ({ item }) => (  
-                        <TouchableOpacity 
-                            onPress={()=> {this.receivedData(item)}
-                            }>
+                        <TouchableOpacity >
                             <View style={{flexDirection: 'row'}}>         
-                                <Image 
-                                style={styles.imageInBox}
-                                source = {{ uri: "file://"+item}} />
+                            {this.checkExtensionOfFile(item)}
                             </View>
                         </TouchableOpacity>
                         
-                    )} 
+                    )}
+                    numColumns={4}
                     />
                 </View>
                 <View style={{flexDirection:'row', backgroundColor:'', marginTop: 10, marginLeft: 10, marginRight: 10,}}>
@@ -233,14 +265,14 @@ export default class ActivityList extends React.Component{
                         </Text> */}
                 </View>
                 <View style={{flexDirection:'row', flex:0.5,backgroundColor:'', marginTop:5, 
-                marginLeft: 10, marginRight: 10, }}>
+                    marginLeft: 10, marginRight: 10, borderWidth: 0}}>
                     <Text style={{fontFamily:'roboto',fontSize:16, fontWeight:'500', marginRight:0}}>
                         Description: 
                     </Text>
-                    <View style={{ alignSelf:'center',flex:1, marginRight:0,borderWidth: 0, backgroundColor:''}}>
+                    <View style={{ alignSelf:'center',marginLeft:5,borderWidth: 0, backgroundColor:''}}>
                         <ScrollView 
                         style={{flex:1}}>
-                            <Text style={{fontFamily:'roboto',fontSize:14, alignSelf:'center', marginLeft:5, alignSelf:'center', 
+                            <Text style={{fontFamily:'roboto',fontSize:15, alignSelf:'center', marginLeft:5, alignSelf:'center', 
                                 color: '#7E7E7E'}}>
                                 {itemIndex.description}
                                 {/* BUILD SUCCESSFUL in 54s
@@ -271,14 +303,23 @@ const styles = StyleSheet.create ({
         backgroundColor: '#FFFFFF',
     },
     imageInBox: {
-        width: 45,
-        height: 45,
+        width: 80,
+        height: 85,
         justifyContent: 'center',
         alignSelf:'center',
-        marginLeft:5,
-        marginRight:5,
+        margin:2,
         backgroundColor: '#7E7E7E'
       },
+      playPhotoButton:{
+        position:'absolute',
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'black',
+        width: 80,
+        height: 85,
+        alignSelf:'center',
+        opacity: 0.5,
+    },
       previewImage:{
         width: 340,
         height: 250,

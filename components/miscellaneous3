@@ -828,3 +828,14 @@ const styles = StyleSheet.create ({
     }
 });
 AppRegistry.registerComponent('App', () => MainActivityList);
+
+ <View style={{backgroundColor: 'black',opacity: 0.8, justifyContent:'center', width:70, height: 75}}>
+            
+                {/* <TouchableOpacity style={styles.playPhotoButton}>
+                    <Play
+                       name={'play-circle-outline'}
+                       size={35}
+                       color="#C0C0C0"  
+                    />   
+                </TouchableOpacity> */}
+            </View>

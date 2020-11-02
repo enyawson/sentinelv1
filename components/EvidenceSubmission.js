@@ -15,7 +15,7 @@ import CameraRoll from "@react-native-community/cameraroll";
 import AsyncStorage from '@react-native-community/async-storage';
 import ArrowBack from 'react-native-vector-icons/Ionicons';
 import { set } from 'react-native-reanimated';
-
+import Play from 'react-native-vector-icons/Ionicons';
 
 
 
@@ -30,6 +30,7 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
     const [photos, setPhotos] = useState([]);
     const [picDetails, setPicDetails] = useState(" ");
     //const [dateFileTaken, setDateFileTaken] = useState('21/10/2020')
+    const [mp4Extension, setMp4Extension] = useState(false);
     
   
 
@@ -225,7 +226,40 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
         
         })      
     }
-
+/**This method checks for the extension of file (jpg or mp4) */
+const checkExtensionOfFile=(item)=>{
+    //set the state of extension 
+    let ext = item.split('.').pop();
+    //console.log("Extension "+ ext);
+    if (ext == 'jpg'){
+         return(
+            <Image
+            onLoadStart={_onLoadStart}
+            onLoadEnd={_onLoadEnd}
+            style={{ width:68, height:75,margin:1, resizeMode:'cover'}}   
+            source = {{ uri: "file://"+ item}}/>
+     )
+    } 
+    if (ext == 'mp4'){
+        return(
+            <View>
+                <Image
+                onLoadStart={_onLoadStart}
+                onLoadEnd={_onLoadEnd}
+                style={{ width:68, height:75,margin:1, resizeMode:'cover'}}   
+                source = {{ uri: "file://"+ item}}/>
+                <TouchableOpacity style={styles.playPhotoButton}>
+                        <Play
+                           name={'play-circle-outline'}
+                           size={35}
+                           color="#C0C0C0"  
+                        />   
+                </TouchableOpacity>
+            </View>
+            )
+            
+    }
+}
 
     return(
         <SafeAreaView style= {globalStyle.MainContainer}>
@@ -242,15 +276,16 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
                         keyExtractor={(item, index)=> index}
                         renderItem={ ({ item}) => (  
                           <TouchableOpacity onPress={() => navigateToPhotoPreview(item) }>
-                             <Image
+                            {checkExtensionOfFile(item)}
+                             {/* <Image
                                 onLoadStart={_onLoadStart}
                                 onLoadEnd={_onLoadEnd}
-                                style={{ width:70, height:75,margin:0.5, resizeMode:'cover'}}   
+                                style={{ width:70, height:75,margin:1, resizeMode:'cover'}}   
                                 source = {{ uri: "file://"+ item}} 
                               
                                 // source = {{ uri: item}} 
                                 //source = {{ uri: item.node.image.uri}} 
-                            />
+                            /> */}
                             {/* {loading && <ActivityIndicator
                                 size='small'
                                 color='#1D5179'
@@ -273,12 +308,11 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
                 </View>  
             </View>
             <TouchableOpacity style={styles.addPhotoButton}
-                    onPress={()=>{navigation.goBack()}}>
-                    <Add
-                       name={'add'}
-                       size={30}
-                       color="white"  
-                    />   
+                onPress={()=>{navigation.goBack()}}>
+                <Add
+                name={'add'}
+                size={30}
+                color="white"/>   
             </TouchableOpacity>
 
             <View style={{justifyContent: 'center', margin:5 ,flex: 1.2}}>
@@ -390,7 +424,7 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
                         alignSelf:'center',
                         fontSize: 18,
                         }}>
-                        Next
+                        Submit
                     </Text>
                 </TouchableOpacity>   
             </View>
@@ -468,6 +502,17 @@ const styles = StyleSheet.create({
         position: 'absolute',
         right: 12,
         top: 5, 
+    },
+    playPhotoButton:{
+        position:'absolute',
+        justifyContent: 'center',
+        alignItems: 'center',
+        
+        backgroundColor: 'black',
+        width: 68,
+        height: 75,
+        alignSelf:'center',
+        opacity: 0.5,
     },
     trashButton: {
         width: 30,

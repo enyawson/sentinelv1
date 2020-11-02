@@ -69,7 +69,7 @@ export default function PhotoLogic ({ props, navigation }) {
         pathBase64: null,
         recordOptions: {
             mute: false,
-            maxDuration: 5,
+            maxDuration: 50,
             quality: RNCamera.Constants.VideoQuality['288p'],
         },
         ratio: '16:9',
@@ -95,18 +95,18 @@ export default function PhotoLogic ({ props, navigation }) {
 
     useEffect(() => {
         console.log("Photo component mounted");
-        //console.log ('status of toggleVideoButton :'+ videoComponent.toggleVideoButton);
-        // console.log("ImageUri Value after mount Taking Photo " + imageUri);
-        // console.log("Video Uri after mount "+ videoUri);
-        console.log("ToggledVideoButton state onClick "+ videoComponent.toggleVideoButton);
-        console.log("ToggledCameraButton state onClick "+ videoComponent.toggleCameraButton);
-        console.log("ToggledPauseButton state onClick "+ videoComponent.togglePauseButton);
-
+        
+        console.log("ToggledVideoButton OFF onClick  "+ videoComponent.toggleVideoButton);
+        console.log("ToggledCameraButton OFF onClick "+ videoComponent.toggleCameraButton);
+        console.log("ToggledPauseButton OFF onClick "+ videoComponent.togglePauseButton);
+        console.log('recording :' + isRecording);
+        console.log('video uri : '+ videoUri);
             //console.log("TogglePauseButton state "+ videoComponent.togglePauseButton);
         return () => {
             
         }
-    }, [imageUri, videoComponent.toggleVideoButton, videoComponent.togglePauseButton, imageWithIcon])
+    }, [imageUri, videoComponent.toggleVideoButton, videoComponent.togglePauseButton, imageWithIcon, 
+    isRecording, videoUri])
     
     //test function 
     // const testFunc =()=> {
@@ -218,7 +218,7 @@ export default function PhotoLogic ({ props, navigation }) {
     /** this method gets street address name */
     const getStreetData= (lat, lng) =>{
         // Initialize the module 
-        Geocoder.init("AIzaSyB1nEal4lqDWdBz9mf79KUd0zGZdgArVfY");
+        Geocoder.init("AIzaSyBVySLCyfP7xyn8Zz2ntOiuMFaZWSk-9Uo");
        
        // console.log("lat and lng" + lat + " " +lng);
 
@@ -236,7 +236,7 @@ export default function PhotoLogic ({ props, navigation }) {
     }
 
 //function to save Image
-async function savePicture(path){
+async function saveInFolder(path){
         let imageUri = path;
         //if permission denied do this or save picture
         if  (Platform.OS == "android" && !(await hasAndroidPermission() )){
@@ -244,7 +244,7 @@ async function savePicture(path){
             return;
            
         }
-        CameraRoll.save(imageUri, {type:'photo', album: 'ElectionWatchFolder'});
+        CameraRoll.save(imageUri, {type:'photo', album: 'ElectionWatch'});
         console.log('Image Saved in Election Watch folder');      
         
 }
@@ -310,9 +310,10 @@ const createNewWaterMark = (path) => new Promise((resolve, reject) => {
     })
     .then(async (res) => {
         console.log("renderingImage status after picture taken, "+ renderingImage)
+        saveInFolder(res);
         saveImage2(res);
-        savePicture(res);
         resolve(true)
+
     })
     .catch((err) => reject(err))
 })
@@ -458,17 +459,18 @@ const takePicture = async () => {
 
 
 
-const takeVideo = async () => {
-    
-        //console.log('is Recording takeVideo status : '+ isRecording)
+const takeVideo = async () => {  
         if (camera && !isRecording) {
             try {
                 const promise = camera.recordAsync(camState.recordOptions);
                 if (promise){
-                    setIsRecording({isRecording: true});
+                    setIsRecording(true);
                     const data = await promise;
                     
                     const videoPath = await data.uri
+                    console.log(data)
+                    setVideoUri( await videoPath);
+                    //save video asynchronously
                    
                    // console.log("VideoPath after video capture : " + videoPath)
                    // console.log('Video Taken', data)
@@ -476,46 +478,52 @@ const takeVideo = async () => {
                     //console.log('video uri : '+ videoUri);
                     saveImage2(videoPath)
                 }
+                saveImage2(promise.uri)
+                //saveInFolder(data);
+                
             } catch (e){
                  console.error(e);
 
              }
         }
 };
-
-const renderRecording = () =>{
-    console.log('is Recording status : '+ isRecording)
-    if(isRecording){
-        stopVideo();
-        renderStopRecBtn();
-    }else{
-        takeVideo();
-        console.log('isRecording status in takeVideo : '+ isRecording)
-        renderRecBtn();
-        
-    }
-    // const backgroundColor = isRecording ? 'white' : 'black';
-    // const action = isRecording ? stopVideo() : takeVideo();
-    // const button = isRecording ? renderStopRecBtn(): renderRecBtn();
-    // return (
-    //     <View style={styles.container}>
-    //          <TouchableOpacity
-    //         style={[styles.flipButton, {flex: 0.3, alignSelf: 'flex-end', backgroundColor,}]}
-    //         onPress={()=> action()}
-    //     >
-    //     {button}
-    //     </TouchableOpacity>
-        
-    //     </View>
-       
-    // );
-}
-
 const stopVideo = async () => {
     await camera.stopRecording();
-    setIsRecording({isRecording: false});
+    setIsRecording(false);
+    console.log('recording '+ isRecording)
    // console.log('is Recording value after stop video :'+ isRecording)
+ 
 };
+
+// const renderRecording = () =>{
+//     console.log('is Recording status : '+ isRecording)
+//     if(isRecording){
+//         stopVideo();
+//         renderStopRecBtn();
+//     }else{
+//         takeVideo();
+//         console.log('isRecording status in takeVideo : '+ isRecording)
+//         renderRecBtn();
+        
+//     }
+//     // const backgroundColor = isRecording ? 'white' : 'black';
+//     // const action = isRecording ? stopVideo() : takeVideo();
+//     // const button = isRecording ? renderStopRecBtn(): renderRecBtn();
+//     // return (
+//     //     <View style={styles.container}>
+//     //          <TouchableOpacity
+//     //         style={[styles.flipButton, {flex: 0.3, alignSelf: 'flex-end', backgroundColor,}]}
+//     //         onPress={()=> action()}
+//     //     >
+//     //     {button}
+//     //     </TouchableOpacity>
+        
+//     //     </View>
+       
+//     // );
+// }
+
+
 
 // const renderRecBtn =() => {
 //     console.log("RECORDING.............")
@@ -554,12 +562,13 @@ const stopVideo = async () => {
 
 /**Function to change video icon views on click*/
 const renderVideoComponent = ()=> {
+    //take video
+    takeVideo();
     //set video state to true to turn display of camera button to none
     // const newState = !videoComponent.toggleVideoButton;
     const newState = true;
 
     //turn camera button to true
-    //const toggleCamView = !videoComponent.toggleCameraButton
     const toggleCamView = true;
     setVideoComponent({
        toggleVideoButton: newState,
@@ -570,12 +579,11 @@ const renderVideoComponent = ()=> {
 }
 /**toggle stop button on click */ 
 const toggleStopButtonOnClick = ()=> {
+    
     //change the state of toggle video button to true
-    // const newState = !videoComponent.toggleVideoButton;
     const newState = false;
    
     //change the state of toggle video button to true
-    // const toggleCamView =  !videoComponent.toggleCameraButton;
     const toggleCamView =  false;
    
     //set changes in video component state
@@ -583,11 +591,12 @@ const toggleStopButtonOnClick = ()=> {
         toggleVideoButton: newState,
         toggleCameraButton: toggleCamView,
     })
+    //stops video recording
+    stopVideo ();
 }
 /**toggle pause button on click */ 
 const togglePauseButtonOnClick = ()=> {
     //change the state of toggle pause button to true
-    // const newState = !videoComponent.togglePauseButton;
     const newState = true;
     //set changes in video component state
     setVideoComponent({
