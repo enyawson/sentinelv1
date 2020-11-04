@@ -126,9 +126,9 @@ export default class ActivityList extends React.Component{
                             <Text style={{fontSize:16, fontWeight:'500', fontFamily:'roboto'}}>{item.incidenceValue}</Text>
                             <Text style={{fontSize:12, marginBottom:5,}}>{item.picDetail.streetName}</Text>
                         </View>
-                        <View style={{right: 45,marginTop: 5}}>
-                            <Text>{item.picDetail.timeTaken}</Text>
-                            <Text style={{right: 40}}>{item.picDetail.dateTaken}</Text>
+                        <View style={{right: 32,marginTop: 5}}>
+                            <Text style={{right:32, fontSize:12}}>{item.picDetail.dateTaken}</Text>
+                            <Text style={{fontSize: 12}}>{item.picDetail.timeTaken}</Text>
                         </View>
                         
                     </TouchableOpacity>

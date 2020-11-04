@@ -2,7 +2,7 @@ import React from 'react';
 import {
     StyleSheet, Text,  View, StatusBar,
     Image, TouchableOpacity, Dimensions} from 'react-native';
-import { FlatList, ScrollView } from 'react-native-gesture-handler';
+import { FlatList, ScrollView, TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import AsyncStorage from '@react-native-community/async-storage';
 import ArrowBack from 'react-native-vector-icons/Ionicons';
 import LocationMap from './LocationMap';
@@ -154,17 +154,32 @@ export default class ActivityList extends React.Component{
                 <Image
                 style={styles.imageInBox}  
                 source = {{ uri: "file://"+ item}}/>
-                <TouchableOpacity style={styles.playPhotoButton}>
-                        <Play
-                           name={'play-circle-outline'}
-                           size={35}
-                           color="#C0C0C0"  
-                        />   
-                </TouchableOpacity>
+                <View style={{ backgroundColor: 'black',
+                 position:'absolute',justifyContent:'center',alignItems: 'center',margin:2,
+                 width: 80 , height: 86,opacity:0.5}}>
+                <Play
+                    name={'play-circle-outline'}
+                    size={35}
+                    color="white" />   
+                </View>      
+              
             </View>
             )
             
     }
+}
+
+ showPreview =(path)=>{
+     //set the state of extension 
+    let ext = path.split('.').pop();
+    console.log("show Preview ready")
+    if (ext == 'mp4'){
+        return(
+        this.props.navigation.navigate( 'VideoPreview', {itemToPreview: path})
+        )
+    } 
+    
+ 
 }
     render () {
         // const { navigation } = this.props;
@@ -179,7 +194,7 @@ export default class ActivityList extends React.Component{
         // console.log("date "+itemIndex.picDetail.dateTaken)
         // console.log("incidence "+itemIndex.incidenceValue)
         // console.log("des "+itemIndex.description)
-        const { itemIndex } = this.props.route.params;
+        const { itemIndex } = this.props.route.params; //list of items received from an activityList
         console.log(itemIndex)
         console.log("file:/"+itemIndex.evidenceFiles[0]);
        
@@ -240,15 +255,16 @@ export default class ActivityList extends React.Component{
                 </View> */}
                
                 <View style={{flex: 1.2,marginRight: 5, backgroundColor:'', marginLeft:5,
-                 marginTop: 10, borderWidth:0.5,padding:2, alignSelf: 'center'}}>
+                 marginTop: 10, borderWidth:0.5,padding:2, }}>
                     <FlatList
                     data= {itemIndex.evidenceFiles}
                     keyExtractor={(item, index)=> index.toString()}
                     horizontal={false}
                     renderItem={ ({ item }) => (  
-                        <TouchableOpacity >
+                        <TouchableOpacity
+                            onPress={()=> this.showPreview(item)}>
                             <View style={{flexDirection: 'row'}}>         
-                            {this.checkExtensionOfFile(item)}
+                                {this.checkExtensionOfFile(item)}
                             </View>
                         </TouchableOpacity>
                         
@@ -311,12 +327,14 @@ const styles = StyleSheet.create ({
         backgroundColor: '#7E7E7E'
       },
       playPhotoButton:{
-        position:'absolute',
+        
         justifyContent: 'center',
         alignItems: 'center',
+        // width: 100, 
+        // height: 100,
+        marginTop: 25,
         backgroundColor: 'black',
-        width: 80,
-        height: 85,
+        borderRadius: 100,
         alignSelf:'center',
         opacity: 0.5,
     },

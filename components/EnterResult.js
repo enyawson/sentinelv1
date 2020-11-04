@@ -2,49 +2,15 @@ import React, { useState, Fragment } from 'react';
 
 import {
     StyleSheet, View, KeyboardAvoidingView,Text, Image, TouchableOpacity,StatusBar,
-    TextInput, FlatList,ActivityIndicator, Platform
+    TextInput, FlatList,ActivityIndicator, Platform, Dimensions, ScrollView,
 } from 'react-native';
 import SearchableDropdown from 'react-native-searchable-dropdown';
+import ArrowBack from 'react-native-vector-icons/Ionicons';
+import ArrowDown from 'react-native-vector-icons/Ionicons';
+import { Picker } from '@react-native-community/picker';
+import RNPicker from "rn-modal-picker";
 
-items = [
-    {
-      id: 1,
-      name:'Ayawso-North Pol:CC0014',
-    },
-    {
-      id: 2,
-      name: 'Ablekuma-North Pol:CC0674',
-    },
-    {
-      id: 3,
-      name: 'Doodowa-Central Pol:CC0244',
-    },
-    {
-      id: 4,
-      name: 'Kasao-East Pol:CC0034',
-    },
-    {
-      id: 5,
-      name: 'Hafo-east Pol:CC00544',
-    },
-    {
-      id: 6,
-      name: 'Tain Pol:CC00554',
-    },
-    {
-      id: 7,
-      name: 'Paga  Pol:CC00454',
-    },
-    {
-      id: 8,
-      name: 'Boko Pol:CC0894',
-    },
-    {
-        id: 9,
-        name: 'Nima-Central Pol:CC0017', 
-    }
-    
-  ];
+
 // presidential:{
 //     partyName: " ",
 //     candidateName: " ",
@@ -71,19 +37,88 @@ export default class EnterResult extends React.Component{
        // console.log({...props});
 
         this.state ={
+            dataSource: [
+                {
+                  id: '1',
+                  name:'Ayawso-North CC0014',
+                },
+                {
+                  id: '2',
+                  name: 'Ablekuma-North CC0674',
+                },
+                {
+                  id: '3',
+                  name: 'Doodowa-Central CC0244',
+                },
+                {
+                  id: '4',
+                  name: 'Kasao-East CC0034',
+                },
+                {
+                  id: '5',
+                  name: 'Hafo-east CC00544',
+                },
+                {
+                  id: '6',
+                  name: 'Tain CC00554',
+                },
+                {
+                  id: '7',
+                  name: 'Paga  CC00454',
+                },
+                {
+                  id: '8',
+                  name: 'Boko CC0894',
+                },
+                {
+                    id: '9',
+                    name: 'Nima-Central CC0017', 
+                }, {
+                    id: '10',
+                    name: 'Boko CC0894',
+                  },
+                  {
+                      id: '11',
+                      name: 'Nima-Central CC0017', 
+                  },
+                  {
+                    id: '12',
+                    name: 'Boko CC0894',
+                  },
+                  {
+                      id: '13',
+                      name: 'Nima-Central CC0017', 
+                  },{
+                    id: '14',
+                    name: 'Nima-Central CC0017', 
+                },
+                {
+                  id: '15',
+                  name: 'Boko CC0894',
+                },
+                {
+                    id: '16',
+                    name: 'Nima-Central CC0017', 
+                },
+                {
+                    id: '17',
+                    name: 'Boko CC0894',
+                  },
+                  {
+                      id: '18',
+                      name: 'Nima-Central CC0017', 
+                  }, {
+                      id: '19',
+                      name: 'Boko CC0894',
+                    },
+                
+              ],
+              placeHolderText: "Select polling Station",
+              selectedText: " ",
+
+            selectedPollStation: '',
             selectedItems:[
-            // {
-            //     id: 7,
-            //     name: 'Praga Pol:CC0014',
-            // },
-            // {
-            //     id: 8,
-            //     name: 'Boko Pol:CC0014',
-            // },
-            // {
-            //     id: 9,
-            //     name: 'Nima Pol:CC0014',
-            // }
+            
             ],
             presidential:[
                 {
@@ -105,6 +140,12 @@ export default class EnterResult extends React.Component{
             ]
             
         } 
+    };
+    
+    _selectedValue(index, item){
+        this.setState({
+            selectedText: item.name
+        });
     }
 
 
@@ -128,132 +169,123 @@ componentDidUpdate(){
             result : text
         });
     }
+    setPollingStationName (pollName){
+        this.setState({
+            selectedPollStation: pollName,
+        })
+    }
 
     render()
     {
         return(
         <View style={styles.container}>
-            <Fragment>
-            {/* MultiSearch */}
-                <SearchableDropdown
-                    onItemSelect={(item) => {
-                        const items = this.state.selectedItems;
-                        items.push(item)
-                        this.setState({ selectedItems: items });
-                    }}
-                    containerStyle = {{ padding: 5}}
-                    onRemoveItem = {(item, index)=> {
-                        const items = this.state.selectedItems.filter((sitem) => sitem.id !== item.id);
-                        this.setState({ selectedItems: items });
-                    }}
-                    itemStyle={{
-                        padding: 10,
-                        marginTop: 2,
-                        backgroundColor: '#ddd',
-                        borderColor: '#bbb',
-                        borderWidth: 1,
-                        borderRadius: 5,
-                    }}
-                    itemTextStyle={{ color: '#222'}}
-                    itemsContainerStyle={{ maxHeight: 140,
-                    }}
-                    items={items}
-                    defaultIndex ={0}
-                    resetValue={false}
-                    textInputProps ={
-                        {
-                            placeholder: "select polling station code or Name ",
-                            underlineColorAndroid: "transparent",
-                            fontSize:16,
-                            height: 40,
-                            
-                            style: {
-                                padding:12,
-                                borderWidth: 1,
-                                borderColor: '#ccc',
-                                borderRadius: 10,
-                            },
-                            onTextChange: text => {
-                                //check if text is in  the list
-                                //as the user types in
-                               alert(text) 
-                            }
-                        } 
-                    }
-                    listProps = {
-                        {
-                            nestedScrollEnabled: true,
-                        }
-                        
-                    }
+            <View style={{backgroundColor: 'white',borderBottomLeftRadius: 5, borderBottomRightRadius:5,elevation:10}}>
+                <View style={{flexDirection:'row',}}>
+                    <ArrowBack
+                    name={'arrow-back-outline'}
+                    size={23}
+                    color="black"
+                    style={{margin:15, marginRight:50, }}
+                        onPress={()=> this.props.navigation.goBack()}
                     />
-            </Fragment>
-                    {/* presidential and parliamentary result  */}
-                <View style={{ flex: 0.1,flexDirection:'row', backgroundColor: '', justifyContent:'center'}}>
-                    <TouchableOpacity style={styles.presidential}>
-                        <Text style={{alignSelf:'center', color:'gray'}}>
-                            PRESIDENTIAL
-                        </Text>
-                    </TouchableOpacity>
 
-                    <TouchableOpacity style={styles.parliamentary}>
-                        <Text style={{alignSelf:'center', color:'gray'}}>
-                            PARLIAMENTARY
-                        </Text>
-                    </TouchableOpacity>
+                    <Text style={{ color:"#6D6B6B", fontSize: 16, marginTop: 0,
+                    fontFamily:'roboto',fontWeight: 'bold', alignSelf: 'center'}}>
+                    POWERED BY SOFTMASTERS</Text>
                 </View>
+                <RNPicker
+                    dataSource={this.state.dataSource}
+                    dummyDataSource={this.state.dataSource}
+                    defaultValue={false}
+                    pickerTitle ={"Polling Stations"}
+                    showSearchBar={true}
+                    disablePicker={false}
+                    changeAnimation={"none"}
+                    searchBarPlaceHolder = {"Search....."}
+                    showPickerTitle ={true}
+                    searchBarContainerStyle={this.props.searchBarContainerStyle}
+                    pickerStyle={styles.pickerStyle}
+                    pickerItemTextStyle={styles.listTextViewStyle}
+                    selectedLabel={this.state.selectedText}
+                    placeHolderLabel={this.state.placeHolderText}
+                    selectLabelTextStyle={styles.selectLabelTextStyle}
+                    placeHolderTextStyle={styles.placeHolderTextStyle}
+                    dropDownImageStyle={styles.dropDownImageStyle}
+                    dropDownImage= {require("../assets/ic_drop_down.png") }
+                    selectedValue={(index, item) => this._selectedValue(index.toString(), item)}
+                />
+              
 
-                <View style={{flex:1,backgroundColor: '',flexDirection:'column',margin:5 }}>
-                <View style={{backgroundColor:'', flexDirection:'row', flex:0.2,borderRadius:5,elevation:2}}>
-                    <View style={{backgroundColor: '#1D5179', width: 50,marginLeft: 5,justifyContent:'center'}}>
-                        <Text style={{alignSelf:'center', color: 'white', fontSize: 20}}>1</Text>
-                    </View>
-                    <View style={{backgroundColor: '', width: 100, height: 100,justifyContent:'center'}}>
-                        <View>
-                        <Image 
-                        style={styles.imageInBox}
-                        source = { require('../assets/politicalCandidate.png') } />
-                           <Text style={{alignSelf:'center', fontSize:12}}>
-                               name: candidate 
-                           </Text>
-                        </View>
-                    </View>
-                    <View style={{backgroundColor: '', width: 100, height: 100,justifyContent:'center'}}>
-                        <Image 
-                        style={styles.partyImage}                        source = { require('../assets/NDP_Ghana_logo.png') } />
-                           <Text style={{alignSelf:'center', fontSize:18}}>
-                               NDP
-                           </Text>
-                    </View>
-                    <View style={{backgroundColor: '', width: 100, height: 100,justifyContent:'center',marginRight: 5}}>
-                        <TextInput 
-                                style={{height: 40, 
-                                marginLeft: 5}}
+            </View>
+       
+                    {/* presidential and parliamentary result  */}
+                <View style={{flex: 0.1, flexDirection: 'row',backgroundColor: '',elevation: 0,}}>
+                   
+                        <TouchableOpacity style={styles.presidential}>
+                            <Text style={{alignSelf:'center',fontWeight:'500', color:'#1D5179'}}>
+                                PRESIDENTIAL
+                            </Text>
+                        </TouchableOpacity>
+                   
+                        <TouchableOpacity style={styles.parliamentary}>
+                            <Text style={{alignSelf:'center',fontWeight:'500', color:'#FFFFFF'}}>
+                                PARLIAMENTARY
+                            </Text>
+                        </TouchableOpacity>
+                </View>
+               
+                <ScrollView style={{margin: 5,}}>
+                    <View style={{flex:1,backgroundColor: '',flexDirection:'column',margin:15 }}>
+                        <View style={{backgroundColor:'', flexDirection:'row', flex:0.2,borderRadius:7,elevation:2}}>
+                            {/* candidate Image */}
+                            <Image style={{width: 80, height:80, backgroundColor:'#FFD4D4', borderRadius:100,marginLeft:20, alignSelf: 'center'}}
+                                source={require('../assets/dramani.jpg')}
+                            />
+                            <View style={{flexDirection:'column'}}>
+                                <View style={{flexDirection:'row', alignSelf:'center',justifyContent:'center', marginLeft: 10, marginTop: 12}}>
+                                    <Text style={{fontSize:15, fontFamily:'Roboto', fontWeight:'500', alignSelf: 'center', justifyContent:'center' }}>John M. Dramani</Text>
+                                    <Image style={{width: 40, height:40, backgroundColor:'#FFD4D4', borderRadius:100,marginLeft:10, alignSelf: 'center'}}
+                                        source={require('../assets/ndc.png')}
+                                    />
+                                </View>
+                                <TextInput 
+                                style={{height:30, 
+                                width: 185,
+                                borderRadius: 50,
+                                borderColor:'#C4C4C4',
+                                borderWidth: 1, marginLeft: 10,
+                                backgroundColor: 'rgba(196, 196, 196, 0.3)',
+                                marginBottom: 5,
+                            }}
                                 onChangeText={(text) => 
-                                this.setResult(text)
+                                    console.log('send changed vote to state')
                                 }
-                                textAlignVertical={'top'}
-                                value={this.state.result}
-                                multiline={false}
-                                placeholder={' Enter result'}
-                                fontSize={14}
+                                
+                                textAlign={'left'}
+                                placeholder={'   enter total votes'}
+                                fontSize={10}
+                                marginTop={3}
                                 enablesReturnKeyAutomatically={true}
                             > 
-                        </TextInput>
-                    </View>
+                            </TextInput>
 
-                </View>
-                  
-                {/* <FlatList
-                data= {}
-                keyExtractor={(item, index)=> index.toString()}
-                renderItem={ ({ item }) => (  
-                    
-                   <View>   </View>
-                )   
-                }
-                /> */}
-                </View>
+                            </View>
+            
+                        
+                        </View>  
+                        
+
+                    </View>
+                       
+                </ScrollView>
+                <TouchableOpacity style={{backgroundColor:'#1D5179', width: 85, height:35, 
+                justifyContent:'center',alignSelf:'flex-end', margin: 25,borderRadius:5}}>
+                    <Text style={{color: '#ffffff', justifyContent: 'center',
+                    alignSelf:'center',  fontFamily:'Roboto', fontSize: 14}}>
+                        Next
+                    </Text>
+                </TouchableOpacity>
+               
             </View>
             
         
@@ -267,15 +299,83 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: 'column',
         marginTop: 0,
-        backgroundColor: 'white'
+        backgroundColor: '#F2F2F2',
     },
-    contentContainer: {
+    searchBarContainerStyle: {
+        marginBottom: 10,
+        flexDirection: "row",
+        height: 40,
+        shadowOpacity: 1.0,
+        shadowRadius: 5,
+        shadowOffset: {
+          width: 1,
+          height: 1
+        },
+        backgroundColor: "rgba(255,255,255,1)",
+        shadowColor: "#d3d3d3",
+        borderRadius: 10,
+        elevation: 3,
+        marginLeft: 10,
+        marginRight: 10
+      },
+      selectLabelTextStyle: {
+        color: "#000",
+        textAlign: "left",
+        width: "99%",
+        padding: 10,
+        flexDirection: "row"
+      },
+      dropDownImageStyle: {
+        marginLeft: 10,
+        width: 10,
+        height: 10,
+        alignSelf: "center",
+     
+      },
     
-    flex:1, 
-    backgroundColor: '#F0F0F0',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 15,
+      pickerStyle: {
+        marginLeft: 25,
+        elevation:1,
+        paddingRight: 25,
+        marginRight: 15,
+        marginBottom: 10,
+        shadowOpacity: 0.2,
+        shadowOffset: {
+          width: 1,
+          height: 1
+        },
+        borderWidth:0.3,
+        borderColor:"gray",
+        shadowRadius: 0,
+        backgroundColor: "rgba(255,255,255,1)",
+        
+        borderRadius: 5,
+        flexDirection: "row"
+      },
+      listTextViewStyle: {
+        color: "#000",
+        marginVertical: 5,
+        marginLeft: 20,
+        marginHorizontal: 5,
+        textAlign: "left"
+      },
+      placeHolderTextStyle: {
+        color: "gray",
+        padding: 10,
+        textAlign: "left",
+        width: "99%",
+        flexDirection: "row"
+      },
+
+
+
+
+    contentContainer: {
+        flex:1, 
+        backgroundColor: '#F0F0F0',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginTop: 15,
     
     },
 
@@ -283,30 +383,22 @@ const styles = StyleSheet.create({
         fontFamily: 'roboto',
         fontSize: 16,
         fontWeight: 'bold', 
+        
     }, 
-    presidential:{
-        width: 140,
-        height: 35,
+    presidential:{  
+        height: 50,
+        width: Dimensions.get('window').width/2,
         alignSelf: 'center',
         justifyContent:'center',
-        borderRadius:5, 
-        borderWidth: 1,
         borderColor:'gray',
-        backgroundColor: '#ffffff',
-        marginLeft: 10,
-        marginRight:10,
-
-
+        backgroundColor:'#C4C4C4',
     },
     parliamentary:{
-        width: 140,
-        height: 35,
-        backgroundColor: '#ffffff',
+        height: 50,
+        width: Dimensions.get('window').width/2,
+        backgroundColor: '#1D5179',
         justifyContent: 'center',
         alignSelf: 'center',
-        borderRadius:5,  
-        borderRadius:5, 
-        borderWidth: 1,
         borderColor:'gray',
     },
     imageInBox:{

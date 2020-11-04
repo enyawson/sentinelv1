@@ -24,7 +24,9 @@ import { MenuProvider } from 'react-native-popup-menu';
 import ActivityList from './components/ActivityList';
 import ActivityPreview from './components/ActivityPreview';
 import VoteTally from './components/VoteTally';
-import EnterResult from './components/EnterResult'
+import EnterResult from './components/EnterResult';
+import VideoPreview from './components/VideoPreview';
+import PinSheet from './components/PinSheet';
 
 
 const Stack = createStackNavigator();
@@ -159,7 +161,30 @@ export default function App() {
           component ={EnterResult}
           options={{
           title: 'Enter Result',
-          headerShown: true,
+          headerShown: false,
+          headerStyle: {
+          backgroundColor: '#1D5179',
+          },
+          headerTintColor: '#FFFFFF',
+          headerTitleStyle: {
+          fontWeight: 'normal',
+          alignSelf:'center',
+          fontFamily: 'roboto'
+         }}
+          }
+        />  
+         <Stack.Screen 
+          name="VideoPreview"
+          component ={VideoPreview}
+          options={{
+          headerShown: false
+        }}/> 
+        <Stack.Screen 
+          name="PinSheet" 
+          component ={PinSheet}
+          options={{
+          title: 'Enter Result',
+          headerShown: false,
           headerStyle: {
           backgroundColor: '#1D5179',
           },

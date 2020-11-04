@@ -28,7 +28,6 @@ import Marker from 'react-native-image-marker';
 import AsyncStorage from '@react-native-community/async-storage';
 import Geocoder from 'react-native-geocoding';
 
-import { red } from '@material-ui/core/colors';
 
 TouchableOpacity.defaultProps = { activeOpacity : 0.3};
 
@@ -476,9 +475,10 @@ const takeVideo = async () => {
                    // console.log('Video Taken', data)
                     setVideoUri( await videoPath);
                     //console.log('video uri : '+ videoUri);
-                    saveImage2(videoPath)
+                    saveImage2(videoPath);
+                    saveInFolder(videoPath);
                 }
-                saveImage2(promise.uri)
+                //saveImage2(promise.uri)
                 //saveInFolder(data);
                 
             } catch (e){
