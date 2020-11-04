@@ -31,88 +31,13 @@ import RNPicker from "rn-modal-picker";
 //     result: " ",  
 // }
 
-export default class EnterResult extends React.Component{
+export default class ResultPreview extends React.Component{
     constructor(props){
         super(props);
        // console.log({...props});
 
         this.state ={
-            dataSource: [
-                {
-                  id: '1',
-                  name:'Ayawso-North CC0014',
-                },
-                {
-                  id: '2',
-                  name: 'Ablekuma-North CC0674',
-                },
-                {
-                  id: '3',
-                  name: 'Doodowa-Central CC0244',
-                },
-                {
-                  id: '4',
-                  name: 'Kasao-East CC0034',
-                },
-                {
-                  id: '5',
-                  name: 'Hafo-east CC00544',
-                },
-                {
-                  id: '6',
-                  name: 'Tain CC00554',
-                },
-                {
-                  id: '7',
-                  name: 'Paga  CC00454',
-                },
-                {
-                  id: '8',
-                  name: 'Boko CC0894',
-                },
-                {
-                    id: '9',
-                    name: 'Nima-Central CC0017', 
-                }, {
-                    id: '10',
-                    name: 'Boko CC0894',
-                  },
-                  {
-                      id: '11',
-                      name: 'Nima-Central CC0017', 
-                  },
-                  {
-                    id: '12',
-                    name: 'Boko CC0894',
-                  },
-                  {
-                      id: '13',
-                      name: 'Nima-Central CC0017', 
-                  },{
-                    id: '14',
-                    name: 'Nima-Central CC0017', 
-                },
-                {
-                  id: '15',
-                  name: 'Boko CC0894',
-                },
-                {
-                    id: '16',
-                    name: 'Nima-Central CC0017', 
-                },
-                {
-                    id: '17',
-                    name: 'Boko CC0894',
-                  },
-                  {
-                      id: '18',
-                      name: 'Nima-Central CC0017', 
-                  }, {
-                      id: '19',
-                      name: 'Boko CC0894',
-                    },
-                
-              ],
+            
               placeHolderText: "Select polling Station",
               selectedText: " ",
 
@@ -142,11 +67,7 @@ export default class EnterResult extends React.Component{
         } 
     };
     
-    _selectedValue(index, item){
-        this.setState({
-            selectedText: item.name
-        });
-    }
+  
 
 
 componentDidMount(){
@@ -156,21 +77,8 @@ componentWillUnmount(){
 componentDidUpdate(){
 }
 
-    // getVerificationCode= (text) => {
-    //     setVerificationCode(text);
-    // }
-
-    //  onFormSubmit (){
-    //     //set the onSubmit state to true
-    //     setOnSubmit(true);
-    // }
-    setResult(text){
-        this.setState({
-            result : text
-        });
-    }
    
-
+    
     render()
     {
         return(
@@ -189,46 +97,15 @@ componentDidUpdate(){
                     fontFamily:'roboto',fontWeight: 'bold', alignSelf: 'center'}}>
                     POWERED BY SOFTMASTERS</Text>
                 </View>
-                <RNPicker
-                    dataSource={this.state.dataSource}
-                    dummyDataSource={this.state.dataSource}
-                    defaultValue={false}
-                    pickerTitle ={"Polling Stations"}
-                    showSearchBar={true}
-                    disablePicker={false}
-                    changeAnimation={"none"}
-                    searchBarPlaceHolder = {"Search....."}
-                    showPickerTitle ={true}
-                    searchBarContainerStyle={this.props.searchBarContainerStyle}
-                    pickerStyle={styles.pickerStyle}
-                    pickerItemTextStyle={styles.listTextViewStyle}
-                    selectedLabel={this.state.selectedText}
-                    placeHolderLabel={this.state.placeHolderText}
-                    selectLabelTextStyle={styles.selectLabelTextStyle}
-                    placeHolderTextStyle={styles.placeHolderTextStyle}
-                    dropDownImageStyle={styles.dropDownImageStyle}
-                    dropDownImage= {require("../assets/ic_drop_down.png") }
-                    selectedValue={(index, item) => this._selectedValue(index.toString(), item)}
-                />
+               <Text style={{justifyContent:'center', alignSelf: 'center', fontSize:16,marginTop:5, margin: 10}}>
+                   Ayawaso West (D/H JHS block) CC0014
+               </Text>
               
 
             </View>
        
                     {/* presidential and parliamentary result  */}
-                <View style={{flex: 0.1, flexDirection: 'row',backgroundColor: '',elevation: 0,}}>
-                   
-                        <TouchableOpacity style={styles.presidential}>
-                            <Text style={{alignSelf:'center',fontWeight:'500', color:'#1D5179'}}>
-                                PRESIDENTIAL
-                            </Text>
-                        </TouchableOpacity>
-                   
-                        <TouchableOpacity style={styles.parliamentary}>
-                            <Text style={{alignSelf:'center',fontWeight:'500', color:'#FFFFFF'}}>
-                                PARLIAMENTARY
-                            </Text>
-                        </TouchableOpacity>
-                </View>
+                
                
                 <ScrollView style={{margin: 5,}}>
                     <View style={{flex:1,backgroundColor: '',flexDirection:'column',margin:15 }}>

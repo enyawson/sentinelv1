@@ -39,83 +39,36 @@ export default class PinSheet extends React.Component{
     {
         return(
         <View style={styles.container}>
-            <View style={{backgroundColor: 'white',borderBottomLeftRadius: 5, borderBottomRightRadius:5,elevation:10}}>
-               
-               
+           
+           <View style={{flexDirection:'row',}}>
+                <ArrowBack
+                name={'arrow-back-outline'}
+                size={23}
+                color="black"
+                style={{margin:15, marginRight:50, }}
+                    onPress={()=> this.props.navigation.goBack()}
+                />
 
+                <Text style={{ color:"#6D6B6B", fontSize: 16, marginTop: 0,
+                fontFamily:'roboto',fontWeight: 'bold', alignSelf: 'center'}}>
+                POWERED BY SOFTMASTERS</Text>
             </View>
-       
-                    {/* presidential and parliamentary result  */}
-                <View style={{flex: 0.1, flexDirection: 'row',backgroundColor: '',elevation: 0,}}>
-                   
-                        <TouchableOpacity style={styles.presidential}>
-                            <Text style={{alignSelf:'center',fontWeight:'500', color:'#1D5179'}}>
-                                PRESIDENTIAL
-                            </Text>
-                        </TouchableOpacity>
-                   
-                        <TouchableOpacity style={styles.parliamentary}>
-                            <Text style={{alignSelf:'center',fontWeight:'500', color:'#FFFFFF'}}>
-                                PARLIAMENTARY
-                            </Text>
-                        </TouchableOpacity>
-                </View>
-               
-                <ScrollView style={{margin: 5,}}>
-                    <View style={{flex:1,backgroundColor: '',flexDirection:'column',margin:15 }}>
-                        <View style={{backgroundColor:'', flexDirection:'row', flex:0.2,borderRadius:7,elevation:2}}>
-                            {/* candidate Image */}
-                            <Image style={{width: 80, height:80, backgroundColor:'#FFD4D4', borderRadius:100,marginLeft:20, alignSelf: 'center'}}
-                                source={require('../assets/dramani.jpg')}
-                            />
-                            <View style={{flexDirection:'column'}}>
-                                <View style={{flexDirection:'row', alignSelf:'center',justifyContent:'center', marginLeft: 10, marginTop: 12}}>
-                                    <Text style={{fontSize:15, fontFamily:'Roboto', fontWeight:'500', alignSelf: 'center', justifyContent:'center' }}>John M. Dramani</Text>
-                                    <Image style={{width: 40, height:40, backgroundColor:'#FFD4D4', borderRadius:100,marginLeft:10, alignSelf: 'center'}}
-                                        source={require('../assets/ndc.png')}
-                                    />
-                                </View>
-                                <TextInput 
-                                style={{height:30, 
-                                width: 185,
-                                borderRadius: 50,
-                                borderColor:'#C4C4C4',
-                                borderWidth: 1, marginLeft: 10,
-                                backgroundColor: 'rgba(196, 196, 196, 0.3)',
-                                marginBottom: 5,
-                            }}
-                                onChangeText={(text) => 
-                                    console.log('send changed vote to state')
-                                }
-                                
-                                textAlign={'left'}
-                                placeholder={'   enter total votes'}
-                                fontSize={10}
-                                marginTop={3}
-                                enablesReturnKeyAutomatically={true}
-                            > 
-                            </TextInput>
+               <Text style={{justifyContent:'center', alignSelf:'center', marginTop: 200}}>
+                   PIN SHEET SCANNED
+               </Text>
 
-                            </View>
-            
-                        
-                        </View>  
-                        
-
-                    </View>
-                       
-                </ScrollView>
-                <TouchableOpacity style={{backgroundColor:'#1D5179', width: 85, height:35, 
-                justifyContent:'center',alignSelf:'flex-end', margin: 25,borderRadius:5}}>
+                <TouchableOpacity style={{backgroundColor:'#1D5179', marginTop:300,width: 85, height:35, 
+                justifyContent:'center',alignSelf:'flex-end', margin: 25,borderRadius:5}}
+                onPress={()=>this.props.navigation.navigate('ResultPreview')}>
                     <Text style={{color: '#ffffff', justifyContent: 'center',
                     alignSelf:'center',  fontFamily:'Roboto', fontSize: 14}}>
                         Next
                     </Text>
                 </TouchableOpacity>
                
-            </View>
+         
             
-        
+        </View>
         );
 
     }

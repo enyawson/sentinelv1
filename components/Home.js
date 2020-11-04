@@ -126,7 +126,7 @@ const turnPopUpOn =()=>{
                 <Text>Call</Text>
             </TouchableOpacity>
             <TouchableOpacity>
-                <Text>Results</Text>
+                <Text>Stories</Text>
             </TouchableOpacity>
             <TouchableOpacity
             onPress={()=>navigation.navigate('VideoPreview')}>

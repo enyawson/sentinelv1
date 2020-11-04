@@ -11,210 +11,41 @@ import { Picker } from '@react-native-community/picker';
 import RNPicker from "rn-modal-picker";
 
 
-// presidential:{
-//     partyName: " ",
-//     candidateName: " ",
-//     result: " ",  
-// },
-// {
-//     id: 1,
-//     imageOfCandidate: ' ',
-//     partyImage: '',
-//     candidateName: '',
-//     result: ' '
 
-    
-//   },
-// parliamentary:{
-//     partyName: " ",
-//     candidateName: " ",
-//     result: " ",  
-// }
-
-export default class EnterResult extends React.Component{
+export default class ParliamentaryComponent extends React.Component{
     constructor(props){
         super(props);
        // console.log({...props});
 
         this.state ={
-            dataSource: [
-                {
-                  id: '1',
-                  name:'Ayawso-North CC0014',
-                },
-                {
-                  id: '2',
-                  name: 'Ablekuma-North CC0674',
-                },
-                {
-                  id: '3',
-                  name: 'Doodowa-Central CC0244',
-                },
-                {
-                  id: '4',
-                  name: 'Kasao-East CC0034',
-                },
-                {
-                  id: '5',
-                  name: 'Hafo-east CC00544',
-                },
-                {
-                  id: '6',
-                  name: 'Tain CC00554',
-                },
-                {
-                  id: '7',
-                  name: 'Paga  CC00454',
-                },
-                {
-                  id: '8',
-                  name: 'Boko CC0894',
-                },
-                {
-                    id: '9',
-                    name: 'Nima-Central CC0017', 
-                }, {
-                    id: '10',
-                    name: 'Boko CC0894',
-                  },
-                  {
-                      id: '11',
-                      name: 'Nima-Central CC0017', 
-                  },
-                  {
-                    id: '12',
-                    name: 'Boko CC0894',
-                  },
-                  {
-                      id: '13',
-                      name: 'Nima-Central CC0017', 
-                  },{
-                    id: '14',
-                    name: 'Nima-Central CC0017', 
-                },
-                {
-                  id: '15',
-                  name: 'Boko CC0894',
-                },
-                {
-                    id: '16',
-                    name: 'Nima-Central CC0017', 
-                },
-                {
-                    id: '17',
-                    name: 'Boko CC0894',
-                  },
-                  {
-                      id: '18',
-                      name: 'Nima-Central CC0017', 
-                  }, {
-                      id: '19',
-                      name: 'Boko CC0894',
-                    },
-                
-              ],
-              placeHolderText: "Select polling Station",
-              selectedText: " ",
-
-            selectedPollStation: '',
-            selectedItems:[
-            
-            ],
-            presidential:[
-                {
-                id: 1,
-                candidateImage: '',
-                candidateName: " ",
-                partyImage: " ",
-                partyName: " ",
-                result: " ",  
-            },
-            {
-                id: 1,
-                imageOfCandidate: ' ',
-                partyImage: '',
-                candidateName: '',
-                result: ' ' 
-              },
            
-            ]
+            
             
         } 
     };
     
-    _selectedValue(index, item){
-        this.setState({
-            selectedText: item.name
-        });
+  
+    componentDidMount(){
+    }
+    componentWillUnmount(){
+    }
+    componentDidUpdate(){
     }
 
-
-componentDidMount(){
-}
-componentWillUnmount(){
-}
-componentDidUpdate(){
-}
-
-    // getVerificationCode= (text) => {
-    //     setVerificationCode(text);
-    // }
-
-    //  onFormSubmit (){
-    //     //set the onSubmit state to true
-    //     setOnSubmit(true);
-    // }
-    setResult(text){
-        this.setState({
-            result : text
-        });
-    }
-   
+    
+    
 
     render()
     {
         return(
         <View style={styles.container}>
             <View style={{backgroundColor: 'white',borderBottomLeftRadius: 5, borderBottomRightRadius:5,elevation:10}}>
-                <View style={{flexDirection:'row',}}>
-                    <ArrowBack
-                    name={'arrow-back-outline'}
-                    size={23}
-                    color="black"
-                    style={{margin:15, marginRight:50, }}
-                        onPress={()=> this.props.navigation.goBack()}
-                    />
-
-                    <Text style={{ color:"#6D6B6B", fontSize: 16, marginTop: 0,
-                    fontFamily:'roboto',fontWeight: 'bold', alignSelf: 'center'}}>
-                    POWERED BY SOFTMASTERS</Text>
-                </View>
-                <RNPicker
-                    dataSource={this.state.dataSource}
-                    dummyDataSource={this.state.dataSource}
-                    defaultValue={false}
-                    pickerTitle ={"Polling Stations"}
-                    showSearchBar={true}
-                    disablePicker={false}
-                    changeAnimation={"none"}
-                    searchBarPlaceHolder = {"Search....."}
-                    showPickerTitle ={true}
-                    searchBarContainerStyle={this.props.searchBarContainerStyle}
-                    pickerStyle={styles.pickerStyle}
-                    pickerItemTextStyle={styles.listTextViewStyle}
-                    selectedLabel={this.state.selectedText}
-                    placeHolderLabel={this.state.placeHolderText}
-                    selectLabelTextStyle={styles.selectLabelTextStyle}
-                    placeHolderTextStyle={styles.placeHolderTextStyle}
-                    dropDownImageStyle={styles.dropDownImageStyle}
-                    dropDownImage= {require("../assets/ic_drop_down.png") }
-                    selectedValue={(index, item) => this._selectedValue(index.toString(), item)}
-                />
-              
+               
+               
 
             </View>
        
-                    {/* presidential and parliamentary result  */}
+                    {/*  parliamentary result  */}
                 <View style={{flex: 0.1, flexDirection: 'row',backgroundColor: '',elevation: 0,}}>
                    
                         <TouchableOpacity style={styles.presidential}>
@@ -274,10 +105,8 @@ componentDidUpdate(){
                     </View>
                        
                 </ScrollView>
-                
                 <TouchableOpacity style={{backgroundColor:'#1D5179', width: 85, height:35, 
-                justifyContent:'center',alignSelf:'flex-end', margin: 25,borderRadius:5}}
-                onPress={()=> this.props.navigation.navigate('PinSheet')}>
+                justifyContent:'center',alignSelf:'flex-end', margin: 25,borderRadius:5}}>
                     <Text style={{color: '#ffffff', justifyContent: 'center',
                     alignSelf:'center',  fontFamily:'Roboto', fontSize: 14}}>
                         Next
