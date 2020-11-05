@@ -139,6 +139,7 @@ componentDidUpdate(){
                                 fontSize={10}
                                 marginTop={3}
                                 enablesReturnKeyAutomatically={true}
+                                editable={false}
                             > 
                             </TextInput>
 

@@ -113,21 +113,19 @@ export default class EnterResult extends React.Component{
                     },
                 
               ],
-              placeHolderText: "Select polling Station",
-              selectedText: " ",
-
-            selectedPollStation: '',
-            selectedItems:[
-            
-            ],
+            placeHolderText: "Select polling Station",
+            selectedText: " ",
+            result: " ",
+           // selectedPollStation: '',
+            selectedItems:[],
             presidential:[
-                {
+            {
                 id: 1,
                 candidateImage: '',
                 candidateName: " ",
                 partyImage: " ",
                 partyName: " ",
-                result: " ",  
+                result: 0,  
             },
             {
                 id: 1,
@@ -142,19 +140,37 @@ export default class EnterResult extends React.Component{
         } 
     };
     
+    componentDidMount(){
+        console.log("enter result mounted")
+    }
+    componentWillUnmount(){
+    }
+    componentDidUpdate(prevProps, prevState){
+    if(prevState.selectedText !== this.state.selectedText){
+        console.log("selected Text : "+ this.state.selectedText)
+    }
+    if(prevState.result !== this.state.result){
+        console.log("selected result : "+ this.state.result)
+    }
+    
+}
+    /**The method that set state of selected Item */
     _selectedValue(index, item){
         this.setState({
             selectedText: item.name
         });
+        //console.log("Value selected : "+ this.state.selectedText)
+    }
+    /** this method sets the state result to the entered total votes */
+    _enteredResult(text){
+        console.log("TEXT : "+ text)
+        
+        this.setState({
+            result : text,
+        });
     }
 
 
-componentDidMount(){
-}
-componentWillUnmount(){
-}
-componentDidUpdate(){
-}
 
     // getVerificationCode= (text) => {
     //     setVerificationCode(text);
@@ -164,11 +180,8 @@ componentDidUpdate(){
     //     //set the onSubmit state to true
     //     setOnSubmit(true);
     // }
-    setResult(text){
-        this.setState({
-            result : text
-        });
-    }
+    
+    
    
 
     render()
@@ -253,14 +266,18 @@ componentDidUpdate(){
                                 backgroundColor: 'rgba(196, 196, 196, 0.3)',
                                 marginBottom: 5,
                             }}
-                                onChangeText={(text) => 
-                                    console.log('send changed vote to state')
-                                }
+                                onChangeText={(text) => {
+                                    this._enteredResult(text);
+                                    // console.log('votes entered stored in state');
+                                    //console.log(this.state.selectedText + " : " + this.state.result);
+                                    
+                                }}
                                 
-                                textAlign={'left'}
-                                placeholder={'   enter total votes'}
-                                fontSize={10}
-                                marginTop={3}
+                                textAlign={'center'}
+                                placeholder={'enter total votes'}
+                                fontSize={14}
+                                marginTop={5}
+                                padding={0}
                                 enablesReturnKeyAutomatically={true}
                             > 
                             </TextInput>
