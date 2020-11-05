@@ -15,7 +15,7 @@ import CameraRoll from "@react-native-community/cameraroll";
 import AsyncStorage from '@react-native-community/async-storage';
 import ArrowBack from 'react-native-vector-icons/Ionicons';
 import { set } from 'react-native-reanimated';
-
+import Play from 'react-native-vector-icons/Ionicons';
 
 
 
@@ -24,11 +24,13 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
     const [selectedIncidence, setSelectedIncidence] = useState('select incidence');
     const [description, setDescription] = useState("");
    // const [timeFileTaken, setTimeFileTaken] = useState('4:50');
-    const [location, setLocation] = useState('30 Oyankele Street Accra')
+    const [location, setLocation] = useState('')
     //const [locCoordinates,setLocCoordinates] = useState('5.65544, -4556644')
     const [loading, setLoading] = useState(true);
     const [photos, setPhotos] = useState([]);
+    const [picDetails, setPicDetails] = useState(" ");
     //const [dateFileTaken, setDateFileTaken] = useState('21/10/2020')
+    const [mp4Extension, setMp4Extension] = useState(false);
     
   
 
@@ -42,6 +44,7 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
         /*Get the stored captured images from async storage*/   
         
         getData();
+        getPicDetails();
 
         /*save description and incidence*/
         saveIncidenceDescription();
@@ -104,7 +107,7 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
         await removeDataStored();
         await mainActivityListData();
         // navigate to submit form
-        navigation.navigate('SubmitEvidenceForm');
+        navigation.navigate('Home');
     }
 
     /**save incidence type and description */
@@ -121,18 +124,34 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
     }
     }
 
-    /**Getting images from async storage */
+    /**Get Photos , picture details from async storage */
     const getData = async () => {
         try {
             const value = await AsyncStorage.getItem('photos')
-            console.log('async values', value);
+            console.log('async Photo values', value);
             if(value !== null){
-                setPhotos((JSON.parse(value)))
-                
+                setPhotos((JSON.parse(value)));
             }
         }catch(e){
         console.log('error with async getData');
         }     
+        console.log("photos state "+ photos)
+    }
+    const getPicDetails = async () => {
+        try {
+            const picDetailsValue = await AsyncStorage.getItem('activityListPicDetail')
+            const value = JSON.parse(picDetailsValue);
+            console.log('async PicDetail values,'+ picDetailsValue);
+            console.log("Time on Pic "+ value.locationLat);
+            if(value !== null){
+                setPicDetails(value);
+            }
+        }catch(e){
+        console.log('error with async getData');
+        }     
+       
+        console.log('state picDetails '+ picDetails);
+        console.log('one of it '+ picDetails.locationLat);
     }
 
     /** This method gets incidence type and description*/
@@ -161,16 +180,22 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
         console.log('removed photos, picture details')
     }
 
+
+
     /** save image in an array 
      * evidence-files : consist of audio, videos, pictures
     */
     const mainActivityListData = async ()=> {
         let newData = {}
+
         newData.evidenceFiles = photos;
         newData.incidenceValue = selectedIncidence;
         newData.description = description;
         //newData.timeTaken = timeFileTaken;
-        newData.streetName = location;
+        //newData.streetName = location;
+        //picture details 
+        newData.picDetail = picDetails;
+       
         //newData.locationCord = locCoordinates;
         //newData.dateTaken = dateFileTaken;
         
@@ -179,10 +204,10 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
         
         data.push(newData);
         await AsyncStorage.setItem('mainActivityData', JSON.stringify(data), () => {    
-            console.log('MAIN ACTIVITY DATA '+ data);
-            console.log(data)
+            // console.log('MAIN ACTIVITY DATA '+ data);
+            // console.log(data)
         });
-      
+        
         //clear files and text on evidence page after submitting
         setPhotos("")
         setDescription("")
@@ -201,7 +226,40 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
         
         })      
     }
-
+/**This method checks for the extension of file (jpg or mp4) */
+const checkExtensionOfFile=(item)=>{
+    //set the state of extension 
+    let ext = item.split('.').pop();
+    //console.log("Extension "+ ext);
+    if (ext == 'jpg'){
+         return(
+            <Image
+            onLoadStart={_onLoadStart}
+            onLoadEnd={_onLoadEnd}
+            style={{ width:68, height:75,margin:1, resizeMode:'cover'}}   
+            source = {{ uri: "file://"+ item}}/>
+     )
+    } 
+    if (ext == 'mp4'){
+        return(
+            <View>
+                <Image
+                onLoadStart={_onLoadStart}
+                onLoadEnd={_onLoadEnd}
+                style={{ width:68, height:75,margin:1, resizeMode:'cover'}}   
+                source = {{ uri: "file://"+ item}}/>
+                <TouchableOpacity style={styles.playPhotoButton}>
+                        <Play
+                           name={'play-circle-outline'}
+                           size={35}
+                           color="#C0C0C0"  
+                        />   
+                </TouchableOpacity>
+            </View>
+            )
+            
+    }
+}
 
     return(
         <SafeAreaView style= {globalStyle.MainContainer}>
@@ -218,14 +276,16 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
                         keyExtractor={(item, index)=> index}
                         renderItem={ ({ item}) => (  
                           <TouchableOpacity onPress={() => navigateToPhotoPreview(item) }>
-                             <Image
+                            {checkExtensionOfFile(item)}
+                             {/* <Image
                                 onLoadStart={_onLoadStart}
                                 onLoadEnd={_onLoadEnd}
-                                style={{ width:70, height:75,margin:0.5, resizeMode:'cover'}}   
-                                source = {{ uri: "file://"+ item}}  source = {{ uri: "file://"+ item}} 
+                                style={{ width:70, height:75,margin:1, resizeMode:'cover'}}   
+                                source = {{ uri: "file://"+ item}} 
+                              
                                 // source = {{ uri: item}} 
                                 //source = {{ uri: item.node.image.uri}} 
-                            />
+                            /> */}
                             {/* {loading && <ActivityIndicator
                                 size='small'
                                 color='#1D5179'
@@ -248,12 +308,11 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
                 </View>  
             </View>
             <TouchableOpacity style={styles.addPhotoButton}
-                    onPress={()=>{navigation.goBack()}}>
-                    <Add
-                       name={'add'}
-                       size={30}
-                       color="white"  
-                    />   
+                onPress={()=>{navigation.goBack()}}>
+                <Add
+                name={'add'}
+                size={30}
+                color="white"/>   
             </TouchableOpacity>
 
             <View style={{justifyContent: 'center', margin:5 ,flex: 1.2}}>
@@ -263,9 +322,9 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
                     width: 270, 
                     marginLeft: 5,
                     marginBottom: 0,
-                    marginTop: 15}}>
+                    marginTop: 10}}>
                     <Picker
-                        selectedValue ={selectedIncidence}
+                        selectedValue={selectedIncidence}
                         style={{height:45, width: 270, 
                         fontFamily:'roboto', 
                         fontStyle:'normal',
@@ -274,7 +333,7 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
                            setIncidence(itemValue)
                         }
                     >
-                    <Picker.Item label="select incidence type" value="" color="gray"/>    
+                    <Picker.Item label="select incidence type" value="" color="#898989" />    
                     <Picker.Item label="Non-Compliance" value="non-Compliance"/>
                     <Picker.Item label="Logistics" value="logistics"/>
                     <Picker.Item label="Harassment" value="harassment"/>
@@ -286,7 +345,7 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
                     <Picker.Item label="Power Failure" value="power failure"/>
                     </Picker>
                 </View>
-                <View marginBottom={0} marginLeft={5} marginTop={15}>
+                <View marginBottom={0} marginLeft={5} marginTop={30}>
                     <Text style={styles.textStyle}>
                         Description
                     </Text>
@@ -302,8 +361,11 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
                             onChangeText={(text) => 
                              setInputtedText(text)
                             }
+                            textAlignVertical={'top'}
                             value={description}
                             multiline={true}
+                            placeholder={' enter text'}
+                            fontSize={14}
                             enablesReturnKeyAutomatically={true}
                         > 
                         </TextInput>
@@ -316,35 +378,53 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
                             /> 
                         </TouchableOpacity>
                 </View>
-                <View marginBottom={0} marginLeft={0} marginTop={30}  marginBottom={15} >
-                    <View style={{flexDirection: 'row'}}>
-                        <Text style={{margin:10,marginRight:10,
-                                fontFamily:'roboto', fontSize: 14,
-                                fontWeight:'bold', 
-                                }}>
-                            Register to track
+                <View marginBottom={0} marginLeft={10}marginTop={30}  marginBottom={20} >
+                    <View style={{flexDirection: 'row', }}>
+                        <Text style={{
+                            fontFamily:'roboto', fontSize: 16, marginRight: 5, marginLeft: 0,
+                            fontWeight:'500', color:'#1D5179',
+                            }}
+                            onPress={()=>navigation.navigate('SignUp')}>
+                            Register 
                         </Text>
-                        <View style={styles.radioCircumference}>
+                        <Text style={{
+                            fontFamily:'roboto', fontSize: 16,marginLeft:5,
+                            fontWeight:'500',color:'#898989'
+                            }}>
+                            and 
+                        </Text>
+                        <Text style={{
+                            fontFamily:'roboto', fontSize: 16,marginLeft:5,
+                            fontWeight:'500',color:'#1D5179'
+                            }}>
+                            Sign In 
+                        </Text>
+                        <Text style={{
+                            fontFamily:'roboto', fontSize: 16,marginLeft:5,
+                            fontWeight:'500',color:'#898989'
+                            }}>
+                            to get feedback
+                        </Text>
+                        {/* <View style={styles.radioCircumference}>
                             <TouchableOpacity style={styles.radioButton}></TouchableOpacity>
                         </View>
                         <Text style={{marginLeft: 5, marginRight: 0, marginTop: 10}}>anonymous</Text>  
                         <Text style={{marginLeft: 10, marginRight: 10, marginTop: 10, fontWeight:'bold'}}> or </Text>
                         <View style={styles.radioCircumference}>
                             <TouchableOpacity style={styles.radioButton}></TouchableOpacity>
-                        </View>
-                        <Text style={{marginTop: 10,marginLeft: 5, marginRight: 0}}>Sign In</Text>                   
+                        </View> */}
+                        {/* <Text style={{marginTop: 10,marginLeft: 5, marginRight: 0}}>Sign In</Text>                    */}
                     </View>
                 </View>
             
                 <TouchableOpacity
                     style={styles.button}
-                    onPress={()=> evidenceSubmit()}
-                >
+                    onPress={()=> evidenceSubmit()}>
                     <Text style={{color:'white', 
                         alignSelf:'center',
                         fontSize: 18,
                         }}>
-                        Next
+                        Submit
                     </Text>
                 </TouchableOpacity>   
             </View>
@@ -396,7 +476,7 @@ const styles = StyleSheet.create({
         width: 100,
         height: 45,
         margin: 10,
-        marginTop: 20,
+        marginTop: 30,
         borderRadius: 5,
         justifyContent: 'center',
         backgroundColor: '#1D5179',
@@ -422,6 +502,17 @@ const styles = StyleSheet.create({
         position: 'absolute',
         right: 12,
         top: 5, 
+    },
+    playPhotoButton:{
+        position:'absolute',
+        justifyContent: 'center',
+        alignItems: 'center',
+        
+        backgroundColor: 'black',
+        width: 68,
+        height: 75,
+        alignSelf:'center',
+        opacity: 0.5,
     },
     trashButton: {
         width: 30,

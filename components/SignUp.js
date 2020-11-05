@@ -56,9 +56,9 @@ export default function SignUp ({route, navigation,navigation:{setParams}}){
     
         <View style={styles.container}>
          <StatusBar barStyle="light-content" backgroundColor="#174060"/>
-                <View style={{flex:0.55, backgroundColor: '#1D5179'}}>
+                <View style={{flex:0.45, backgroundColor: '#1D5179'}}>
                     <Text style={{fontFamily:'roboto',
-                    fontSize:35, marginTop: 35,marginLeft: 30,marginRight: 30,
+                    fontSize:35, marginTop: 30,marginLeft: 30,marginRight: 30,
                      fontWeight:'bold', 
                      color: 'white', alignSelf: 'center'}}>
                         ELECTION WATCH
@@ -67,13 +67,13 @@ export default function SignUp ({route, navigation,navigation:{setParams}}){
                     <Text style={{fontFamily:'roboto',
                     fontSize:24,
                      fontWeight:'bold', 
-                     color: 'white', alignSelf: 'center', margin: 10,}}>
+                     color: 'white', alignSelf: 'center', margin:5,}}>
                          Sign up
                     </Text>
                 </View>
 
                 <View style={styles.contentContainer}>
-                <View style={{marginTop: 50,marginBottom: 0}}>
+                <View style={{marginTop: 45,marginBottom: 0}}>
                  <View> 
                         <TextInput 
                             style={styles.textInputBoxStyle}

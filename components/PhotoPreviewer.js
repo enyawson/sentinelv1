@@ -11,12 +11,13 @@ export default  function PhotoPreviewer({route, navigation}){
     return(
 
         <View style={styles.preview}>
-            <View style={{margin: 0,marginBottom:20, alignSelf:'center'}}>
+           
                 <Image
-                style={{ width:Dimensions.get('window').width, height:Dimensions.get('window').height, resizeMode:'cover'}}   
+                // style={{ width:Dimensions.get('window').width, height:Dimensions.get('window').height, resizeMode:'contain'}}
+                style={styles.imagePreview}   
                 source = {{ uri: "file://"+ transferredImageItem}} 
               />
-            </View>
+          
               <View style={{position: 'absolute', marginBottom:0, alignSelf:'center' , bottom: 10}}>
                 <TouchableOpacity
                     style={styles.closeButton}
@@ -60,6 +61,14 @@ const styles = StyleSheet.create({
      height: 50, 
      backgroundColor:'white', 
      alignSelf:'center',
+  },
+  imagePreview:{
+    flex: 1,
+    // width:Dimensions.get('window').width,
+    // height:Dimensions.get('window').height, 
+    resizeMode:'cover',
+   
+    
   }
 })
 

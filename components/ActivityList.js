@@ -21,6 +21,7 @@ export default class ActivityList extends React.Component{
 
         }
     }
+   
     
     componentDidMount (){
         this.getData();
@@ -48,21 +49,17 @@ export default class ActivityList extends React.Component{
             this.setState(
                 {
                     receivedFiles:  (JSON.parse(value)),
-                    
                 });
-               
-
             if(value !== null){
-
                 const retrievedData = JSON.parse(value)
                 console.log('value received '+ retrievedData[2].incidenceValue )
                 console.log('array '+ (value))
-
                  /**looping through array */
                 // for(let i=0; i<retrievedData.length; i++){
                 // console.log('value[' + (i +1)+']'+ retrievedData[3].evidenceFiles)
                 //  }
                 // console.log('value[1]'+ retrievedData[0].evidenceFiles[0])
+                console.log('value[5]'+ retrievedData[4].picDetail.dateTaken)
             }
             receivedData(retrievedData);
             
@@ -73,7 +70,7 @@ export default class ActivityList extends React.Component{
             
     }
 
-        
+   
     // }
 
 
@@ -86,6 +83,18 @@ export default class ActivityList extends React.Component{
         })
         console.log ("VALUES ARE"+ data);
      }
+
+     /**
+     * This method navigates to photo preview page
+     * @param path image retrieved from flat list item in evidence page
+     */
+    // navigateEachActivity = (path) =>{
+    //     this.props.navigation.navigate('ActivityPreview',
+    //     {
+    //         transferredItem: path,
+        
+    //     })      
+    // }
  
     render(){
          return(
@@ -95,22 +104,31 @@ export default class ActivityList extends React.Component{
             <FlatList
                 data= {this.state.receivedFiles.reverse()}
                 keyExtractor={(item, index)=> index.toString()}
-                renderItem={ ({ item}) => (  
+                renderItem={ ({ item }) => (  
                     
-                    <TouchableOpacity style={{flexDirection: 'row', margin: 5}}>
+                    <TouchableOpacity style={{flexDirection: 'row', margin: 5}}
+                        onPress={()=> {this.props.navigation.navigate( 'ActivityPreview', {itemIndex: item}
+                        )
+                            // let value = item.evidenceFiles[0]
+                            // console.log("INDEX OF IMAGE " + value)
+                        }
+                       
+                        }>
                         <View>
                             <Image 
                             style={styles.imageInBox}
-                            source = {{ uri: "file://"+ item.evidenceFiles[0]}} />
+                            source = {{ uri: "file://"+ item.evidenceFiles[0]}} 
+                            />
+                            
                         </View>
                         
                         <View style={styles.incidence}>
                             <Text style={{fontSize:16, fontWeight:'500', fontFamily:'roboto'}}>{item.incidenceValue}</Text>
-                            <Text style={{fontSize:12, marginBottom:5,}}>{item.streetName}</Text>
+                            <Text style={{fontSize:12, marginBottom:5,}}>{item.picDetail.streetName}</Text>
                         </View>
-                        <View style={{right: 40,marginTop: 5}}>
-                            <Text>{item.timeTaken}</Text>
-                            <Text style={{right: 30}}>{item.dateTaken}</Text>
+                        <View style={{right: 32,marginTop: 5}}>
+                            <Text style={{right:32, fontSize:12}}>{item.picDetail.dateTaken}</Text>
+                            <Text style={{fontSize: 12}}>{item.picDetail.timeTaken}</Text>
                         </View>
                         
                     </TouchableOpacity>

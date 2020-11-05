@@ -23,6 +23,13 @@ import MainActivityList from './components/MainActivityList';
 import { MenuProvider } from 'react-native-popup-menu';
 import ActivityList from './components/ActivityList';
 import ActivityPreview from './components/ActivityPreview';
+import VoteTally from './components/VoteTally';
+import EnterResult from './components/EnterResult';
+import VideoPreview from './components/VideoPreview';
+import PinSheet from './components/PinSheet';
+import PresidentialComponent from './components/PresidentialComponent';
+import ParliamentaryComponent from './components/ParliamentaryComponent';
+import ResultPreview from './components/ResultPreview';
 
 
 const Stack = createStackNavigator();
@@ -144,21 +151,106 @@ export default function App() {
           name="ActivityPreview" 
           component ={ActivityPreview}
           options={{
-          
-          headerShown: true,
-          title:   <Text>Events </Text>,
+          headerShown: false
+        }}/> 
+         <Stack.Screen 
+          name="VoteTally"
+          component ={VoteTally}
+          options={{
+          headerShown: false
+        }}/> 
+        <Stack.Screen 
+          name="EnterResult" 
+          component ={EnterResult}
+          options={{
+          title: 'Enter Result',
+          headerShown: false,
           headerStyle: {
           backgroundColor: '#1D5179',
           },
           headerTintColor: '#FFFFFF',
           headerTitleStyle: {
           fontWeight: 'normal',
-          marginLeft: 20,
-          fontFamily: 'roboto',
-         },
-        
+          alignSelf:'center',
+          fontFamily: 'roboto'
+         }}
+          }
+        />  
+         <Stack.Screen 
+          name="VideoPreview"
+          component ={VideoPreview}
+          options={{
+          headerShown: false
         }}/> 
+        <Stack.Screen 
+          name="PinSheet" 
+          component ={PinSheet}
+          options={{
+          title: 'Enter Result',
+          headerShown: false,
+          headerStyle: {
+          backgroundColor: '#1D5179',
+          },
+          headerTintColor: '#FFFFFF',
+          headerTitleStyle: {
+          fontWeight: 'normal',
+          alignSelf:'center',
+          fontFamily: 'roboto'
+         }}
+          }
+        />  
+        <Stack.Screen 
+          name="PresidentialComponent" 
+          component ={PresidentialComponent}
+          options={{
+          title: 'Enter Result',
+          headerShown: false,
+          headerStyle: {
+          backgroundColor: '#1D5179',
+          },
+          headerTintColor: '#FFFFFF',
+          headerTitleStyle: {
+          fontWeight: 'normal',
+          alignSelf:'center',
+          fontFamily: 'roboto'
+         }}
+          }
+        />  
+        <Stack.Screen 
+          name="ParliamentaryComponent" 
+          component ={ParliamentaryComponent}
+          options={{
+          title: 'Enter Result',
+          headerShown: false,
+          headerStyle: {
+          backgroundColor: '#1D5179',
+          },
+          headerTintColor: '#FFFFFF',
+          headerTitleStyle: {
+          fontWeight: 'normal',
+          alignSelf:'center',
+          fontFamily: 'roboto'
+         }}
+          }
+        />  
 
+        <Stack.Screen 
+          name="ResultPreview" 
+          component ={ResultPreview}
+          options={{
+          title: 'Enter Result',
+          headerShown: false,
+          headerStyle: {
+          backgroundColor: '#1D5179',
+          },
+          headerTintColor: '#FFFFFF',
+          headerTitleStyle: {
+          fontWeight: 'normal',
+          alignSelf:'center',
+          fontFamily: 'roboto'
+         }}
+          }
+        />  
         
       </Stack.Navigator>
       
