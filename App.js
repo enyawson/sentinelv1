@@ -18,6 +18,7 @@ import AudioRecorderPlayer from './components/AudioRecorderPlayer';
 import AudioRecorderActivityList from './components/AudioRecordingActivityList';
 import SubmitEvidenceForm from './components/SubmitEvidenceForm';
 import SignUp from './components/SignUp';
+import SignUpContinuation from './components/SignUpContinuation';
 import VerificationCodeForm from './components/VerificationCodeForm';
 import MainActivityList from './components/MainActivityList';
 import { MenuProvider } from 'react-native-popup-menu';
@@ -30,7 +31,10 @@ import PinSheet from './components/PinSheet';
 import PresidentialComponent from './components/PresidentialComponent';
 import ParliamentaryComponent from './components/ParliamentaryComponent';
 import ResultPreview from './components/ResultPreview';
-
+import BusinessRegistration from './components/BusinessRegistration';
+import DocumentScanner from './components/DocumentScanner';
+import ScannedDocumentPage from './components/ScannedDocumentPage';
+import BusinessRegContinuation from './components/BusinessRegContinuation';
 
 const Stack = createStackNavigator();
 
@@ -39,6 +43,7 @@ export default function App() {
   <MenuProvider>
     <NavigationContainer>
       <Stack.Navigator>
+      
         <Stack.Screen 
         name="Home"
         component={Home}
@@ -115,7 +120,14 @@ export default function App() {
           options={{
           headerShown: false
         }}/> 
-
+       
+       <Stack.Screen 
+          name="SignUpContinuation" 
+          component ={SignUpContinuation}
+          options={{
+          headerShown: false
+        }}/> 
+       
         <Stack.Screen 
           name="VerificationCodeForm" 
           component ={VerificationCodeForm}
@@ -251,6 +263,75 @@ export default function App() {
          }}
           }
         />  
+         <Stack.Screen 
+          name="BusinessRegistration" 
+          component ={BusinessRegistration}
+          options={{
+          title: 'Enter Result',
+          headerShown: false,
+          headerStyle: {
+          backgroundColor: '#1D5179',
+          },
+          headerTintColor: '#FFFFFF',
+          headerTitleStyle: {
+          fontWeight: 'normal',
+          alignSelf:'center',
+          fontFamily: 'roboto'
+         }}
+          }
+        />  
+         <Stack.Screen 
+          name="BusinessRegContinuation" 
+          component ={BusinessRegContinuation}
+          options={{
+          title: 'Enter Result',
+          headerShown: false,
+          headerStyle: {
+          backgroundColor: '#1D5179',
+          },
+          headerTintColor: '#FFFFFF',
+          headerTitleStyle: {
+          fontWeight: 'normal',
+          alignSelf:'center',
+          fontFamily: 'roboto',
+         }}
+          }
+        />  
+        <Stack.Screen 
+          name="DocumentScanner" 
+          component ={DocumentScanner}
+          options={{
+          title: 'Enter Result',
+          headerShown: false,
+          headerStyle: {
+          backgroundColor: '#1D5179',
+          },
+          headerTintColor: '#FFFFFF',
+          headerTitleStyle: {
+          fontWeight: 'normal',
+          alignSelf:'center',
+          fontFamily: 'roboto'
+         }}
+          }
+        />  
+          <Stack.Screen 
+          name="ScannedDocumentPage" 
+          component ={ScannedDocumentPage}
+          options={{
+          title: 'Report on Result',
+          headerShown: true,
+          headerStyle: {
+          backgroundColor: '#1D5179',
+          },
+          headerTintColor: '#FFFFFF',
+          headerTitleStyle: {
+          fontWeight: 'normal',
+          alignSelf:'center',
+          fontFamily: 'roboto'
+         }}
+          }
+        />  
+
         
       </Stack.Navigator>
       

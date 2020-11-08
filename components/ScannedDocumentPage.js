@@ -19,18 +19,13 @@ import Play from 'react-native-vector-icons/Ionicons';
 
 
 
-export default function EvidenceSubmission ({route, navigation,navigation:{setParams}}){
+export default function ScannedDocumentPage ({route, navigation,navigation:{setParams}}){
 
-    const [selectedIncidence, setSelectedIncidence] = useState('select incidence');
+    const [selectedFormType, setSelectedFormType] = useState('select Form Type');
     const [description, setDescription] = useState("");
-   // const [timeFileTaken, setTimeFileTaken] = useState('4:50');
-    const [location, setLocation] = useState('')
-    //const [locCoordinates,setLocCoordinates] = useState('5.65544, -4556644')
-    const [loading, setLoading] = useState(true);
-    const [photos, setPhotos] = useState([]);
-    const [picDetails, setPicDetails] = useState(" ");
-    //const [dateFileTaken, setDateFileTaken] = useState('21/10/2020')
-    const [mp4Extension, setMp4Extension] = useState(false);
+    const [scannedSheets, setScannedSheets] = useState([]);
+   
+   
     
   
 
@@ -39,47 +34,27 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
    // const { transferredImage } = route.params
     /**component did mount , component will unmount */
     useEffect(()=> {
-        console.log('EVIDENCE USE_EFFECT,  mounted');
-           
-        /*Get the stored captured images from async storage*/   
+        console.log('Report page,  mounted');   
         
+        //get scanned image data
         getData();
-        getPicDetails();
 
-        /*save description and incidence*/
-        saveIncidenceDescription();
-
-        /*get the saved description and incidence*/
-        getIncidenceDescription();
-
-       
-        /**component will unmount */
         return ()=> { 
         }
-
-   
     }, []);
 
   
-
-   /*set the state of incident selected */
-    const setIncidence = (itemSelected) => {
-      setSelectedIncidence(itemSelected)
-      console.log("Incidence " + itemSelected)
+   /*set the state of form type selected */
+    const setForm = (itemSelected) => {
+      setSelectedFormType(itemSelected)
+      console.log("Form " + itemSelected)
     }
-
+    /** set state of description entered */
     const setInputtedText = (inputtedText) => {
         setDescription(inputtedText)
         console.log("InputtedText "+ inputtedText)
     }
 
-    /**on loading end */
-    const _onLoadEnd = ()=> {
-        setLoading(false)
-    }
-    const _onLoadStart = ()=> {
-        setLoading(true)
-    }
     
     /**
     * This method clears Storage and gallery on submit, to 
@@ -93,86 +68,68 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
             console.log('error clearing  items');
     }
         
-    //clear gallery
-        setPhotos("")
+    //clear gallery and report fields
+        setScannedSheets("")
         setDescription("")
-        setSelectedIncidence("")
+        setSelectedFormType("")
     }
 
-    const evidenceSubmit = async () => {
-        /**Clears storage*/
-        //clearStorage();
-        /**save data to be displayed on the activityList  in storage */
-        console.log("PHOTOS : "+ photos);
-        await removeDataStored();
-        await mainActivityListData();
-        // navigate to submit form
-        navigation.navigate('Home');
-    }
+    // const formReportSubmit = async () => {
+    //     /**Clears storage*/
+    //     //clearStorage();
+    //     /**save data to be displayed on the activityList  in storage */
+    //     console.log("SCANNED IMAGES : "+ scannedSheets);
+    //     await removeDataStored();
+    //     navigation.navigate('Home');
+    // }
 
-    /**save incidence type and description */
-    const saveIncidenceDescription = () => {
+    /**save Form type and description  used to preview activity on report*/
+    const saveFormDescription = () => {
     let  storedObject = {};
-    storedObject.incidenceValue = selectedIncidence;
+    storedObject.formValue = selectedFormType;
     storedObject.descriptionText = description;
 
-    try {
-        AsyncStorage.setItem('allTextValue', JSON.stringify(storedObject));
-        
-    }catch (error){
-        console.log('error with saving incidence and description');
-    }
-    }
-
-    /**Get Photos , picture details from async storage */
-    const getData = async () => {
         try {
-            const value = await AsyncStorage.getItem('photos')
-            console.log('async Photo values', value);
-            if(value !== null){
-                setPhotos((JSON.parse(value)));
-            }
-        }catch(e){
-        console.log('error with async getData');
-        }     
-        console.log("photos state "+ photos)
-    }
-    const getPicDetails = async () => {
-        try {
-            const picDetailsValue = await AsyncStorage.getItem('activityListPicDetail')
-            const value = JSON.parse(picDetailsValue);
-            console.log('async PicDetail values,'+ picDetailsValue);
-            console.log("Time on Pic "+ value.locationLat);
-            if(value !== null){
-                setPicDetails(value);
-            }
-        }catch(e){
-        console.log('error with async getData');
-        }     
-       
-        console.log('state picDetails '+ picDetails);
-        console.log('one of it '+ picDetails.locationLat);
-    }
-
-    /** This method gets incidence type and description*/
-    const  getIncidenceDescription = async () => {
-        try {
-            const infoValue = await AsyncStorage.getItem('allTextValue')
-            let resObject = JSON.parse(infoValue);
-            console.log('resObject '+ resObject)
-            setDescription(resObject.descriptionText)
-            setSelectedIncidence(resObject.incidenceValue)
-            console.log("Description" + resObject.descriptionText)
-        } catch (error){
-            console.log(error);
+            AsyncStorage.setItem('formTextValues', JSON.stringify(storedObject));
+            
+        }catch (error){
+            console.log('error with saving scannedSheets and description');
         }
     }
+
+    /**Get Images , image details from async storage in Document scanner page */
+    const getData = async () => {
+        try {
+            const value = await AsyncStorage.getItem('scannedImages')
+            console.log('async scannedImages values', value);
+            if(value !== null){
+                setScannedSheets((JSON.parse(value)));
+            }
+        }catch(e){
+        console.log('error with async getData');
+        }     
+        console.log("scanned sheets state "+ scannedSheets)
+    }
+
+
+    // /** This method gets form type and description*/
+    // const  getFormDescription = async () => {
+    //     try {
+    //         const infoValue = await AsyncStorage.getItem('formTextValue')
+    //         let resObject = JSON.parse(infoValue);
+    //         console.log('resObject '+ resObject)
+    //         setDescription(resObject.descriptionText)
+    //         setSelectedFormType(resObject.incidenceValue)
+    //         console.log("Description" + resObject.descriptionText)
+    //     } catch (error){
+    //         console.log(error);
+    //     }
+    // }
 
     /**This method clears storage for photos submitted to receive new ones */
     const removeDataStored = async () =>{
         try{
-            await AsyncStorage.removeItem('photos');
-            await AsyncStorage.removeItem('activityListPicDetail');
+            await AsyncStorage.removeItem('scannedImages');
 
         }catch(e){
             console.log('error')
@@ -183,41 +140,41 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
 
 
     /** save image in an array 
-     * evidence-files : consist of audio, videos, pictures
+     
     */
-    const mainActivityListData = async ()=> {
-        let newData = {}
+    // const mainActivityListData = async ()=> {
+    //     // let newData = {}
 
-        newData.evidenceFiles = photos;
-        newData.incidenceValue = selectedIncidence;
-        newData.description = description;
-        //newData.timeTaken = timeFileTaken;
-        //newData.streetName = location;
-        //picture details 
-        newData.picDetail = picDetails;
+        // newData.reportedForms = scannedSheets;
+        // newData.formValue = selectedFormType;
+        // newData.description = description;
+        // //newData.timeTaken = timeFileTaken;
+        // //newData.streetName = location;
+        // //picture details 
+        // //newData.picDetail = picDetails;
        
-        //newData.locationCord = locCoordinates;
-        //newData.dateTaken = dateFileTaken;
+        // //newData.locationCord = locCoordinates;
+        // //newData.dateTaken = dateFileTaken;
         
-        let data = await AsyncStorage.getItem('mainActivityData');
-        data = data? JSON.parse(data) : [];
+        // let data = await AsyncStorage.getItem('mainActivityData');
+        // data = data? JSON.parse(data) : [];
         
-        data.push(newData);
-        await AsyncStorage.setItem('mainActivityData', JSON.stringify(data), () => {    
-            // console.log('MAIN ACTIVITY DATA '+ data);
-            // console.log(data)
-        });
+        // data.push(newData);
+        // await AsyncStorage.setItem('mainActivityData', JSON.stringify(data), () => {    
+        //     // console.log('MAIN ACTIVITY DATA '+ data);
+        //     // console.log(data)
+        // });
         
-        //clear files and text on evidence page after submitting
-        setPhotos("")
-        setDescription("")
-        setSelectedIncidence("")
-    }
+        //clear files and text on report form page after submitting
+    //     setScannedSheets("")
+    //     setDescription("")
+    //     setSelectedFormType("")
+    // }
     
    
 /**
  * This method navigates to photo preview page
- * @param path image retrieved from flat list item in evidence page
+ * @param path image retrieved from flat list item in report from page
  */
     const  navigateToPhotoPreview = (path) =>{
         navigation.navigate('PhotoPreviewer',
@@ -226,41 +183,6 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
         
         })      
     }
-/**This method checks for the extension of file (jpg or mp4) */
-const checkExtensionOfFile=(item)=>{
-    //set the state of extension 
-    let ext = item.split('.').pop();
-    //console.log("Extension "+ ext);
-    if (ext == 'jpg'){
-         return(
-            <Image
-            onLoadStart={_onLoadStart}
-            onLoadEnd={_onLoadEnd}
-            style={{ width:68, height:75,margin:1, resizeMode:'cover'}}   
-            source = {{ uri: "file://"+ item}}/>
-     )
-    } 
-    if (ext == 'mp4'){
-        return(
-            <View>
-                <Image
-                onLoadStart={_onLoadStart}
-                onLoadEnd={_onLoadEnd}
-                style={{ width:68, height:75,margin:1, resizeMode:'cover'}}   
-                source = {{ uri: "file://"+ item}}/>
-                <View style={{ backgroundColor: 'black',
-                 position:'absolute',justifyContent:'center',alignItems: 'center',margin:2,
-                 width: 68 , height: 75,opacity:0.5}}>
-                    <Play
-                    name={'play-circle-outline'}
-                    size={35}
-                    color="white"/>   
-                </View>  
-            </View>
-            )
-            
-    }
-}
 
     return(
         <SafeAreaView style= {globalStyle.MainContainer}>
@@ -273,39 +195,20 @@ const checkExtensionOfFile=(item)=>{
             borderColor='#7E7E7E'>
                 <View>
                     <FlatList
-                        data= {photos}
+                        data= {scannedSheets}
                         keyExtractor={(item, index)=> index}
                         renderItem={ ({ item}) => (  
                           <TouchableOpacity onPress={() => navigateToPhotoPreview(item) }>
-                            {checkExtensionOfFile(item)}
-                             {/* <Image
-                                onLoadStart={_onLoadStart}
-                                onLoadEnd={_onLoadEnd}
+                             <Image
                                 style={{ width:70, height:75,margin:1, resizeMode:'cover'}}   
                                 source = {{ uri: "file://"+ item}} 
-                              
-                                // source = {{ uri: item}} 
-                                //source = {{ uri: item.node.image.uri}} 
-                            /> */}
-                            {/* {loading && <ActivityIndicator
-                                size='small'
-                                color='#1D5179'
-                                style={styles.activityIndicator}
-                                animating={loading}
-                            />} */}
-                             
-                           
-                          </TouchableOpacity>   
+                            />
+                        </TouchableOpacity>   
                          )   
                         }
                         numColumns = {5}
                     />
-                    {/* <Image
-                        style={{ width:70, height:75,margin:0.5, resizeMode:'cover'}}   
-                        source = {{ uri: "file://"+ photos}} 
-                        // source = {{ uri: item}} 
-                        //source = {{ uri: item.node.image.uri}} 
-                    /> */}
+                    
                 </View>  
             </View>
             <TouchableOpacity style={styles.addPhotoButton}
@@ -325,25 +228,18 @@ const checkExtensionOfFile=(item)=>{
                     marginBottom: 0,
                     marginTop: 10}}>
                     <Picker
-                        selectedValue={selectedIncidence}
+                        selectedValue={selectedFormType}
                         style={{height:45, width: 270, 
                         fontFamily:'roboto', 
                         fontStyle:'normal',
                         fontWeight:'normal'}}
                         onValueChange={(itemValue, itemIndex) =>
-                           setIncidence(itemValue)
+                           setForm(itemValue)
                         }
                     >
-                    <Picker.Item label="select incidence type" value="" color="#898989" />    
-                    <Picker.Item label="Non-Compliance" value="non-Compliance"/>
-                    <Picker.Item label="Logistics" value="logistics"/>
-                    <Picker.Item label="Harassment" value="harassment"/>
-                    <Picker.Item label="Interference" value="interference"/>
-                    <Picker.Item label="Violence" value="violence"/>
-                    <Picker.Item label="Delays" value="delays"/>
-                    <Picker.Item label="Confusion" value="confusion"/>
-                    <Picker.Item label="Chaos" value="chaos" />
-                    <Picker.Item label="Power Failure" value="power failure"/>
+                    <Picker.Item label="select form type" value="" color="#898989" />    
+                    <Picker.Item label="Form A" value="Form A"/>
+                    <Picker.Item label="Form B" value="Form B"/>
                     </Picker>
                 </View>
                 <View marginBottom={0} marginLeft={5} marginTop={30}>
@@ -420,7 +316,7 @@ const checkExtensionOfFile=(item)=>{
             
                 <TouchableOpacity
                     style={styles.button}
-                    onPress={()=> evidenceSubmit()}>
+                    onPress={()=> formReportSubmit()}>
                     <Text style={{color:'white', 
                         alignSelf:'center',
                         fontSize: 18,

@@ -156,11 +156,11 @@ export default class ActivityList extends React.Component{
                 source = {{ uri: "file://"+ item}}/>
                 <View style={{ backgroundColor: 'black',
                  position:'absolute',justifyContent:'center',alignItems: 'center',margin:2,
-                 width: 80 , height: 86,opacity:0.5}}>
-                <Play
+                 width: 80 , height: 85,opacity:0.5}}>
+                    <Play
                     name={'play-circle-outline'}
                     size={35}
-                    color="white" />   
+                    color="white"/>   
                 </View>      
               
             </View>
@@ -168,17 +168,27 @@ export default class ActivityList extends React.Component{
             
     }
 }
+//save path of video and image to display in async storage
+ storeData =async (value)=> {
+    try{
+        await AsyncStorage.setItem('previewVideoOrImage',value)
+    } catch (e) {
+        console.log('error saving video for preview')
+    }
+ }
 
  showPreview =(path)=>{
      //set the state of extension 
     let ext = path.split('.').pop();
     console.log("show Preview ready")
     if (ext == 'mp4'){
+        this.storeData(path);
         return(
-        this.props.navigation.navigate( 'VideoPreview', {itemToPreview: path})
+        this.props.navigation.navigate( 'VideoPreview')
         )
     } 
-    
+    console.log("item"+ itemToPreview)
+    //else show preview for image
  
 }
     render () {
@@ -202,7 +212,7 @@ export default class ActivityList extends React.Component{
         <View style= {styles.container}>
             <StatusBar barStyle="light-content" backgroundColor="#174060"/>
             <View style={{width:Dimensions.get('window').width, height: 60,
-             backgroundColor:'#1D5179', elevation: 5, flexDirection: 'row',}}>
+                backgroundColor:'#1D5179', elevation: 5, flexDirection: 'row',}}>
                 <TouchableOpacity
                     onPress={()=> this.props.navigation.goBack()}>
                     <ArrowBack
@@ -257,10 +267,10 @@ export default class ActivityList extends React.Component{
                 <View style={{flex: 1.2,marginRight: 5, backgroundColor:'', marginLeft:5,
                  marginTop: 10, borderWidth:0.5,padding:2, }}>
                     <FlatList
-                    data= {itemIndex.evidenceFiles}
-                    keyExtractor={(item, index)=> index.toString()}
-                    horizontal={false}
-                    renderItem={ ({ item }) => (  
+                        data= {itemIndex.evidenceFiles}
+                        keyExtractor={(item, index)=> index.toString()}
+                        horizontal={false}
+                        renderItem={ ({ item }) => (  
                         <TouchableOpacity
                             onPress={()=> this.showPreview(item)}>
                             <View style={{flexDirection: 'row'}}>         

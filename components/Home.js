@@ -129,7 +129,7 @@ const turnPopUpOn =()=>{
                 <Text>Stories</Text>
             </TouchableOpacity>
             <TouchableOpacity
-            onPress={()=>navigation.navigate('VideoPreview')}>
+            onPress={()=> navigation.navigate('VideoPreview')}>
                 <Text>Help</Text>
             </TouchableOpacity>
       </View>
@@ -265,9 +265,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignSelf: 'stretch',
     marginTop:15,
-    marginLeft:15,
+    marginLeft:30,
     marginBottom:15,
-    marginRight: 15,
+    marginRight: 30,
     backgroundColor: '#f0f0f0',
   },
   text: {
