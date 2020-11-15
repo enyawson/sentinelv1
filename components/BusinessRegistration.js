@@ -13,16 +13,17 @@ export default class BusinessRegistration extends React.Component{
        // console.log({...props});
 
         this.state ={
-            institutionIDNumber: '',
+            institutionIDNumber: '', //take out
             institutionName: '',
             institutionEmail: '',
-            institutionContact: '',
-            institutionCountry: '',
-            accountManager: '',
+            institutionContact: '',// telephone number
+            institutionCountry: '',//country out
+            accountManager: '', // account managers name
             userName: '',
             password: '',
             confirmPassword: ' ',
             onContinueForm: false,
+            //deviceIMEI
 
               } 
     };

@@ -3,6 +3,7 @@ import { StyleSheet, View, Text, TouchableOpacity, Image, Dimensions} from 'reac
 import ArrowBack from 'react-native-vector-icons/Ionicons';
 import  Trash from 'react-native-vector-icons/Ionicons';
 import  Close from 'react-native-vector-icons/Ionicons';
+import NewImage from 'react-native-scalable-image';
 
 export default  function PhotoPreviewer({route, navigation}){
 
@@ -12,10 +13,18 @@ export default  function PhotoPreviewer({route, navigation}){
 
         <View style={styles.preview}>
            
-                <Image
+                <NewImage
                 // style={{ width:Dimensions.get('window').width, height:Dimensions.get('window').height, resizeMode:'contain'}}
-                style={styles.imagePreview}   
-                source = {{ uri: "file://"+ transferredImageItem}} 
+                  style={{ flex: 1,
+                    // width:Dimensions.get('window').width,
+                    // height:Dimensions.get('window').height, 
+                    //resizeMode:'cover',
+                    //aspectRatio: Dimensions.get('window').width/Dimensions.get('window').height,
+                    //aspectRatio:4/2,
+                   }}   
+                   width={Dimensions.get('window').width}
+                   //height={Dimensions.get('window').height}
+                   source = {{ uri: "file://"+ transferredImageItem}} 
               />
           
               <View style={{position: 'absolute', marginBottom:0, alignSelf:'center' , bottom: 10}}>
@@ -66,7 +75,7 @@ const styles = StyleSheet.create({
     flex: 1,
     // width:Dimensions.get('window').width,
     // height:Dimensions.get('window').height, 
-    resizeMode:'cover',
+    resizeMode:'contain',
    
     
   }

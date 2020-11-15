@@ -50,10 +50,6 @@ export default function PhotoLogic ({ props, navigation }) {
     const [imageUri, setImageUri] = useState("");
     const [imageState, setImageState] = useState('false')
     const [renderingImage, setRenderingImage] =useState(false)
-    //timer 
-    const [timerSeconds, setTimerSeconds]=useState(0);
-    const [timerMinute, setTimerMinute] =useState(0)
-    const [timerHour, setTimerHour] = useState(0);
   
     
     //State of Video
@@ -98,13 +94,15 @@ export default function PhotoLogic ({ props, navigation }) {
     })
 
     useEffect(() => {
-        console.log("Photo component mounted");
+       // console.log("Photo component mounted");
         
-        console.log("ToggledVideoButton OFF onClick  "+ videoComponent.toggleVideoButton);
-        console.log("ToggledCameraButton OFF onClick "+ videoComponent.toggleCameraButton);
-        console.log("ToggledPauseButton OFF onClick "+ videoComponent.togglePauseButton);
-        console.log('recording :' + isRecording);
-        console.log('video uri : '+ videoUri);
+        //console.log("ToggledVideoButton OFF onClick  "+ videoComponent.toggleVideoButton);
+       // console.log("ToggledCameraButton OFF onClick "+ videoComponent.toggleCameraButton);
+        //console.log("ToggledPauseButton OFF onClick "+ videoComponent.togglePauseButton);
+        //console.log('recording :' + isRecording);
+        //console.log('video uri : '+ videoUri);
+
+        console.log("H  and W " + Dimensions.get('window').height + " " + Dimensions.get('window').width)
             //console.log("TogglePauseButton state "+ videoComponent.togglePauseButton);
         return () => {
             
@@ -297,7 +295,7 @@ const createNewWaterMark = (path) => new Promise((resolve, reject) => {
         X: Dimensions.get('window').width * 0.5,
         Y: Dimensions.get('window').height * 1.20,
         // position:'bottomCenter',
-        color: 	'#d3d3d3',
+        color: 'a(2rgb55,255,255,0.8)',
         fontName: 'Arial-BoldItalicMT',
         fontSize: RFPercentage(5),
         // shadowStyle: {
@@ -662,20 +660,22 @@ const renderCamera = ()=>{
                 buttonPositive: 'Ok',
                 buttonNegative: 'Cancel',
             }}
-            captureAudio={true}>
+            captureAudio={true}
+        >
         
         <View style={{alignItems:'flex-start',
             flexDirection: 'row', 
             justifyContent:'space-between', 
             flex:4,
             alignSelf: 'stretch'}}>
-            <TouchableOpacity
+                <TouchableOpacity
                 onPress={()=> navigation.goBack()}>
                    <ArrowBack
                     name={'arrow-back-outline'}
                     size={23}
                     color="white"
-                    style={{margin:15, alignContent: 'center'}} 
+                    style={{margin:15, alignContent: 'center'}}
+                    
                 />  
                 </TouchableOpacity>
                
@@ -692,28 +692,14 @@ const renderCamera = ()=>{
                     style={{margin:15, alignContent: 'center'}}
                 />  
             </View>
-           {videoComponent.toggleVideoButton != false? 
-           
-           <View style={{background:'yellow', flexDirection:'row', alignItems:'center'}}>
-                    <TouchableOpacity
-                    style={{backgroundColor:'red', width:10, height:10,borderRadius:100, }}/>
-                    <Text style={{color:'white', padding:5}}>Recording...</Text>
-                </View>
-                :
-                <View></View>
-           
-           }
-            
-           
             <View
                 style={{alignSelf: 'stretch',
                 flex: 0.35,
                 alignContent:'center'}}>
-                
                 <GPSLocationLogic customProp={handleData}  streetName={capturedImageState.capturedStreetName}/>
             </View>  
             <View style={{
-                
+                flex: 0., 
                 flexDirection: 'row', 
                 alignSelf:'stretch',
                 justifyContent: 'center',        
@@ -724,7 +710,6 @@ const renderCamera = ()=>{
                 pointerEvents={(state.disableCameraView)? 'none': 'auto'} //change first auto to none to use accuracy detection
                 opacity={(state.disableCameraView===false)? 1 : 0.5}
                 style={{ marginBottom: 25, }}>
-                
                 {videoComponent.toggleCameraButton ==true? 
                     <View>
                         <View style={{display:'none'}}>

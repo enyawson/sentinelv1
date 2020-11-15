@@ -30,7 +30,8 @@ export default function videoPreview (route, navigation){
         }
     }, [videoOrImage])
 
-    // Retrieving image of video to be displayed 
+
+    // Retrieving image uri of video from ActivityPreview to be displayed 
     const getData = async()=>{
         try {
             const value = await AsyncStorage.getItem('previewVideoOrImage')

@@ -9,6 +9,8 @@ import ArrowBack from 'react-native-vector-icons/Ionicons';
 import ArrowDown from 'react-native-vector-icons/Ionicons';
 import { Picker } from '@react-native-community/picker';
 import RNPicker from "rn-modal-picker";
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import KeyboardSpacer from 'react-native-keyboard-spacer';
 
 
 // presidential:{
@@ -37,7 +39,7 @@ export default class EnterResult extends React.Component{
        // console.log({...props});
 
         this.state ={
-            dataSource: [
+            constituencyDataSource: [
                 {
                   id: '1',
                   name:'Ayawso-North CC0014',
@@ -116,13 +118,14 @@ export default class EnterResult extends React.Component{
             placeHolderText: "Select polling Station",
             selectedText: " ",
             result: " ",
-            focusedPresButtonColor:'#C4C4C4',
-            focusedPresTextColor: 'black',
+            focusedPresButtonColor:'#1D5179',
+            focusedPresTextColor: 'white',
             presPressed: false,
             focusedParliaButtonColor:' #C4C4C4',
             focusedParliaTextColor: 'black',
             parliaPressed: false,
             toggleCandidates: false,
+            scannerReady: true,
            // selectedPollStation: '',
             candidatesItemsFromServer:[],
             presidential:[
@@ -280,14 +283,14 @@ export default class EnterResult extends React.Component{
         
     }
 
-    /**The method that set state of selected Item */
+    /**The method that set state of selected Item(polling Station)*/
     _selectedValue(index, item){
         this.setState({
             selectedText: item.name
         });
         //console.log("Value selected : "+ this.state.selectedText)
     }
-    /** this method sets the state result to the entered total votes */
+    /** This method sets the state result to the entered total votes */
     _enteredResult(text){
         console.log("TEXT : "+ text)
         
@@ -295,8 +298,7 @@ export default class EnterResult extends React.Component{
             result : text,
         });
     }
-    /**on press buttons */
-  
+    /**Method that handles on press buttons color changes*/
     // changePresStatus(){
     //     this.setState({
     //         presPressed: true,
@@ -323,13 +325,7 @@ export default class EnterResult extends React.Component{
             })
         }
     }
-    /**Parliament Button toggle */
-    // changeParliaStatus(){
-    //     this.setState({
-    //         presPressed: false,
-    //         parliaPressed: true,
-    //     })
-    // }
+   
     changeParliaButtonColor() {
         
         //this.changeParliaStatus();
@@ -347,8 +343,6 @@ export default class EnterResult extends React.Component{
        
     }
 
-
-
     // getVerificationCode= (text) => {
     //     setVerificationCode(text);
     // }
@@ -357,9 +351,75 @@ export default class EnterResult extends React.Component{
     //     //set the onSubmit state to true
     //     setOnSubmit(true);
     // }
+
+
+    /**This method creates rejected ballot view */
+    _rejectedBallotPapers=()=> {
+    return(
+        <View>
+        {console.log("rejected ballot papers")}
+            <View style={{flex:1,backgroundColor: '',flexDirection:'column',margin:15 }}>
+                <View style={{backgroundColor:'', flexDirection:'row', flex:0.2,borderRadius:7,elevation:2}}>
+                    {/* candidate Image */}
+                    <Image style={{width: 40, height:40, backgroundColor:'#ffffff', borderRadius:100,marginLeft:20, alignSelf: 'center', color:'gray'}}
+                    source={require('../assets/questionMarkBrown.png')}/>
+                    <View style={{flexDirection:'column'}}>
+                        <View style={{flexDirection:'row', alignSelf:'center',justifyContent:'center', marginLeft: 30, marginTop: 12}}>
+                            <Text style={{fontSize:15, fontFamily:'Roboto', fontWeight:'500', alignSelf: 'center', justifyContent:'center' }}>
+                                Rejected Ballots</Text>
+                                {/* Party flag */}
+                            {/* <Image style={{width: 40, height:40, backgroundColor:'#FFD4D4', borderRadius:100,marginLeft:10, alignSelf: 'center'}}
+                            source={require('../assets/questionMark.jpg')}
+                            /> */}
+                        </View>
+                        <TextInput 
+                        style={{height:30, 
+                        width: 185,
+                        borderRadius: 50,
+                        borderColor:'#C4C4C4',
+                        borderWidth: 1, marginLeft: 10,
+                        backgroundColor: '#ffffff',
+                        marginBottom: 5,
+                        marginLeft: 30,}}
+                        keyboardAppearance={'default'}
+                        keyboardType={'numeric'}
+                        onChangeText={(text) => {
+                            this._enteredResult(text);
+                            // console.log('votes entered stored in state');
+                            //console.log(this.state.selectedText + " : " + this.state.result); 
+                        }}
+                        textAlign={'center'}
+                        placeholder={'enter total votes'}
+                        fontSize={14}
+                        marginTop={5}
+                        padding={0}
+                        enablesReturnKeyAutomatically={true} /> 
+                    </View>
+                </View>  
+            </View>
+        </View>
+
+    );
+    }
+
+    // //remove scanned images
+    //  removeDataStored = async () =>{
+    //     try{
+    //         await AsyncStorage.removeItem('scannedImages');
+    //         //await AsyncStorage.removeItem('cropScannedImages');
     
-    
-   
+    //     }catch(e){
+    //         console.log('error')
+    //     }
+    // }
+
+
+    /**This method navigates to scanner */
+    openScanner=()=>{
+        this.props.navigation.navigate('ScannerDoc');
+    }
+
+
 
     render()
     {
@@ -372,7 +432,7 @@ export default class EnterResult extends React.Component{
                     size={23}
                     color="black"
                     style={{margin:15, marginRight:50, }}
-                        onPress={()=> this.props.navigation.goBack()}
+                    onPress={()=> this.props.navigation.goBack()}
                     />
 
                     <Text style={{ color:"#6D6B6B", fontSize: 16, marginTop: 0,
@@ -380,7 +440,7 @@ export default class EnterResult extends React.Component{
                     POWERED BY SOFTMASTERS</Text>
                 </View>
                 <RNPicker
-                    dataSource={this.state.dataSource}
+                    dataSource={this.state.constituencyDataSource}
                     dummyDataSource={this.state.dataSource}
                     defaultValue={false}
                     pickerTitle ={"Polling Stations"}
@@ -415,7 +475,7 @@ export default class EnterResult extends React.Component{
                             backgroundColor:'#C4C4C4',
                             borderWidth: 1,
                             backgroundColor:this.state.focusedPresButtonColor}}
-                        onPress={()=> this.changePresButtonColor()}>
+                            onPress={()=> this.changePresButtonColor()}>
                             <Text style={{alignSelf:'center',fontWeight:'500', color:this.state.focusedPresTextColor}}>
                                 PRESIDENTIAL
                             </Text>
@@ -437,7 +497,7 @@ export default class EnterResult extends React.Component{
                         </TouchableOpacity>
                 </View>
                 {/* This flat list populates the list of candidates for presidential and parliamentary  */}
-              
+             
                 <ScrollView style={{margin: 5,}}>
                     <FlatList
                         data= {this.state.toggleCandidates? this.state.parliamentary : this.state.presidential}
@@ -465,12 +525,13 @@ export default class EnterResult extends React.Component{
                                     borderRadius: 50,
                                     borderColor:'#C4C4C4',
                                     borderWidth: 1, marginLeft: 10,
-                                    backgroundColor: 'rgba(196, 196, 196, 0.3)',
+                                    backgroundColor: '#ffffff',
                                     marginBottom: 5,
                                     
                                 }}
                                    
                                     keyboardAppearance={'default'}
+                                    keyboardType={'numeric'}
                                     onChangeText={(text) => {
                                         this._enteredResult(text);
                                         // console.log('votes entered stored in state');
@@ -494,23 +555,38 @@ export default class EnterResult extends React.Component{
                             )   
                         }
                     />
-                    <TouchableOpacity style={{backgroundColor:'#1D5179', width: 85, height:35, 
-                    justifyContent:'center',alignSelf:'flex-end', margin: 25,borderRadius:5}}
-                    onPress={()=>{ 
-                        this.props.navigation.navigate('DocumentScanner')
-                        {console.log("NEXT PRESSED")}
+                    {/* Rejected Ballot Papers */}
+                    {this._rejectedBallotPapers()}
 
-                    }}>
+
+
+                     {/* <TouchableOpacity
+                onPress={()=> this.props.navigation.navigate('DocumentScanner')}
+                style={{backgroundColor:'#1D5179',width:80, height: 30, }}>
                     <Text style={{color: '#ffffff', justifyContent: 'center',
-                        alignSelf:'center',  fontFamily:'Roboto', fontSize: 14}}>
-                        Next
-                    </Text>
-                </TouchableOpacity>
-                       
+                        alignSelf:'center',  fontFamily:'Roboto', fontSize: 14}}>Next</Text>
+                </TouchableOpacity> */}  
                 </ScrollView>  
+                {/* Next Button */}
+                <View style={{width: Dimensions.get('window').width, height:42,backgroundColor: '', }}>
+                    <TouchableOpacity style={{backgroundColor:'#1D5179', width: Dimensions.get('window').width, height:42, 
+                        justifyContent:'center',alignSelf:'flex-end', margin: 0,borderRadius:0}}
+                        onPress={()=>{ 
+                            this.openScanner()
+                        
+                        }}>
+                        <Text style={{color: '#ffffff', justifyContent: 'center',
+                            alignSelf:'center',  fontFamily:'Roboto', fontSize: 16}}>
+                            Scan Result Slip/PinkSheet
+                            {console.log("NEXT PRESSED")}
+                        </Text>
+                    </TouchableOpacity>  
+                </View>
+                
+                <KeyboardSpacer />
+                
             </View>
             
-        
         );
 
     }

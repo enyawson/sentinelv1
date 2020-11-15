@@ -105,7 +105,7 @@ const turnPopUpOn =()=>{
                     <Image 
                     style={styles.imageInBox}
                     source = { require('../assets/microphone.png') } />
-                    <Text style={styles.text}>Voice</Text>
+                    <Text style={styles.text}>Audio Recorder</Text>
                   </TouchableOpacity>
                 </View>
                 <View style={styles.box}>
@@ -114,22 +114,24 @@ const turnPopUpOn =()=>{
                     <Image 
                     style={styles.imageInBox}
                     source = { require('../assets/resultImage.png') } />
-                    <Text style={styles.text}> Results </Text>
+                    <Text style={styles.text}> Submit Results </Text>
                 </TouchableOpacity>
                 </View>    
           </View>
       <View style={styles.bottomContainer}>
+            <TouchableOpacity
+            onPress={()=>navigation.navigate('LoginPage')}>
+                <Text>Login</Text>
+            </TouchableOpacity>
             <TouchableOpacity>
                 <Text>Locate</Text>
             </TouchableOpacity>
-            <TouchableOpacity>
-                <Text>Call</Text>
-            </TouchableOpacity>
-            <TouchableOpacity>
-                <Text>Stories</Text>
-            </TouchableOpacity>
             <TouchableOpacity
-            onPress={()=> navigation.navigate('VideoPreview')}>
+             onPress={()=>navigation.navigate('PresidentialComponent')}
+            >
+              <Text>Stories</Text>
+            </TouchableOpacity>
+            <TouchableOpacity>
                 <Text>Help</Text>
             </TouchableOpacity>
       </View>
@@ -144,7 +146,7 @@ const turnPopUpOn =()=>{
         marginTop={10}
         color='#ed7055'
         marginRight={10}/>
-         <Text style={styles.textBottom}>SOFTMASTERS</Text>
+         <Text style={styles.textBottom}> SOFTMASTERS </Text>
       </View>
       
      
@@ -274,6 +276,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     justifyContent: 'center',
     alignSelf: 'center',
+    padding: 2,
   },
   textBottom: {
     fontSize: 26,

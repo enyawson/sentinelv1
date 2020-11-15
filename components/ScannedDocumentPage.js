@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 
 import {
     StyleSheet, View, KeyboardAvoidingView,Text, Image, TouchableOpacity,StatusBar,
-    TextInput, FlatList,ActivityIndicator, Platform
+    TextInput, FlatList,ActivityIndicator, Platform, Dimensions
 } from 'react-native';
 import globalStyle from '../components_styles/globalStyle';
 import { ScrollView, State, TouchableWithoutFeedback } from 'react-native-gesture-handler';
@@ -16,7 +16,8 @@ import AsyncStorage from '@react-native-community/async-storage';
 import ArrowBack from 'react-native-vector-icons/Ionicons';
 import { set } from 'react-native-reanimated';
 import Play from 'react-native-vector-icons/Ionicons';
-
+import KeyboardSpacer from 'react-native-keyboard-spacer';
+import ScannerDoc from '../components/ScannerDoc';
 
 
 export default function ScannedDocumentPage ({route, navigation,navigation:{setParams}}){
@@ -24,17 +25,19 @@ export default function ScannedDocumentPage ({route, navigation,navigation:{setP
     const [selectedFormType, setSelectedFormType] = useState('select Form Type');
     const [description, setDescription] = useState("");
     const [scannedSheets, setScannedSheets] = useState([]);
-   
-   
-    
-  
+    const [result, setResult]= useState('');
+    const [totalVoteCounted, setTotalVoteCounted]= useState('');
+    const [totalRejectedVotes, setTotalRejectedVotes]= useState('');
 
+   // width of cropped image
+   const imageWidth = ((Dimensions.get('window').width)/3 );
+   
 
     /**navigated image */
    // const { transferredImage } = route.params
     /**component did mount , component will unmount */
     useEffect(()=> {
-        console.log('Report page,  mounted');   
+        console.log('Report page mounted');   
         
         //get scanned image data
         getData();
@@ -74,14 +77,15 @@ export default function ScannedDocumentPage ({route, navigation,navigation:{setP
         setSelectedFormType("")
     }
 
-    // const formReportSubmit = async () => {
-    //     /**Clears storage*/
-    //     //clearStorage();
-    //     /**save data to be displayed on the activityList  in storage */
-    //     console.log("SCANNED IMAGES : "+ scannedSheets);
-    //     await removeDataStored();
-    //     navigation.navigate('Home');
-    // }
+    const formReportSubmit = async () => {
+        /**Clears storage*/
+        //clearStorage();
+        /**save data to be displayed on the activityList  in storage */
+        console.log("SCANNED IMAGES : "+ scannedSheets);
+        await removeDataStored();
+        setScannedSheets('');
+        navigation.navigate('Home');
+    }
 
     /**save Form type and description  used to preview activity on report*/
     const saveFormDescription = () => {
@@ -97,18 +101,18 @@ export default function ScannedDocumentPage ({route, navigation,navigation:{setP
         }
     }
 
-    /**Get Images , image details from async storage in Document scanner page */
+    /**Get Images , image details from async storage from scanner doc */
     const getData = async () => {
         try {
-            const value = await AsyncStorage.getItem('scannedImages')
-            console.log('async scannedImages values', value);
+            const value = await AsyncStorage.getItem('croppedImages')
+            console.log('async cropped images values', value);
             if(value !== null){
                 setScannedSheets((JSON.parse(value)));
             }
         }catch(e){
         console.log('error with async getData');
         }     
-        console.log("scanned sheets state "+ scannedSheets)
+        
     }
 
 
@@ -126,17 +130,8 @@ export default function ScannedDocumentPage ({route, navigation,navigation:{setP
     //     }
     // }
 
-    /**This method clears storage for photos submitted to receive new ones */
-    const removeDataStored = async () =>{
-        try{
-            await AsyncStorage.removeItem('scannedImages');
-
-        }catch(e){
-            console.log('error')
-        }
-        console.log('removed photos, picture details')
-    }
-
+    
+   
 
 
     /** save image in an array 
@@ -183,50 +178,64 @@ export default function ScannedDocumentPage ({route, navigation,navigation:{setP
         
         })      
     }
+ /**This method clears scannedImages array */
+ const removeDataStored = async () =>{
+    try{
+        await AsyncStorage.removeItem('scannedImages');
+        await AsyncStorage.removeItem('cropScannedImages');
+        console.log('images cleared');
+
+    }catch(e){
+        console.log('error')
+    }
+}
+
 
     return(
         <SafeAreaView style= {globalStyle.MainContainer}>
         <StatusBar barStyle="light-content" backgroundColor="#174060"/>
-            <View flexDirection='column' flex={0.456} marginTop={30} 
-            marginRight ={5}
-            marginLeft ={5}
-            borderWidth={0.5}
-            borderRadius={3}
-            borderColor='#7E7E7E'>
+            <View flexDirection='row' flex={1} marginTop={30} 
+                marginRight ={5}
+                marginLeft ={5}
+                borderWidth={0.5}
+                borderRadius={3}
+                borderColor='#7E7E7E'>
                 <View>
                     <FlatList
                         data= {scannedSheets}
                         keyExtractor={(item, index)=> index}
+                        horizontal={true}
                         renderItem={ ({ item}) => (  
                           <TouchableOpacity onPress={() => navigateToPhotoPreview(item) }>
                              <Image
-                                style={{ width:70, height:75,margin:1, resizeMode:'cover'}}   
+                                style={{ flex:1,width: imageWidth, margin:1, resizeMode:'cover'}}   
                                 source = {{ uri: "file://"+ item}} 
                             />
                         </TouchableOpacity>   
                          )   
                         }
-                        numColumns = {5}
                     />
                     
                 </View>  
             </View>
             <TouchableOpacity style={styles.addPhotoButton}
-                onPress={()=>{navigation.goBack()}}>
+                onPress={()=>{
+                    navigation.navigate('ScannerDoc');
+                }}>
                 <Add
                 name={'add'}
                 size={30}
                 color="white"/>   
             </TouchableOpacity>
-
-            <View style={{justifyContent: 'center', margin:5 ,flex: 1.2}}>
+            
+            <View style={{justifyContent: 'center', margin:5 ,flex: 1.5}}>
                 <View style={{borderWidth: 1, 
                     borderColor:'#C4C4C4',
                     borderRadius:5,
                     width: 270, 
                     marginLeft: 5,
                     marginBottom: 0,
-                    marginTop: 10}}>
+                    marginTop: 0}}>
                     <Picker
                         selectedValue={selectedFormType}
                         style={{height:45, width: 270, 
@@ -247,7 +256,7 @@ export default function ScannedDocumentPage ({route, navigation,navigation:{setP
                         Description
                     </Text>
                 </View>
-                <View style={{flexDirection:'row'}} >
+                <View style={{flexDirection:'row', }} >
                     <View>
                         <TextInput 
                             style={{height: 70, 
@@ -268,14 +277,14 @@ export default function ScannedDocumentPage ({route, navigation,navigation:{setP
                         </TextInput>
                     </View>
                         <TouchableOpacity style={styles.microphoneButton}
-                        onPress={()=> navigation.navigate('AudioRecorder') } >
+                            onPress={()=> navigation.navigate('AudioRecorder') } >
                             <Microphone name="microphone" 
                             size={21} 
                             color='white'
                             /> 
                         </TouchableOpacity>
                 </View>
-                <View marginBottom={0} marginLeft={10}marginTop={30}  marginBottom={20} >
+                {/* <View marginBottom={0} marginLeft={10}marginTop={30}  marginBottom={0} >
                     <View style={{flexDirection: 'row', }}>
                         <Text style={{
                             fontFamily:'roboto', fontSize: 16, marginRight: 5, marginLeft: 0,
@@ -302,30 +311,29 @@ export default function ScannedDocumentPage ({route, navigation,navigation:{setP
                             }}>
                             to get feedback
                         </Text>
-                        {/* <View style={styles.radioCircumference}>
-                            <TouchableOpacity style={styles.radioButton}></TouchableOpacity>
-                        </View>
-                        <Text style={{marginLeft: 5, marginRight: 0, marginTop: 10}}>anonymous</Text>  
-                        <Text style={{marginLeft: 10, marginRight: 10, marginTop: 10, fontWeight:'bold'}}> or </Text>
-                        <View style={styles.radioCircumference}>
-                            <TouchableOpacity style={styles.radioButton}></TouchableOpacity>
-                        </View> */}
-                        {/* <Text style={{marginTop: 10,marginLeft: 5, marginRight: 0}}>Sign In</Text>                    */}
+                                  
                     </View>
-                </View>
-            
-                <TouchableOpacity
-                    style={styles.button}
-                    onPress={()=> formReportSubmit()}>
-                    <Text style={{color:'white', 
-                        alignSelf:'center',
-                        fontSize: 18,
-                        }}>
-                        Submit
-                    </Text>
-                </TouchableOpacity>   
+                </View> */}
+                
+                    
             </View>
-        
+            <TouchableOpacity
+                style={{ width: Dimensions.get('window').width,
+                height: 45,
+                margin: 0,
+                marginTop: 30,
+                justifyContent: 'center',
+                backgroundColor: '#1D5179',
+                alignSelf:'center'}}
+                onPress={()=> formReportSubmit()}>
+                <Text style={{color:'white', 
+                    alignSelf:'center',
+                    fontSize: 18,
+                    }}>
+                    Submit
+                </Text>
+            </TouchableOpacity> 
+            <KeyboardSpacer />
         </SafeAreaView> 
     );
 }
@@ -355,29 +363,10 @@ const styles = StyleSheet.create({
         justifyContent:'center',
         margin: 1,
     },
-    moreView:{
-        backgroundColor:'#E7E7E7',
-        borderRadius:20,
-        alignSelf:'center',
-        elevation: 6,
-        shadowOpacity: 0.5,
-        shadowRadius: 5,
-        marginBottom: 10,
-    },
     textStyle:{
         fontSize: 14,   
         fontFamily: 'roboto',
         fontWeight: 'bold'
-    },
-    button: {
-        width: 100,
-        height: 45,
-        margin: 10,
-        marginTop: 30,
-        borderRadius: 5,
-        justifyContent: 'center',
-        backgroundColor: '#1D5179',
-        alignSelf:'center'
     },
     microphoneButton:{
         width: 48,

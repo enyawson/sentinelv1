@@ -3,5 +3,6 @@ Async Storage                        Component found in             retrieved
 'photos' -----------------------------PhotoLogic 
 'mainActivityList'--------------------EvidenceSubmission
 'activityListPicDetail'----------------PhotoLogic--------------EvidenceSubmission  
-'scannedImages'.........................DocumentScanner.........ScannedDocumentPage
+'scannedImage'.........................scanner Doc.........ScannedDocumentPage
 'formTextValues' ......................ScannedDocumentPage
+croppedImages .............................ScannedDocumentPage

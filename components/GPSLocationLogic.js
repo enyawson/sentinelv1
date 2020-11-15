@@ -230,7 +230,15 @@ export default class GPSLocationLogic extends Component{
     render(){
         return (
             <View style={{flexDirection: 'column', marginBottom: 10}}>
-                {/* <View style={styles.gpsContainer}>
+            {this.props.streetName != null? 
+                
+                <View style={{flexDirection: 'row', alignSelf:'center'}}>
+                    <Text style={{fontSize:16, color:'white', alignItems:'center',
+                    alignSelf:'center', marginLeft:65,marginRight:65, marginBottom:0}}>
+                    {this.props.streetName}</Text>
+                </View>
+                :
+                <View style={styles.gpsContainer}>
                     <Text style={{fontSize: 16, color: 'white', marginLeft: 10}} >
                      {this.state.latitude} 
                     </Text>
@@ -241,12 +249,8 @@ export default class GPSLocationLogic extends Component{
                      alignSelf:'center', marginLeft: 5, marginBottom:0}} >
                     acc:{Math.round(this.state.isWithInAccuracy).toFixed(3)} 
                     </Text>
-                </View> */}
-                <View style={{flexDirection: 'row', alignSelf:'center'}}>
-                    <Text style={{fontSize:16, color:'white', alignItems:'center',
-                    alignSelf:'center', marginLeft:65,marginRight:65, marginBottom:0}}>
-                    {this.props.streetName}</Text>
                 </View>
+            }
                 <View style={{marginBottom: 75, alignSelf: 'center',}}>
                     <Text style={{fontSize: 16, color: 'white', marginLeft: 5 ,marginBottom: 10,}} >
                     Date:{this.state.date} time: {this.state.dateTime}

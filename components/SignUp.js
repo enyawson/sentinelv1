@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-//import {MAIN_URL, APIKEY} from './ConstantUrls';
+import {MAIN_URL, APIKEY} from './ConstantUrls';
 import {
     StyleSheet, View, KeyboardAvoidingView,Text, Image, TouchableOpacity,StatusBar,
     TextInput, FlatList,ActivityIndicator, Platform
@@ -18,12 +18,16 @@ export default class SignUp extends React.Component{
            lastName: '',
            userEmail:'',
            contact: '',
-           countrySelected:'',
+           countrySelected:'', // remove country from both sides, just use the country code to detect country
            institution: '',
-           institutionIDNum: '',
-           individualColor: '#1D5179',
-           businessColor: '#f0f0f0',
+           institutionIDNum: '', // remove this// use accreditation number or code is optional
+           deviceIMEI: '', // submit the device id when submitting telephone number
+
+
            onContinue: false,
+           individualColor: '#1D5179', 
+           businessColor: '#f0f0f0',
+            
         } 
     };
     componentDidMount(){
@@ -37,52 +41,40 @@ export default class SignUp extends React.Component{
         
     }
 
-
-    // const [firstName,setFirstName] = useState('');
-    // const [lastName,setLastName] = useState('');
-    // const [userEmail,setEmail] = useState("");
-    // const [contact, setContact] = useState("");
-    // const [countrySelected, setCountrySelected] = useState("");
-    // const [institution, setInstitution] = useState("");
-    // const [institutionIDNum, setInstitutionIDNum] = useState("");
-    // const [individualColor, setIndividualColor]= useState('#1D5179')
-    // const [businessColor, setBusinessColor]= useState('#f0f0f0')
-    
-    // const [userName, setUserName] = useState("");
-    // const [password, setPassword] = useState("");
-    // const [confirmPassword, setConfirmPassword] = useState("");
-    // const [onContinue, setOnContinue] = useState(false);
- 
-
-    // useEffect(() => {
-    //         console.log('SignUp mounted');
-    //     return () => {
-    //         //unmount set button colors to individual
-            
-        
-    //     }
-    // }, [])
-
-    // const register =()=>{
-
-    //     let formData=new FormData();
-    //     formData.append('name','abt');
+     _register =()=>{
+        // firstname Chaos
+        // lastname Figthing
+        // email Ghana
+        // affiliation Joy FM
+        // affiliationcode 8020202
+        // password 11111
+        // telephone 904030303
+        // address Abeka
+        // country Ghana
+        let formData=new FormData();
+        formData.append('firstname',this.state.firstName);
+        formData.append('lastname', this.state.lastName);
+        formData.append('email', this.state.userEmail);
+        formData.append('affiliation', this.state.institution);
+        formData.append('affiliationcode', this.state.institutionIDNum);
+        formData.append('telephone', this.state.contact);
+       
 
 
-    //     // axios({
-    //     //     method:'POST',
-    //     //     url:MAIN_URL+'register',
-    //     //     data:formData,
-    //     //     headers: {
-    //     //         Accept: 'application/json',
-    //     //         'Content-Type': 'application/json',
-    //     //         apikey: APIKEY,
-    //     //       },
-    //     // }).then(response=>{
-    //     //     console.log(response.data);
-    //     // })
+        axios({
+            method:'POST',
+            url:MAIN_URL+'register',
+            data:formData,
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                apikey: APIKEY,
+              },
+        }).then(response=>{
+            console.log(response.data);
+        })
 
-    // }
+    }
     setPersonsFirstName = (text)=>{
         this.setState({
             firstName: text,
@@ -152,9 +144,6 @@ export default class SignUp extends React.Component{
 
     render(){
         return(
-            <KeyboardAvoidingView>
-
-          
             <View style={styles.container}>
              <StatusBar barStyle="light-content" backgroundColor="#174060"/>
                     <View style={{flex:0.35, backgroundColor: '#1D5179'}}>
@@ -326,7 +315,6 @@ export default class SignUp extends React.Component{
                     </View>
                        
             </View>
-            </KeyboardAvoidingView>
             
         
         );

@@ -215,17 +215,35 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
     }
     
    
+    //this method stores video path
+    const storeData =async (value)=> {
+        try{
+            await AsyncStorage.setItem('previewVideoOrImage',value)
+            } catch (e) {
+                console.log('error saving video for preview')
+            }
+        }
 /**
  * This method navigates to photo preview page
  * @param path image retrieved from flat list item in evidence page
  */
     const  navigateToPhotoPreview = (path) =>{
-        navigation.navigate('PhotoPreviewer',
-        {
-            transferredImageItem: path,
-        
-        })      
+    //set the state of extension 
+    let ext = path.split('.').pop();
+    //console.log("show Preview ready")
+    if (ext == 'mp4'){
+        storeData(path);
+        return(
+            navigation.navigate( 'VideoPreview')
+        );
     }
+    if(ext == 'jpg')
+    {
+        return(
+            navigation.navigate('PhotoPreviewer',{transferredImageItem: path})
+        );  
+    }
+}
 /**This method checks for the extension of file (jpg or mp4) */
 const checkExtensionOfFile=(item)=>{
     //set the state of extension 
@@ -260,7 +278,7 @@ const checkExtensionOfFile=(item)=>{
             )
             
     }
-}
+ }
 
     return(
         <SafeAreaView style= {globalStyle.MainContainer}>

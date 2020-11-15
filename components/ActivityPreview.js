@@ -8,6 +8,7 @@ import ArrowBack from 'react-native-vector-icons/Ionicons';
 import LocationMap from './LocationMap';
 import { ThreeDRotationSharp } from '@material-ui/icons';
 import Play from 'react-native-vector-icons/Ionicons';
+import LocationMapStatic from './LocationMapStatic';
 
 
 
@@ -137,7 +138,7 @@ export default class ActivityList extends React.Component{
         // console.log("ITEM CLICKED STATE : "+ this.state.imageClickedState);
     }
  /**This method checks for the extension of file (jpg or mp4) */
- checkExtensionOfFile=(item)=>{
+     checkExtensionOfFile=(item)=>{
     //set the state of extension 
     let ext = item.split('.').pop();
     //console.log("Extension "+ ext);
@@ -146,7 +147,7 @@ export default class ActivityList extends React.Component{
             <Image
             style={styles.imageInBox}   
             source = {{ uri: "file://"+ item}}/>
-     )
+        )
     } 
     if (ext == 'mp4'){
         return(
@@ -167,27 +168,33 @@ export default class ActivityList extends React.Component{
             )
             
     }
-}
-//save path of video and image to display in async storage
- storeData =async (value)=> {
+    }
+    //save path of video to display in videoPreview
+    storeData =async (value)=> {
     try{
         await AsyncStorage.setItem('previewVideoOrImage',value)
-    } catch (e) {
-        console.log('error saving video for preview')
+        } catch (e) {
+            console.log('error saving video for preview')
+        }
     }
- }
 
- showPreview =(path)=>{
+    showPreview =(path)=>{
      //set the state of extension 
     let ext = path.split('.').pop();
     console.log("show Preview ready")
+    console.log(path)
     if (ext == 'mp4'){
         this.storeData(path);
         return(
         this.props.navigation.navigate( 'VideoPreview')
         )
     } 
-    console.log("item"+ itemToPreview)
+    if (ext == 'jpg'){
+        return(
+            this.props.navigation.navigate('PhotoPreviewer',{transferredImageItem: path})
+        )
+    }
+    
     //else show preview for image
  
 }
@@ -222,15 +229,20 @@ export default class ActivityList extends React.Component{
                     style={{margin:15, alignContent: 'center'}}/>  
                 </TouchableOpacity>
                 <View style={{flexDirection: 'column', justifyContent:'center', }}>
-                    <Text style={{alignSelf:'center',marginLeft:40,marginTop: 10, fontFamily:'roboto',fontSize:18,color:'white'}}>
-                        INCIDENT: {itemIndex.incidenceValue.toUpperCase()}
-                    </Text>
+                    <View style={{flexDirection:'row'}}>
+                        <Text style={{alignSelf:'center',marginLeft:45,marginTop: 10, fontFamily:'roboto',fontSize:13,color:'white', fontWeight: 'bold' }}>
+                                INCIDENT: 
+                        </Text>
+                        <Text style={{alignSelf:'center',marginLeft:2,marginTop: 10, fontFamily:'roboto',fontSize:13,color:'white'}}>
+                            {itemIndex.incidenceValue.toUpperCase()}
+                        </Text>
+                    </View> 
                     <View style={{flexDirection: 'row',marginLeft:50, }}>
                          <View style={{flexDirection: 'row'}}>
-                            <Text style={{fontSize:12,color:'white', top:0, marginLeft: 0,marginRight:2,fontWeight:'bold' }}>
+                            <Text style={{fontSize:13,color:'white', top:0, marginLeft: 0,marginRight:2,fontWeight:'bold' }}>
                                 DATE: 
                             </Text>
-                            <Text style={{fontSize:12,color:'white', top:0, marginRight:5, }}>
+                            <Text style={{fontSize:13,color:'white', top:0, marginRight:5, }}>
                                 {itemIndex.picDetail.dateTaken}
                             </Text>
                         </View>
@@ -313,7 +325,7 @@ export default class ActivityList extends React.Component{
                  </View>
                         <Text style={{marginLeft:10}}>Location</Text>
                         <View style={{flex:2, backgroundColor:'',}}>
-                        <LocationMap />
+                        <LocationMap  incident={"Yes"} describe/>
                     </View>
             </View>   
                 

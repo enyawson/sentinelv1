@@ -5,39 +5,57 @@ import {
     TextInput, FlatList,ActivityIndicator, Platform
 } from 'react-native';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
+import axios from 'axios';
 
-export default function VerificationCodeForm({route, navigation}){
+export default function LoginPage({route, navigation}){
 
-    const [code, setCode] = useState("");
-    
-    const [onCodeVerified, setOnCodeVerified]= useState(false);
+    const [phoneNumber, setPhoneNumber] = useState("");
+    const [userEmail, setUserEmail] = useState("");
+    const [onLogin, setOnLogin]= useState(false);
     
 
     useEffect(() => {
-            console.log('Verification page mounted');
+            console.log('Login Page Mounted');
         return () => {
             
         }
     }, [])
 
+     const register =()=>{
+
+        let formData=new FormData();
+        formData.append('name','abt');
+
+
+        axios({
+            method:'POST',
+            url:MAIN_URL+'register',
+            data:formData,
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                apikey: APIKEY,
+              },
+        }).then(response=>{
+            console.log(response.data);
+        })
+
+    }
    
-   
-    const userCode = (value)=>{
-        setCode(value);
+    const userPhoneNumber = (value)=>{
+        setPhoneNumber(value);
     }
     
 
-    // const userAddress = (value) => {
-    //     setUserEmail(value);
-    // }
+    const userAddress = (value) => {
+        setUserEmail(value);
+    }
 
-   const toggleOnCodeVerified = ()=> {
-       setOnCodeVerified(true);
+   const toggleOnLogin = ()=> {
+       setOnLogin(true);
    }
-
    const onSubmitForm=()=> {
-    //if verified true, move to Home
-        navigation.navigate('Home')
+       navigation.navigate('VerificationCodeForm')
    }
 
 
@@ -57,12 +75,12 @@ export default function VerificationCodeForm({route, navigation}){
                 <TextInput 
                     style={styles.textInputBoxStyle}
                     onChangeText={(value) => 
-                        userCode(value)
+                        userPhoneNumber(value)
                     }
-                    value={code}
+                    value={phoneNumber}
                     multiline={false}
                     keyboardType={'numeric'}
-                    placeholder={'Enter verification code'}
+                    placeholder={'Enter Phone Number'}
                     enablesReturnKeyAutomatically={true}
                     
                 > 

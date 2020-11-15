@@ -35,10 +35,18 @@ import BusinessRegistration from './components/BusinessRegistration';
 import DocumentScanner from './components/DocumentScanner';
 import ScannedDocumentPage from './components/ScannedDocumentPage';
 import BusinessRegContinuation from './components/BusinessRegContinuation';
+//import LocationMapStatic from './components/LocationMapStatic';
+import CropperPage from './components/CropperPage';
+import ScannerDoc from './components/ScannerDoc';
+import LoginPage from './components/LoginPage';
+import {HeaderBackButton} from '@react-navigation/stack';
+import { Navigation } from '@material-ui/icons';
+
 
 const Stack = createStackNavigator();
 
 export default function App() {
+  
   return (
   <MenuProvider>
     <NavigationContainer>
@@ -297,7 +305,7 @@ export default function App() {
          }}
           }
         />  
-        <Stack.Screen 
+        {/* <Stack.Screen 
           name="DocumentScanner" 
           component ={DocumentScanner}
           options={{
@@ -313,13 +321,13 @@ export default function App() {
           fontFamily: 'roboto'
          }}
           }
-        />  
-          <Stack.Screen 
-          name="ScannedDocumentPage" 
-          component ={ScannedDocumentPage}
+        />   */}
+        <Stack.Screen 
+          name="ScannerDoc" 
+          component ={ScannerDoc}
           options={{
-          title: 'Report on Result',
-          headerShown: true,
+          title: 'Scan',
+          headerShown: false,
           headerStyle: {
           backgroundColor: '#1D5179',
           },
@@ -330,8 +338,79 @@ export default function App() {
           fontFamily: 'roboto'
          }}
           }
-        />  
+        /> 
+        <Stack.Screen 
+          name="CropperPage" 
+          component ={CropperPage}
+          options={{
+          title: 'Crop Scanned Document',
+          headerShown: false,
+          headerStyle: {
+          backgroundColor: '#1D5179',
+          },
+          headerTintColor: '#FFFFFF',
+          headerTitleStyle: {
+          fontWeight: 'normal',
+          alignSelf:'center',
+          fontFamily: 'roboto'
+         }}
+          }
+        /> 
+          <Stack.Screen 
+          name="ScannedDocumentPage" 
+          component ={ScannedDocumentPage}
+          options={{
+          headerLeft:null,
+          title:'Report on Result',
+          headerShown: false,
+          headerStyle: {
+          backgroundColor: '#1D5179',
+          },
+          headerTintColor: '#FFFFFF',
+          headerTitleStyle: {
+            fontWeight: 'normal',
+            alignSelf:'center',
+            fontFamily: 'roboto'
+         }}
+          }
+        /> 
+        {/* <Stack.Screen 
+          name="LocationMapStatic" 
+          component ={LocationMapStatic}
+          options={{
+          title: 'Report on Result',
+          headerShown: false,
+          headerStyle: {
+          backgroundColor: '#1D5179',
+          },
+          headerTintColor: '#FFFFFF',
+          headerTitleStyle: {
+          fontWeight: 'normal',
+          alignSelf:'center',
+          fontFamily: 'roboto'
+         }}
+          }
+        />   */}
 
+        <Stack.Screen 
+          name="LoginPage" 
+          component ={LoginPage}
+          options={{
+          headerLeft:null,
+          title:'Report on Result',
+          headerShown: false,
+          headerStyle: {
+          backgroundColor: '#1D5179',
+          },
+          headerTintColor: '#FFFFFF',
+          headerTitleStyle: {
+            fontWeight: 'normal',
+            alignSelf:'center',
+            fontFamily: 'roboto'
+         }}
+          }
+        /> 
+       
         
       </Stack.Navigator>
       
