@@ -6,3 +6,7 @@ Async Storage                        Component found in             retrieved
 'scannedImage'.........................scanner Doc.........ScannedDocumentPage
 'formTextValues' ......................ScannedDocumentPage
 croppedImages .............................ScannedDocumentPage
+
+Result database:
+presidentialData---------------------found in--presidentialComponent
+

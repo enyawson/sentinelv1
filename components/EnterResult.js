@@ -11,27 +11,9 @@ import { Picker } from '@react-native-community/picker';
 import RNPicker from "rn-modal-picker";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
+import PresidentialComponent from './PresidentialComponent';
+import ParliamentaryComponent from './ParliamentaryComponent';
 
-
-// presidential:{
-//     partyName: " ",
-//     candidateName: " ",
-//     result: " ",  
-// },
-// {
-//     id: 1,
-//     imageOfCandidate: ' ',
-//     partyImage: '',
-//     candidateName: '',
-//     result: ' '
-
-    
-//   },
-// parliamentary:{
-//     partyName: " ",
-//     candidateName: " ",
-//     result: " ",  
-// }
 
 export default class EnterResult extends React.Component{
     constructor(props){
@@ -118,135 +100,23 @@ export default class EnterResult extends React.Component{
             placeHolderText: "Select polling Station",
             selectedText: " ",
             result: " ",
-            focusedPresButtonColor:'#1D5179',
-            focusedPresTextColor: 'white',
+            focusedPresButtonColor:'',
+            focusedPresTextColor: 'black',
             presPressed: false,
-            focusedParliaButtonColor:' #C4C4C4',
+            focusedParliaButtonColor:'',
             focusedParliaTextColor: 'black',
             parliaPressed: false,
             toggleCandidates: false,
             scannerReady: true,
            // selectedPollStation: '',
-            candidatesItemsFromServer:[],
-            presidential:[
-                {
-                    id: 1,
-                    imageOfCandidate: require('../assets/nana_akufo.jpg'),
-                    candidateName: "Nana Akufo Addo",
-                    partyImage: require('../assets/npp_flag.png'),
-                    result: 0,  
-                },
-                {
-                    id: 2,
-                    imageOfCandidate: require('../assets/dramani.jpg'),
-                    candidateName: "John M. Dramani",
-                    partyImage: require('../assets/ndc.png'),
-                    result: 0,  
-                },
-            
-           
-            {
-                id: 3,
-                imageOfCandidate: require('../assets/christian.jpg'),
-                candidateName: "Christian K. Andrews",
-                partyImage: require('../assets/gum_flag.jpg'),
-                result: 0,  
-            },
-            {
-                id: 4,
-                imageOfCandidate: require('../assets/greenstreet.jpg'),
-                candidateName: "Ivor K. Greenstreet",
-                partyImage: require('../assets/cpp_flag.jpg'),
-                result: 0,  
-            },
-            {
-                id: 5,
-                imageOfCandidate: require('../assets/akua_donkor.jpg'),
-                candidateName: "Akua Donkor",
-                partyImage: require('../assets/gfp_flag.png'),
-                result: 0,  
-            },
-            {
-                id: 6,
-                imageOfCandidate: require('../assets/herbert.jpg'),
-                candidateName: "Henry H. Lartey",
-                partyImage: require('../assets/gcp_flag.jpg'),
-                result: 0,  
-            },
-            {
-                id: 7,
-                imageOfCandidate: require('../assets/alhassan.jpg'),
-                candidateName: "Hassan Ayariga",
-                partyImage: require('../assets/apc_flag.jpg'),
-                result: 0,  
-            },
-            {
-                id: 8,
-                imageOfCandidate: require('../assets/alfred.png'),
-                candidateName: "Alfred K.W. Aseidu",
-                partyImage: require('../assets/no_flag.jpg'),
-                result: 0,  
-            },
-           
-            ],
-            parliamentary: [
-                {
-                    id: 1,
-                    imageOfCandidate: require('../assets/avatar.png'),
-                    candidateName: "Name of Candidate",
-                    partyImage: require('../assets/no_flag.jpg'),
-                    result: 0,  
-                },
-                {
-                    id: 2,
-                    imageOfCandidate: require('../assets/avatar.png'),
-                    candidateName: "Name of Candidate",
-                    partyImage: require('../assets/no_flag.jpg'),
-                    result: 0,  
-                },
-                {
-                    id: 3,
-                    imageOfCandidate: require('../assets/avatar.png'),
-                    candidateName: "Name of Candidate",
-                    partyImage: require('../assets/no_flag.jpg'),
-                    result: 0,  
-                },
-                {
-                    id: 4,
-                    imageOfCandidate: require('../assets/avatar.png'),
-                    candidateName: "Name of Candidate",
-                    partyImage: require('../assets/no_flag.jpg'),
-                    result: 0,  
-                },
-                {
-                    id: 5,
-                    imageOfCandidate: require('../assets/avatar.png'),
-                    candidateName: "Name of Candidate",
-                    partyImage: require('../assets/no_flag.jpg'),
-                    result: 0,  
-                },
-                {
-                    id: 6,
-                    imageOfCandidate: require('../assets/avatar.png'),
-                    candidateName: "Name of Candidate",
-                    partyImage: require('../assets/no_flag.jpg'),
-                    result: 0,  
-                },
-                {
-                    id: 7,
-                    imageOfCandidate: require('../assets/avatar.png'),
-                    candidateName: "Name of Candidate",
-                    partyImage: require('../assets/no_flag.jpg'),
-                    result: 0,  
-                },
-            ]
+            toggleParliamentaryView: false,
             
         } 
     };
     
     componentDidMount(){
         console.log("enter result mounted")
-        {console.log(this.state.presidential[0].imageOfCandidate)}
+       
     }
 
     componentWillUnmount(){
@@ -279,6 +149,9 @@ export default class EnterResult extends React.Component{
         }
         if(prevState.toggleCandidates!== this.state.toggleCandidates){
             console.log("parliaText: "+ this.state.toggleCandidates)
+        }
+        if(prevState.toggleParliamentaryView!== this.state.toggleParliamentaryView){
+            console.log("view: "+ this.state.toggleParliamentaryView)
         }
         
     }
@@ -321,6 +194,7 @@ export default class EnterResult extends React.Component{
                 focusedPresTextColor: '#ffffff',
                 focusedParliaButtonColor: '#C4C4C4',
                 focusedParliaTextColor: 'black',
+                toggleParliamentaryView: false,
                 
             })
         }
@@ -337,7 +211,7 @@ export default class EnterResult extends React.Component{
                 focusedParliaTextColor: '#ffffff',
                 focusedPresButtonColor: '#C4C4C4',
                 focusedPresTextColor: 'black',
-
+                toggleParliamentaryView: true,
             })
         }
        
@@ -472,7 +346,6 @@ export default class EnterResult extends React.Component{
                             alignSelf: 'center',
                             justifyContent:'center',
                             borderColor:'gray',
-                            backgroundColor:'#C4C4C4',
                             borderWidth: 1,
                             backgroundColor:this.state.focusedPresButtonColor}}
                             onPress={()=> this.changePresButtonColor()}>
@@ -490,100 +363,18 @@ export default class EnterResult extends React.Component{
                             borderRightWidth:1,
                             borderBottomWidth:1,
                             borderTopWidth:1,backgroundColor:this.state.focusedParliaButtonColor}}
-                        onPress={()=> this.changeParliaButtonColor()}>
+                            onPress={()=> this.changeParliaButtonColor()}>
                             <Text style={{alignSelf:'center',fontWeight:'500', color:this.state.focusedParliaTextColor}}>
                                 PARLIAMENTARY
                             </Text>
                         </TouchableOpacity>
                 </View>
-                {/* This flat list populates the list of candidates for presidential and parliamentary  */}
-             
-                <ScrollView style={{margin: 5,}}>
-                    <FlatList
-                        data= {this.state.toggleCandidates? this.state.parliamentary : this.state.presidential}
-                        keyExtractor={(item, index)=> index}
-                        renderItem={ ({ item}) => (  
-                            <View>
-                            {console.log(item.image)}
-                                <View style={{flex:1,backgroundColor: '',flexDirection:'column',margin:15 }}>
-                                <View style={{backgroundColor:'', flexDirection:'row', flex:0.2,borderRadius:7,elevation:2}}>
-                                    {/* candidate Image */}
-                                <Image style={{width: 80, height:80, backgroundColor:'#FFD4D4', borderRadius:100,marginLeft:20, alignSelf: 'center'}}
-                                source={item.imageOfCandidate}
-                                />
-                                <View style={{flexDirection:'column'}}>
-                                    <View style={{flexDirection:'row', alignSelf:'center',justifyContent:'center', marginLeft: 10, marginTop: 12}}>
-                                        <Text style={{fontSize:15, fontFamily:'Roboto', fontWeight:'500', alignSelf: 'center', justifyContent:'center' }}>
-                                            {item.candidateName}</Text>
-                                        <Image style={{width: 40, height:40, backgroundColor:'#FFD4D4', borderRadius:100,marginLeft:10, alignSelf: 'center'}}
-                                        source={item.partyImage}
-                                        />
-                                    </View>
-                                    <TextInput 
-                                    style={{height:30, 
-                                    width: 185,
-                                    borderRadius: 50,
-                                    borderColor:'#C4C4C4',
-                                    borderWidth: 1, marginLeft: 10,
-                                    backgroundColor: '#ffffff',
-                                    marginBottom: 5,
-                                    
-                                }}
-                                   
-                                    keyboardAppearance={'default'}
-                                    keyboardType={'numeric'}
-                                    onChangeText={(text) => {
-                                        this._enteredResult(text);
-                                        // console.log('votes entered stored in state');
-                                        //console.log(this.state.selectedText + " : " + this.state.result);
-                                        
-                                    }}
-                                    
-                                    textAlign={'center'}
-                                    placeholder={'enter total votes'}
-                                    fontSize={14}
-                                    marginTop={5}
-                                    padding={0}
-                                    enablesReturnKeyAutomatically={true}
-                                > 
-                                </TextInput>
-
-                            </View>
-                            </View>  
-                            </View>
-                            </View>
-                            )   
-                        }
-                    />
-                    {/* Rejected Ballot Papers */}
-                    {this._rejectedBallotPapers()}
-
-
-
-                     {/* <TouchableOpacity
-                onPress={()=> this.props.navigation.navigate('DocumentScanner')}
-                style={{backgroundColor:'#1D5179',width:80, height: 30, }}>
-                    <Text style={{color: '#ffffff', justifyContent: 'center',
-                        alignSelf:'center',  fontFamily:'Roboto', fontSize: 14}}>Next</Text>
-                </TouchableOpacity> */}  
-                </ScrollView>  
-                {/* Next Button */}
-                <View style={{width: Dimensions.get('window').width, height:42,backgroundColor: '', }}>
-                    <TouchableOpacity style={{backgroundColor:'#1D5179', width: Dimensions.get('window').width, height:42, 
-                        justifyContent:'center',alignSelf:'flex-end', margin: 0,borderRadius:0}}
-                        onPress={()=>{ 
-                            this.openScanner()
-                        
-                        }}>
-                        <Text style={{color: '#ffffff', justifyContent: 'center',
-                            alignSelf:'center',  fontFamily:'Roboto', fontSize: 16}}>
-                            Scan Result Slip/PinkSheet
-                            {console.log("NEXT PRESSED")}
-                        </Text>
-                    </TouchableOpacity>  
-                </View>
-                
-                <KeyboardSpacer />
+                 {/* This view displays the type of candidate (presidential or parliamentary) */}
+                        {this.state.toggleParliamentaryView == false? 
+                            <PresidentialComponent navigation={this.props.navigation} />
+                            :
+                            <ParliamentaryComponent navigation={this.props.navigation}/>
+                        }       
                 
             </View>
             

@@ -1,4 +1,4 @@
-import React, { useState, Fragment } from 'react';
+import React from 'react';
 
 import {
     StyleSheet, View, KeyboardAvoidingView,Text, Image, TouchableOpacity,StatusBar,
@@ -17,120 +17,73 @@ export default class ParliamentaryComponent extends React.Component{
     constructor(props){
         super(props);
        // console.log({...props});
-
         this.state ={
             result: " ",
-            presidential:[
+            parliamentary: [
                 {
                     id: 1,
-                    imageOfCandidate: require('../assets/nana_akufo.jpg'),
-                    candidateName: "Nana Akufo Addo",
-                    partyImage: require('../assets/npp_flag.png'),
+                    imageOfCandidate: require('../assets/avatar.png'),
+                    candidateName: "Name of Candidate",
+                    partyImage: require('../assets/no_flag.jpg'),
                     result: 0,  
                 },
                 {
                     id: 2,
-                    imageOfCandidate: require('../assets/dramani.jpg'),
-                    candidateName: "John M. Dramani",
-                    partyImage: require('../assets/ndc.png'),
+                    imageOfCandidate: require('../assets/avatar.png'),
+                    candidateName: "Name of Candidate",
+                    partyImage: require('../assets/no_flag.jpg'),
                     result: 0,  
                 },
-            
-           
-            {
-                id: 3,
-                imageOfCandidate: require('../assets/christian.jpg'),
-                candidateName: "Christian K. Andrews",
-                partyImage: require('../assets/gum_flag.jpg'),
-                result: 0,  
-            },
-            {
-                id: 4,
-                imageOfCandidate: require('../assets/greenstreet.jpg'),
-                candidateName: "Ivor K. Greenstreet",
-                partyImage: require('../assets/cpp_flag.jpg'),
-                result: 0,  
-            },
-            {
-                id: 5,
-                imageOfCandidate: require('../assets/akua_donkor.jpg'),
-                candidateName: "Akua Donkor",
-                partyImage: require('../assets/gfp_flag.png'),
-                result: 0,  
-            },
-            {
-                id: 6,
-                imageOfCandidate: require('../assets/herbert.jpg'),
-                candidateName: "Henry H. Lartey",
-                partyImage: require('../assets/gcp_flag.jpg'),
-                result: 0,  
-            },
-            {
-                id: 7,
-                imageOfCandidate: require('../assets/alhassan.jpg'),
-                candidateName: "Hassan Ayariga",
-                partyImage: require('../assets/apc_flag.jpg'),
-                result: 0,  
-            },
-            {
-                id: 8,
-                imageOfCandidate: require('../assets/alfred.png'),
-                candidateName: "Alfred K.W. Aseidu",
-                partyImage: require('../assets/no_flag.jpg'),
-                result: 0,  
-            },
-           
+                {
+                    id: 3,
+                    imageOfCandidate: require('../assets/avatar.png'),
+                    candidateName: "Name of Candidate",
+                    partyImage: require('../assets/no_flag.jpg'),
+                    result: 0,  
+                },
+                {
+                    id: 4,
+                    imageOfCandidate: require('../assets/avatar.png'),
+                    candidateName: "Name of Candidate",
+                    partyImage: require('../assets/no_flag.jpg'),
+                    result: 0,  
+                },
+                {
+                    id: 5,
+                    imageOfCandidate: require('../assets/avatar.png'),
+                    candidateName: "Name of Candidate",
+                    partyImage: require('../assets/no_flag.jpg'),
+                    result: 0,  
+                },
+                {
+                    id: 6,
+                    imageOfCandidate: require('../assets/avatar.png'),
+                    candidateName: "Name of Candidate",
+                    partyImage: require('../assets/no_flag.jpg'),
+                    result: 0,  
+                },
+                {
+                    id: 7,
+                    imageOfCandidate: require('../assets/avatar.png'),
+                    candidateName: "Name of Candidate",
+                    partyImage: require('../assets/no_flag.jpg'),
+                    result: 0,  
+                },
             ],
         } 
     };
     
     componentDidMount(){
-        console.log("presidential mounted")
-        {console.log(this.state.presidential[0].imageOfCandidate)}
+        console.log("parliamentary mounted")
     }
-
     componentWillUnmount(){
     }
-
-    componentDidUpdate(prevProps, prevState){
-        if(prevState.selectedText !== this.state.selectedText){
-            console.log("selected Text : "+ this.state.selectedText)
-        }
-        if(prevState.result !== this.state.result){
-            console.log("selected result : "+ this.state.result)
-        }
-        if(prevState.presPressed !== this.state.presPressed){
-            console.log("presStatus : "+ this.state.presPressed)
-        }
-        if(prevState.focusedPresButtonColor!== this.state.focusedPresButtonColor){
-            console.log("presBut: "+ this.state.focusedPresButtonColor)
-        }
-        if(prevState.focusedPresTextColor!== this.state.focusedPresTextColor){
-            console.log("presText: "+ this.state.focusedPresTextColor)
-        }
-        if(prevState.parliaPressed !== this.state.parliaPressed){
-            console.log("parliaStatus : "+ this.state.parliaPressed)
-        }
-        if(prevState.focusedParliaButtonColor!== this.state.focusedParliaButtonColor){
-            console.log("parliaBut: "+ this.state.focusedParliaButtonColor)
-        }
-        if(prevState.focusedParliaTextColor!== this.state.focusedParliaTextColor){
-            console.log("parliaText: "+ this.state.focusedParliaTextColor)
-        }
-        if(prevState.toggleCandidates!== this.state.toggleCandidates){
-            console.log("parliaText: "+ this.state.toggleCandidates)
-        }
-        
+    componentDidUpdate(prevProps, prevState){   
     }
 
-    /**The method that set state of selected Item(polling Station)*/
-    _selectedValue(index, item){
-        this.setState({
-            selectedText: item.name
-        });
-        //console.log("Value selected : "+ this.state.selectedText)
-    }
-    /** This method sets the state result to the entered total votes */
+
+
+    /** This method sets the state (result) to the entered total votes */
     _enteredResult(text){
         console.log("TEXT : "+ text)
         
@@ -138,61 +91,8 @@ export default class ParliamentaryComponent extends React.Component{
             result : text,
         });
     }
-    /**Method that handles on press buttons color changes*/
-    // changePresStatus(){
-    //     this.setState({
-    //         presPressed: true,
-    //         parliaPressed: false,
-    //     })
-    // }
-    changePresButtonColor() {
-        
-        // this.changePresStatus();
-        // this.setState({
-        //     presPressed: true,
-        //     parliaPressed: false,
-        // })
-
-        if(!this.state.presPressed){
-            this.setState({
-                toggleCandidates: false,
-                parliaPressed: false,
-                focusedPresButtonColor: '#1D5179',
-                focusedPresTextColor: '#ffffff',
-                focusedParliaButtonColor: '#C4C4C4',
-                focusedParliaTextColor: 'black',
-                
-            })
-        }
-    }
+    
    
-    changeParliaButtonColor() {
-        
-        //this.changeParliaStatus();
-        if(!this.state.parliaPressed){
-            this.setState({
-                toggleCandidates: true,
-                presPressed: false,
-                focusedParliaButtonColor: '#1D5179',
-                focusedParliaTextColor: '#ffffff',
-                focusedPresButtonColor: '#C4C4C4',
-                focusedPresTextColor: 'black',
-
-            })
-        }
-       
-    }
-
-    // getVerificationCode= (text) => {
-    //     setVerificationCode(text);
-    // }
-
-    //  onFormSubmit (){
-    //     //set the onSubmit state to true
-    //     setOnSubmit(true);
-    // }
-
-
     /**This method creates rejected ballot view */
     _rejectedBallotPapers=()=> {
     return(
@@ -242,178 +142,84 @@ export default class ParliamentaryComponent extends React.Component{
     );
     }
 
-    // //remove scanned images
-    //  removeDataStored = async () =>{
-    //     try{
-    //         await AsyncStorage.removeItem('scannedImages');
-    //         //await AsyncStorage.removeItem('cropScannedImages');
-    
-    //     }catch(e){
-    //         console.log('error')
-    //     }
-    // }
-
 
     /**This method navigates to scanner */
     openScanner=()=>{
         this.props.navigation.navigate('ScannerDoc');
     }
 
-
-
     render()
     {
         return(
-        <View style={styles.container}>
-            <View style={{backgroundColor: 'white',borderBottomLeftRadius: 5, borderBottomRightRadius:5,elevation:10}}>
-                <View style={{flexDirection:'row',}}>
-                    <ArrowBack
-                    name={'arrow-back-outline'}
-                    size={23}
-                    color="black"
-                    style={{margin:15, marginRight:50, }}
-                    onPress={()=> this.props.navigation.goBack()}
-                    />
-
-                    <Text style={{ color:"#6D6B6B", fontSize: 16, marginTop: 0,
-                    fontFamily:'roboto',fontWeight: 'bold', alignSelf: 'center'}}>
-                    POWERED BY SOFTMASTERS</Text>
-                </View>
-                <RNPicker
-                    dataSource={this.state.constituencyDataSource}
-                    dummyDataSource={this.state.dataSource}
-                    defaultValue={false}
-                    pickerTitle ={"Polling Stations"}
-                    showSearchBar={true}
-                    disablePicker={false}
-                    changeAnimation={"none"}
-                    searchBarPlaceHolder = {"Search....."}
-                    showPickerTitle ={true}
-                    searchBarContainerStyle={this.props.searchBarContainerStyle}
-                    pickerStyle={styles.pickerStyle}
-                    pickerItemTextStyle={styles.listTextViewStyle}
-                    selectedLabel={this.state.selectedText}
-                    placeHolderLabel={this.state.placeHolderText}
-                    selectLabelTextStyle={styles.selectLabelTextStyle}
-                    placeHolderTextStyle={styles.placeHolderTextStyle}
-                    dropDownImageStyle={styles.dropDownImageStyle}
-                    dropDownImage= {require("../assets/ic_drop_down.png") }
-                    selectedValue={(index, item) => this._selectedValue(index.toString(), item)}
-                />
-              
-
-            </View>
-       
-                    {/* presidential and parliamentary result  */}
-                <View style={{ flexDirection: 'row',backgroundColor: '',elevation: 0,}}>
-                   
-                        <TouchableOpacity style={{ height: 50,
-                            width: Dimensions.get('window').width/2,
-                            alignSelf: 'center',
-                            justifyContent:'center',
-                            borderColor:'gray',
-                            backgroundColor:'#C4C4C4',
-                            borderWidth: 1,
-                            backgroundColor:this.state.focusedPresButtonColor}}
-                            onPress={()=> this.changePresButtonColor()}>
-                            <Text style={{alignSelf:'center',fontWeight:'500', color:this.state.focusedPresTextColor}}>
-                                PRESIDENTIAL
-                            </Text>
-                        </TouchableOpacity>
-                   
-                        <TouchableOpacity style={{ height: 50,
-                            width: Dimensions.get('window').width/2,
-                            backgroundColor: '#C4C4C4',
-                            justifyContent: 'center',
-                            alignSelf: 'center',
-                            borderColor:'gray',
-                            borderRightWidth:1,
-                            borderBottomWidth:1,
-                            borderTopWidth:1,backgroundColor:this.state.focusedParliaButtonColor}}
-                        onPress={()=> this.changeParliaButtonColor()}>
-                            <Text style={{alignSelf:'center',fontWeight:'500', color:this.state.focusedParliaTextColor}}>
-                                PARLIAMENTARY
-                            </Text>
-                        </TouchableOpacity>
-                </View>
-                {/* This flat list populates the list of candidates for presidential and parliamentary  */}
+            <View style={styles.container}>
+                {/* This flat list populates the list of candidates for presidential */}
              
-                <ScrollView style={{margin: 5,}}>
+              
                     <FlatList
-                        data= {this.state.toggleCandidates? this.state.parliamentary : this.state.presidential}
+                        data= {this.state.parliamentary}
                         keyExtractor={(item, index)=> index}
                         renderItem={ ({ item}) => (  
                             <View>
                             {console.log(item.image)}
                                 <View style={{flex:1,backgroundColor: '',flexDirection:'column',margin:15 }}>
-                                <View style={{backgroundColor:'', flexDirection:'row', flex:0.2,borderRadius:7,elevation:2}}>
-                                    {/* candidate Image */}
-                                <Image style={{width: 80, height:80, backgroundColor:'#FFD4D4', borderRadius:100,marginLeft:20, alignSelf: 'center'}}
-                                source={item.imageOfCandidate}
-                                />
-                                <View style={{flexDirection:'column'}}>
-                                    <View style={{flexDirection:'row', alignSelf:'center',justifyContent:'center', marginLeft: 10, marginTop: 12}}>
-                                        <Text style={{fontSize:15, fontFamily:'Roboto', fontWeight:'500', alignSelf: 'center', justifyContent:'center' }}>
-                                            {item.candidateName}</Text>
-                                        <Image style={{width: 40, height:40, backgroundColor:'#FFD4D4', borderRadius:100,marginLeft:10, alignSelf: 'center'}}
-                                        source={item.partyImage}
-                                        />
-                                    </View>
-                                    <TextInput 
-                                    style={{height:30, 
-                                    width: 185,
-                                    borderRadius: 50,
-                                    borderColor:'#C4C4C4',
-                                    borderWidth: 1, marginLeft: 10,
-                                    backgroundColor: '#ffffff',
-                                    marginBottom: 5,
-                                    
-                                }}
-                                   
-                                    keyboardAppearance={'default'}
-                                    keyboardType={'numeric'}
-                                    onChangeText={(text) => {
-                                        this._enteredResult(text);
-                                        // console.log('votes entered stored in state');
-                                        //console.log(this.state.selectedText + " : " + this.state.result);
-                                        
-                                    }}
-                                    
-                                    textAlign={'center'}
-                                    placeholder={'enter total votes'}
-                                    fontSize={14}
-                                    marginTop={5}
-                                    padding={0}
-                                    enablesReturnKeyAutomatically={true}
-                                > 
-                                </TextInput>
+                                    <View style={{backgroundColor:'', flexDirection:'row', flex:0.2,borderRadius:7,elevation:2}}>
+                                        {/* candidate Image */}
+                                        <Image style={{width: 80, height:80, backgroundColor:'#FFD4D4', borderRadius:100,marginLeft:20, alignSelf: 'center'}}
+                                        source={item.imageOfCandidate}/>
 
-                            </View>
-                            </View>  
-                            </View>
-                            </View>
+                                        {/* candidate and party information */}
+                                        <View style={{flexDirection:'column'}}>
+                                            <View style={{flexDirection:'row', alignSelf:'center',justifyContent:'center', marginLeft: 10, marginTop: 12}}>
+                                                <Text style={{fontSize:15, fontFamily:'Roboto', fontWeight:'500', alignSelf: 'center', justifyContent:'center' }}>
+                                                    {item.candidateName}</Text>
+                                                <Image style={{width: 40, height:40, backgroundColor:'#FFD4D4', borderRadius:100,marginLeft:10, alignSelf: 'center'}}
+                                                source={item.partyImage}
+                                                />
+                                            </View>
+                                            <TextInput 
+                                                style={{height:30, 
+                                                width: 185,
+                                                borderRadius: 50,
+                                                borderColor:'#C4C4C4',
+                                                borderWidth: 1, marginLeft: 10,
+                                                backgroundColor: '#ffffff',
+                                                marginBottom: 5,
+                                                }}
+                                                keyboardAppearance={'default'}
+                                                keyboardType={'numeric'}
+                                                onChangeText={(text) => {
+                                                    this._enteredResult(text);
+                                                    // console.log('votes entered stored in state');
+                                                    //console.log(this.state.selectedText + " : " + this.state.result); 
+                                                }}
+                                                textAlign={'center'}
+                                                placeholder={'enter total votes'}
+                                                fontSize={14}
+                                                marginTop={5}
+                                                padding={0}
+                                                enablesReturnKeyAutomatically={true}
+                                            /> 
+                                        </View>
+                                    </View>  
+                                </View>
+                             </View>
                             )   
                         }
+                        ListFooterComponent={
+                            <View>
+                                 {/* Rejected Ballot Papers */}
+                                {this._rejectedBallotPapers()}
+                            </View>
+                        }
                     />
-                    {/* Rejected Ballot Papers */}
-                    {this._rejectedBallotPapers()}
-
-
-
-                     {/* <TouchableOpacity
-                onPress={()=> this.props.navigation.navigate('DocumentScanner')}
-                style={{backgroundColor:'#1D5179',width:80, height: 30, }}>
-                    <Text style={{color: '#ffffff', justifyContent: 'center',
-                        alignSelf:'center',  fontFamily:'Roboto', fontSize: 14}}>Next</Text>
-                </TouchableOpacity> */}  
-                </ScrollView>  
-                {/* Next Button */}
+                 
+                
+                {/* This button navigates to scanner */}
                 <View style={{width: Dimensions.get('window').width, height:42,backgroundColor: '', }}>
                     <TouchableOpacity style={{backgroundColor:'#1D5179', width: Dimensions.get('window').width, height:42, 
                         justifyContent:'center',alignSelf:'flex-end', margin: 0,borderRadius:0}}
                         onPress={()=>{ 
                             this.openScanner()
-                        
                         }}>
                         <Text style={{color: '#ffffff', justifyContent: 'center',
                             alignSelf:'center',  fontFamily:'Roboto', fontSize: 16}}>
@@ -422,11 +228,8 @@ export default class ParliamentaryComponent extends React.Component{
                         </Text>
                     </TouchableOpacity>  
                 </View>
-                
-                <KeyboardSpacer />
-                
-            </View>
-            
+                <KeyboardSpacer />   
+            </View>  
         );
 
     }
@@ -439,23 +242,7 @@ const styles = StyleSheet.create({
         marginTop: 0,
         backgroundColor: '#F2F2F2',
     },
-    searchBarContainerStyle: {
-        marginBottom: 10,
-        flexDirection: "row",
-        height: 40,
-        shadowOpacity: 1.0,
-        shadowRadius: 5,
-        shadowOffset: {
-          width: 1,
-          height: 1
-        },
-        backgroundColor: "rgba(255,255,255,1)",
-        shadowColor: "#d3d3d3",
-        borderRadius: 10,
-        elevation: 3,
-        marginLeft: 10,
-        marginRight: 10
-      },
+    
       selectLabelTextStyle: {
         color: "#000",
         textAlign: "left",
@@ -463,33 +250,7 @@ const styles = StyleSheet.create({
         padding: 10,
         flexDirection: "row"
       },
-      dropDownImageStyle: {
-        marginLeft: 10,
-        width: 10,
-        height: 10,
-        alignSelf: "center",
-     
-      },
     
-      pickerStyle: {
-        marginLeft: 25,
-        elevation:1,
-        paddingRight: 25,
-        marginRight: 15,
-        marginBottom: 10,
-        shadowOpacity: 0.2,
-        shadowOffset: {
-          width: 1,
-          height: 1
-        },
-        borderWidth:0.3,
-        borderColor:"gray",
-        shadowRadius: 0,
-        backgroundColor: "rgba(255,255,255,1)",
-        
-        borderRadius: 5,
-        flexDirection: "row"
-      },
       listTextViewStyle: {
         color: "#000",
         marginVertical: 5,
@@ -504,10 +265,6 @@ const styles = StyleSheet.create({
         width: "99%",
         flexDirection: "row"
       },
-
-
-
-
     contentContainer: {
         flex:1, 
         backgroundColor: '#F0F0F0',
