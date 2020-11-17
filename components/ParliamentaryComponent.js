@@ -21,49 +21,49 @@ export default class ParliamentaryComponent extends React.Component{
             result: " ",
             parliamentary: [
                 {
-                    id: 1,
+                    id: '1',
                     imageOfCandidate: require('../assets/avatar.png'),
                     candidateName: "Name of Candidate",
                     partyImage: require('../assets/no_flag.jpg'),
                     result: 0,  
                 },
                 {
-                    id: 2,
+                    id: '2',
                     imageOfCandidate: require('../assets/avatar.png'),
                     candidateName: "Name of Candidate",
                     partyImage: require('../assets/no_flag.jpg'),
                     result: 0,  
                 },
                 {
-                    id: 3,
+                    id: '3',
                     imageOfCandidate: require('../assets/avatar.png'),
                     candidateName: "Name of Candidate",
                     partyImage: require('../assets/no_flag.jpg'),
                     result: 0,  
                 },
                 {
-                    id: 4,
+                    id: '4',
                     imageOfCandidate: require('../assets/avatar.png'),
                     candidateName: "Name of Candidate",
                     partyImage: require('../assets/no_flag.jpg'),
                     result: 0,  
                 },
                 {
-                    id: 5,
+                    id: '5',
                     imageOfCandidate: require('../assets/avatar.png'),
                     candidateName: "Name of Candidate",
                     partyImage: require('../assets/no_flag.jpg'),
                     result: 0,  
                 },
                 {
-                    id: 6,
+                    id: '6',
                     imageOfCandidate: require('../assets/avatar.png'),
                     candidateName: "Name of Candidate",
                     partyImage: require('../assets/no_flag.jpg'),
                     result: 0,  
                 },
                 {
-                    id: 7,
+                    id: '7',
                     imageOfCandidate: require('../assets/avatar.png'),
                     candidateName: "Name of Candidate",
                     partyImage: require('../assets/no_flag.jpg'),
@@ -154,7 +154,7 @@ export default class ParliamentaryComponent extends React.Component{
             <View style={styles.container}>
                 {/* This flat list populates the list of candidates for presidential */}
              
-              
+                   
                     <FlatList
                         data= {this.state.parliamentary}
                         keyExtractor={(item, index)=> index}

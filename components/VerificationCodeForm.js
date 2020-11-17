@@ -5,26 +5,51 @@ import {
     TextInput, FlatList,ActivityIndicator, Platform
 } from 'react-native';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
-
+import AsyncStorage from '@react-native-community/async-storage';
 export default function VerificationCodeForm({route, navigation}){
 
-    const [code, setCode] = useState("");
+    const [verificationPin, setVerificationPin] = useState("");
+    const [deviceId, setDeviceId] = useState("");
+    const [phoneNumber,setPhoneNumber] = useState("");
+    const [generatedToken, setGeneratedToken] = useState("")
     
     const [onCodeVerified, setOnCodeVerified]= useState(false);
     
 
     useEffect(() => {
             console.log('Verification page mounted');
+            getData();
+    
         return () => {
             
         }
     }, [])
 
+    // retrieve login Response
+    const getData = async ()=> {
+        
+       
+            const jsonValue = await AsyncStorage.getItem('loginResponse')
+            // get response from json value
+            const getValue =(JSON.parse(jsonValue));
+            console.log(getValue)
+       
+        }
+
    
-   
-    const userCode = (value)=>{
-        setCode(value);
+    const userVerificationPin = (value)=>{
+        setVerificationPin(value);
     }
+    const userDeviceId = (value)=>{
+        setDeviceId(value);
+    }
+    const userPhoneNumber = (value)=>{
+        setPhoneNumber(value);
+    }
+    const userAccessToken = (value)=>{
+        setGeneratedToken(value);
+    }
+
     
 
     // const userAddress = (value) => {
@@ -57,14 +82,13 @@ export default function VerificationCodeForm({route, navigation}){
                 <TextInput 
                     style={styles.textInputBoxStyle}
                     onChangeText={(value) => 
-                        userCode(value)
+                        userVerificationPin(value)
                     }
-                    value={code}
+                    value={verificationPin}
                     multiline={false}
                     keyboardType={'numeric'}
                     placeholder={'Enter verification code'}
                     enablesReturnKeyAutomatically={true}
-                    
                 > 
                 </TextInput>
             </View>

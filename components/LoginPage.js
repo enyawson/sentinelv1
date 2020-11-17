@@ -6,56 +6,87 @@ import {
 } from 'react-native';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 import axios from 'axios';
+import DeviceInfo from 'react-native-device-info';
+import {getUniqueId} from 'react-native-device-info';
+import {APIKEY, MAIN_URL, LOGIN_URL} from '../components/ConstantUrls'
+import AsyncStorage from '@react-native-community/async-storage';
+//import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function LoginPage({route, navigation}){
 
     const [phoneNumber, setPhoneNumber] = useState("");
+    const [uniqueId, setUniqueId] = useState(" ");
     const [userEmail, setUserEmail] = useState("");
     const [onLogin, setOnLogin]= useState(false);
+    const [loading, setLoading] = useState(false);
+    const [errorText, setErrorText] = useState('');
     
-
+    
     useEffect(() => {
             console.log('Login Page Mounted');
         return () => {
+            let deviceId = DeviceInfo.getUniqueId();
+            setUniqueId( deviceId);
+            console.log(uniqueId)
             
         }
     }, [])
 
-     const register =()=>{
+    
 
+    //sign up 
+    const _signUp =()=>{
+        
+        if(phoneNumber){
+           
         let formData=new FormData();
-        formData.append('name','abt');
-
-
+        formData.append('telephone', phoneNumber);
+        formData.append('deviceid', uniqueId);
         axios({
             method:'POST',
-            url:MAIN_URL+'register',
+            url:LOGIN_URL,
             data:formData,
             headers: {
-                Accept: 'application/json',
+                'Accept': 'application/json',
                 'Content-Type': 'application/json',
                 apikey: APIKEY,
               },
         }).then(response=>{
-            console.log(response.data);
+            // let value = response['data']
+            ;
+            const storeData = async()=> {
+                try{
+                    await AsyncStorage.setItem('loginResponse', JSON.stringify( response.data.data))
+                    console.log('login data saved success')
+                }catch (e){
+                    console.log('error saving login response')
+                }
+            }
+            storeData();
         })
+
+
+        //navigate  to verification 
+        navigation.navigate('VerificationCodeForm')
+
+
+    } else if (phoneNumber.length() < 10){
+        alert('incorrect number')
+        console.log(typeof phoneNumber)
+    } else {
+        alert('please enter your phone number')
+    }
 
     }
    
     const userPhoneNumber = (value)=>{
         setPhoneNumber(value);
     }
-    
+   
 
-    const userAddress = (value) => {
-        setUserEmail(value);
-    }
-
-   const toggleOnLogin = ()=> {
-       setOnLogin(true);
-   }
    const onSubmitForm=()=> {
-       navigation.navigate('VerificationCodeForm')
+       _signUp();
+       
    }
 
 

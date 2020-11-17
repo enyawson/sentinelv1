@@ -25,13 +25,13 @@ export default function ScannedDocumentPage ({route, navigation,navigation:{setP
     const [selectedFormType, setSelectedFormType] = useState('select Form Type');
     const [description, setDescription] = useState("");
     const [scannedSheets, setScannedSheets] = useState([]);
-    const [result, setResult]= useState('');
+    const [reference, setReference]= useState('');
     const [totalVoteCounted, setTotalVoteCounted]= useState('');
     const [totalRejectedVotes, setTotalRejectedVotes]= useState('');
 
    // width of cropped image
-   const imageWidth = ((Dimensions.get('window').width)/3 );
-   
+   const imageWidth = ((Dimensions.get('window').width) );
+//    console.log(imageWidth)
 
     /**navigated image */
    // const { transferredImage } = route.params
@@ -56,6 +56,9 @@ export default function ScannedDocumentPage ({route, navigation,navigation:{setP
     const setInputtedText = (inputtedText) => {
         setDescription(inputtedText)
         console.log("InputtedText "+ inputtedText)
+    }
+    const setReferenceText = (text)=>{
+        setReference(text)
     }
 
     
@@ -194,10 +197,10 @@ export default function ScannedDocumentPage ({route, navigation,navigation:{setP
     return(
         <SafeAreaView style= {globalStyle.MainContainer}>
         <StatusBar barStyle="light-content" backgroundColor="#174060"/>
-            <View flexDirection='row' flex={1} marginTop={30} 
+            <View flexDirection='row' flex={3.5} marginTop={30} 
                 marginRight ={5}
                 marginLeft ={5}
-                borderWidth={0.5}
+                borderWidth={0}
                 borderRadius={3}
                 borderColor='#7E7E7E'>
                 <View>
@@ -208,7 +211,7 @@ export default function ScannedDocumentPage ({route, navigation,navigation:{setP
                         renderItem={ ({ item}) => (  
                           <TouchableOpacity onPress={() => navigateToPhotoPreview(item) }>
                              <Image
-                                style={{ flex:1,width: imageWidth, margin:1, resizeMode:'cover'}}   
+                                style={{ flex:1,width: imageWidth, margin:1, resizeMode:'contain'}}   
                                 source = {{ uri: "file://"+ item}} 
                             />
                         </TouchableOpacity>   
@@ -218,7 +221,7 @@ export default function ScannedDocumentPage ({route, navigation,navigation:{setP
                     
                 </View>  
             </View>
-            <TouchableOpacity style={styles.addPhotoButton}
+            {/* <TouchableOpacity style={styles.addPhotoButton}
                 onPress={()=>{
                     navigation.navigate('ScannerDoc');
                 }}>
@@ -226,10 +229,10 @@ export default function ScannedDocumentPage ({route, navigation,navigation:{setP
                 name={'add'}
                 size={30}
                 color="white"/>   
-            </TouchableOpacity>
+            </TouchableOpacity> */}
             
-            <View style={{justifyContent: 'center', margin:5 ,flex: 1.5}}>
-                <View style={{borderWidth: 1, 
+            <View style={{justifyContent: 'center', margin:0 ,flex: 1.5}}>
+                {/* <View style={{borderWidth: 1, 
                     borderColor:'#C4C4C4',
                     borderRadius:5,
                     width: 270, 
@@ -250,27 +253,56 @@ export default function ScannedDocumentPage ({route, navigation,navigation:{setP
                     <Picker.Item label="Form A" value="Form A"/>
                     <Picker.Item label="Form B" value="Form B"/>
                     </Picker>
+                </View> */}
+                <View style={{flexDirection:'column', marginTop:20,
+                marginLeft:10, marginRight:10}}>
+                    <TextInput 
+                        style={{     
+                        width: 270,
+                        height:45,
+                        borderRadius: 8,
+                        borderColor:'#C4C4C4',
+                        borderWidth: 1, 
+                        marginLeft: 0,
+                        marginRight: 30,
+                        paddingTop: 10,
+                        }}
+                        onChangeText={(text) => 
+                            setReferenceText(text)
+                        }
+                        textAlignVertical={'top'}
+                        value={reference}
+                        multiline={false}
+                        keyboardType="numeric"
+                        placeholder={' Enter reference Number'}
+                        fontSize={14}
+                        enablesReturnKeyAutomatically={true}
+                    > 
+                        </TextInput>
                 </View>
-                <View marginBottom={0} marginLeft={5} marginTop={30}>
+                <View marginBottom={0} marginLeft={15} marginTop={10}>
                     <Text style={styles.textStyle}>
-                        Description
+                        Comment
                     </Text>
                 </View>
-                <View style={{flexDirection:'row', }} >
-                    <View>
+                <View style={{flexDirection:'row', alignSelf:'center' , }} >
+                    <View style={{}}> 
                         <TextInput 
-                            style={{height: 70, 
+                            style={{
+                            height: 70,
                             width: 270,
                             borderRadius: 8,
                             borderColor:'#C4C4C4',
-                            borderWidth: 1, marginLeft: 5}}
+                            borderWidth: 1, 
+                            marginLeft: 5,
+                            paddingTop: 20,}}
                             onChangeText={(text) => 
                              setInputtedText(text)
                             }
                             textAlignVertical={'top'}
                             value={description}
                             multiline={true}
-                            placeholder={' enter text'}
+                            placeholder={' Enter comment'}
                             fontSize={14}
                             enablesReturnKeyAutomatically={true}
                         > 

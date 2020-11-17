@@ -45,13 +45,51 @@ import { Navigation } from '@material-ui/icons';
 
 const Stack = createStackNavigator();
 
+const Auth = ()=> {
+  // stack Navigator for Login and Sign Up Screen
+  return (
+    <Stack.Navigator >
+      <Stack.Screen 
+          name="LoginPage" 
+          component ={LoginPage}
+          options={{
+          headerLeft:null,
+          title:'Report on Result',
+          headerShown: false,
+          headerStyle: {
+          backgroundColor: '#1D5179',
+          },
+          headerTintColor: '#FFFFFF',
+          headerTitleStyle: {
+            fontWeight: 'normal',
+            alignSelf:'center',
+            fontFamily: 'roboto'
+         }}
+          }
+        /> 
+         <Stack.Screen 
+          name="VerificationCodeForm" 
+          component ={VerificationCodeForm}
+          options={{
+          headerShown: false
+        }}/> 
+    </Stack.Navigator>
+  );
+}
+
 export default function App() {
   
   return (
   <MenuProvider>
-    <NavigationContainer>
-      <Stack.Navigator>
-      
+    <NavigationContainer initialRouteName = "Home">
+   {/* Auth Navigator: Include Login and Signup */}
+   
+    <Stack.Navigator>
+        {/* <Stack.Screen
+          name="Auth"
+          component={Auth}
+          options={{headerShown:false}}
+        /> */}
         <Stack.Screen 
         name="Home"
         component={Home}
@@ -59,7 +97,6 @@ export default function App() {
           headerShown: false
         }}
         />
-        
         <Stack.Screen 
         name="GPSLocationLogic" 
         component ={GPSLocationLogic}
@@ -136,13 +173,6 @@ export default function App() {
           headerShown: false
         }}/> 
        
-        <Stack.Screen 
-          name="VerificationCodeForm" 
-          component ={VerificationCodeForm}
-          options={{
-          headerShown: false
-        }}/> 
-
         <Stack.Screen 
           name="MainActivityList" 
           component ={MainActivityList}
@@ -392,25 +422,7 @@ export default function App() {
           }
         />   */}
 
-        <Stack.Screen 
-          name="LoginPage" 
-          component ={LoginPage}
-          options={{
-          headerLeft:null,
-          title:'Report on Result',
-          headerShown: false,
-          headerStyle: {
-          backgroundColor: '#1D5179',
-          },
-          headerTintColor: '#FFFFFF',
-          headerTitleStyle: {
-            fontWeight: 'normal',
-            alignSelf:'center',
-            fontFamily: 'roboto'
-         }}
-          }
-        /> 
-       
+        
         
       </Stack.Navigator>
       

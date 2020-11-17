@@ -19,7 +19,8 @@ export default class PresidentialComponent extends React.Component{
         super(props);
        // console.log({...props});
         this.state ={
-           
+
+            inputItems: [{}],
             individualID: '',    // Id number or position of candidate on ballot paper
             result: " ",        // The total number of votes for each candidate
             partyName: '',      // The name of party(initials), used as secondary id to individualID
@@ -42,64 +43,80 @@ export default class PresidentialComponent extends React.Component{
                 },
             
            
-            // {
-            //     id: 3,
-            //     imageOfCandidate: require('../assets/christian.jpg'),
-            //     candidateName: "Christian K. Andrews",
-            //     partyImage: require('../assets/gum_flag.jpg'),
-            //     result: 0,  
-            // },
-            // {
-            //     id: 4,
-            //     imageOfCandidate: require('../assets/greenstreet.jpg'),
-            //     candidateName: "Ivor K. Greenstreet",
-            //     partyImage: require('../assets/cpp_flag.jpg'),
-            //     result: 0,  
-            // },
-            // {
-            //     id: 5,
-            //     imageOfCandidate: require('../assets/akua_donkor.jpg'),
-            //     candidateName: "Akua Donkor",
-            //     partyImage: require('../assets/gfp_flag.png'),
-            //     result: 0,  
-            // },
-            // {
-            //     id: 6,
-            //     imageOfCandidate: require('../assets/herbert.jpg'),
-            //     candidateName: "Henry H. Lartey",
-            //     partyImage: require('../assets/gcp_flag.jpg'),
-            //     result: 0,  
-            // },
-            // {
-            //     id: 7,
-            //     imageOfCandidate: require('../assets/alhassan.jpg'),
-            //     candidateName: "Hassan Ayariga",
-            //     partyImage: require('../assets/apc_flag.jpg'),
-            //     result: 0,  
-            // },
-            // {
-            //     id: 8,
-            //     imageOfCandidate: require('../assets/alfred.png'),
-            //     candidateName: "Alfred K.W. Aseidu",
-            //     partyImage: require('../assets/no_flag.jpg'),
-            //     result: 0,  
-            // },
+                {
+                    id: '3',
+                    partyName: 'GUM',
+                    imageOfCandidate: require('../assets/christian.jpg'),
+                    candidateName: "Christian K. Andrews",
+                    partyImage: require('../assets/gum_flag.jpg'),
+                    result: 0,  
+                },
+                {
+                    id: '4',
+                    partyName: 'CPP',
+                    imageOfCandidate: require('../assets/greenstreet.jpg'),
+                    candidateName: "Ivor K. Greenstreet",
+                    partyImage: require('../assets/cpp_flag.jpg'),
+                    result: 0,  
+                },
+                {
+                    id: '5',
+                    partyName: 'GFP',
+                    imageOfCandidate: require('../assets/akua_donkor.jpg'),
+                    candidateName: "Akua Donkor",
+                    partyImage: require('../assets/gfp_flag.png'),
+                    result: 0,  
+                },
+                {
+                    id: '6',
+                    partyName: 'GCPP',
+                    imageOfCandidate: require('../assets/herbert.jpg'),
+                    candidateName: "Henry H. Lartey",
+                    partyImage: require('../assets/gcp_flag.jpg'),
+                    result: 0,  
+                },
+                {
+                    id: '7',
+                    partyName: 'APC',
+                    imageOfCandidate: require('../assets/alhassan.jpg'),
+                    candidateName: "Hassan Ayariga",
+                    partyImage: require('../assets/apc_flag.jpg'),
+                    result: 0,  
+                },
+                {
+                    id: '8',
+                    partyName: 'Independent',
+                    imageOfCandidate: require('../assets/alfred.png'),
+                    candidateName: "Alfred K.W. Aseidu",
+                    partyImage: require('../assets/no_flag.jpg'),
+                    result: 0,  
+                },
            
             ],                  // Presidential candidates contesting
+            inputFocused: false,
+            
         } 
     };
     
     componentDidMount(){
         console.log("presidential mounted")
         //get presidential data stored
-        // this.getPresidentialData();
+         this.getPresidentialData();
+         console.log("Item "+this.state.partyName + " result "+ this.state.result)
     }
+
+    componentDidUpdate(prevProps, prevState){  
+        if(prevState.inputFocused !== this.state.inputFocused){
+            console.log(" TextInput Focus: "+ this.state.inputFocused)
+        }
+    }
+
     componentWillUnmount(){
     }
-    componentDidUpdate(prevProps, prevState){   
-    }
+    
 
-
+// ************************************************************************************
+ /** setting states */ 
 
     /** This method sets the state (result) to the entered total votes */
     _enteredResult(text){
@@ -107,20 +124,39 @@ export default class PresidentialComponent extends React.Component{
         this.setState({
             result : text,
         });
+        //console.log('Result : '+ this.state.result)
     }
     /**set individualID state */
     setIndividualID(value){
         this.setState({
             individualID: value,
         })
+        //console.log('id '+ this.state.individualID)
     }
     /** set partyName state*/
     setPartyName(value){
         this.setState({
             partyName: value,
         })
+       // console.log('party name: '+ this.state.partyName)
     }
+    /**set onFocus and onblur when textInput gain focus or loose focus */
+    setInputIsOnFocus(){
+        this.setState({
+            inputFocused: true
+        })
+    }
+    setInputIsOnBlur(){
+        this.setState({
+            inputFocused: false
+        })
+       
+    }
+
     
+  // ********************************************************************************************** 
+   /**Functions and methods used */
+
     /**This method creates rejected ballot view */
     _rejectedBallotPapers=()=> {
     return(
@@ -128,7 +164,7 @@ export default class PresidentialComponent extends React.Component{
             <View style={{flex:1,backgroundColor: '',flexDirection:'column',margin:15 }}>
                 <View style={{backgroundColor:'', flexDirection:'row', flex:0.2,borderRadius:7,elevation:2}}>
                     {/* candidate Image */}
-                    <Image style={{width: 40, height:40, backgroundColor:'#ffffff', borderRadius:100,marginLeft:20, alignSelf: 'center', color:'gray'}}
+                    <Image style={{width: 40, height:40, backgroundColor:'#ffffff', borderRadius:100,marginLeft:20, alignSelf: 'center',}}
                     source={require('../assets/questionMarkBrown.png')}/>
                     <View style={{flexDirection:'column'}}>
                         <View style={{flexDirection:'row', alignSelf:'center',justifyContent:'center', marginLeft: 30, marginTop: 12}}>
@@ -170,14 +206,14 @@ export default class PresidentialComponent extends React.Component{
     }
 
     /**This method navigates to scanner */
-    openScanner=()=>{
-        
+    openScanner=()=>{  
+        this.props.navigation.navigate('ScannerDoc');  
     }
 
     /**
      * This method saves entered result in async storage
      */
-    _presidentialResultList = async()=> {
+    _savePresidentialResultList = async()=> {
         //Create an object to save presidential details
         let eachPresidentialTotalVote= {};
         eachPresidentialTotalVote.id = this.state.individualID; 
@@ -192,9 +228,10 @@ export default class PresidentialComponent extends React.Component{
             console.log('PRESIDENTIAL DATA '+ data);
         });
     }
+
     /**This method retrieves presidential data from async storage */
     getPresidentialData = async () => {
-        let value = {}
+       
         try {
             const data = await AsyncStorage.getItem('presidentialData')
             const value = JSON.parse(data);
@@ -210,22 +247,60 @@ export default class PresidentialComponent extends React.Component{
        
     }
 
+    /**This method clears presidential data  */
+     removeDataStored = async () =>{
+        try{
+            await AsyncStorage.removeItem('presidentialData'); 
+            console.log("presidential cleared")
+
+        }catch(e){
+            console.log('error')
+        
+     }
+    }
+
+    /** This method saves value of result after each entry */
+    _saveResult=()=>{
+        //check if inputting in text in done 
+        if(this.state.inputFocused == false){
+            this._savePresidentialResultList()
+        }
+        console.log("SAVE RESULT ON FOCUS FALSE")
+    }
+
+    inputtedItems=(item1, item2, index)=> {
+        let itemData = {};
+        itemData.result = item1;
+        itemData.party = item2;
+        itemData.index = index ;
+
+        if(this.state.inputFocused == false){
+            this.setState({
+            inputItems:[...this.state.inputItems, itemData]
+            })
+            console.log(itemData);
+        }
+    }
+
+
     render()
     {
         return(
             <View style={styles.container}>
                 {/* This flat list populates the list of candidates for presidential */}
              
-               
+                    <View>
+                        
+                    </View>  
                     <FlatList
-                        // ListHeaderComponent={
-                        //     <View>
-                        //        <Text>Hello Jesus</Text> 
-                        //     </View>
-                        // }
+                        ListHeaderComponent={
+                            <View>
+                               
+                            </View>
+                        }
                         data= {this.state.presidential}
                         keyExtractor={(item, index)=> index}
-                        renderItem={ ({ item}) => (  
+                        renderItem={ ({ item, index}) => (  
                             <View>
                             {/* {console.log(item.image)} */}
                                 <View style={{flex:1,backgroundColor: '',flexDirection:'column',margin:15 }}>
@@ -255,14 +330,19 @@ export default class PresidentialComponent extends React.Component{
                                                 }}
                                                 keyboardAppearance={'default'}
                                                 keyboardType={'numeric'}
-                                                onChangeText={(text) => {
+                                                onFocus={()=>this.setInputIsOnFocus()}
+                                                onBlur={()=> this.setInputIsOnBlur()}
+
+                                                onChangeText={(text) =>{
                                                     item.result = text //change the value of result in object
-                                                    this._enteredResult(text); //  this method set new result to result state
-                                                    this.setIndividualID(item.id) // save the id of candidate to individual state
-                                                    this.setPartyName(item.partyName) // save the name of party 
-                                                    this._presidentialResultList();
-                                                }}
-                                                
+                                                    // this._enteredResult(text); //  this method set new result to result state
+                                                    // this.setIndividualID(item.id) // save the id of candidate to individual state
+                                                    // this.setPartyName(item.partyName) // save the name of party 
+                                                    // this._presidentialResultList();
+                                                    //this.removeDataStored();
+                                                    this.inputtedItems(text, item.partyName, item.id)
+                                                    //this._saveResult();
+                                                }}    
                                                 textAlign={'center'}
                                                 placeholder={'enter total votes'}
                                                 fontSize={14}
@@ -284,14 +364,13 @@ export default class PresidentialComponent extends React.Component{
                             </View>
                         }
                     />
-                  
               
                 {/* This button navigates to scanner */}
-                <View style={{width: Dimensions.get('window').width, height:42,backgroundColor: '', }}>
-                    <TouchableOpacity style={{backgroundColor:'#1D5179', width: Dimensions.get('window').width, height:42, 
+                <View style={{width: Dimensions.get('window').width, height:50, }}>
+                    <TouchableOpacity style={{backgroundColor:'#1D5179', width: Dimensions.get('window').width, height:50, 
                         justifyContent:'center',alignSelf:'flex-end', margin: 0,borderRadius:0}}
                         onPress={()=>{ 
-                            this.props.navigation.navigate('ScannerDoc');
+                           this.openScanner();
                         }}>
                         <Text style={{color: '#ffffff', justifyContent: 'center',
                             alignSelf:'center',  fontFamily:'Roboto', fontSize: 16}}>

@@ -115,8 +115,7 @@ export default class EnterResult extends React.Component{
     };
     
     componentDidMount(){
-        console.log("enter result mounted")
-       
+          
     }
 
     componentWillUnmount(){

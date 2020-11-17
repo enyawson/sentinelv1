@@ -121,16 +121,15 @@ const turnPopUpOn =()=>{
       <View style={styles.bottomContainer}>
            
             <TouchableOpacity
-            onPress={()=>navigation.navigate('PresidentialComponent')}
             >
                 <Text>Locate</Text>
             </TouchableOpacity>
             <TouchableOpacity
-             onPress={()=>navigation.navigate('PresidentialComponent')}
             >
               <Text>Stories</Text>
             </TouchableOpacity>
-            <TouchableOpacity>
+            <TouchableOpacity
+             onPress={()=>navigation.navigate('EvidenceSubmission')}>
                 <Text>Help</Text>
             </TouchableOpacity>
       </View>

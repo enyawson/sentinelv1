@@ -701,8 +701,7 @@ const renderCamera = ()=>{
                 </View>
                 :
                 <View></View>
-           
-           }
+            }
             
            
             <View

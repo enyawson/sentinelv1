@@ -16,6 +16,8 @@ import AsyncStorage from '@react-native-community/async-storage';
 import ArrowBack from 'react-native-vector-icons/Ionicons';
 import { set } from 'react-native-reanimated';
 import Play from 'react-native-vector-icons/Ionicons';
+import {generateToken} from './GenerateToken';
+import RNFetchBlob from 'rn-fetch-blob'
 
 
 
@@ -31,6 +33,7 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
     const [picDetails, setPicDetails] = useState(" ");
     //const [dateFileTaken, setDateFileTaken] = useState('21/10/2020')
     const [mp4Extension, setMp4Extension] = useState(false);
+    const [generateToken, setGenerateToken]= useState('');
     
   
 
@@ -45,34 +48,37 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
         
         getData();
         getPicDetails();
-
         /*save description and incidence*/
         saveIncidenceDescription();
-
         /*get the saved description and incidence*/
         getIncidenceDescription();
-
-       
+        //Generate Token
+       getToken();
+       //console.log("HERE CATCH" +generateToken);
         /**component will unmount */
         return ()=> { 
         }
-
    
     }, []);
 
-  
+    //Generate token
+    const getToken = async ()=> {
+      const value = await AsyncStorage.getItem('generatedToken')
+      setGenerateToken(value)
+    }
+    
+
+
 
    /*set the state of incident selected */
     const setIncidence = (itemSelected) => {
       setSelectedIncidence(itemSelected)
       console.log("Incidence " + itemSelected)
     }
-
     const setInputtedText = (inputtedText) => {
         setDescription(inputtedText)
         console.log("InputtedText "+ inputtedText)
     }
-
     /**on loading end */
     const _onLoadEnd = ()=> {
         setLoading(false)
@@ -80,7 +86,37 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
     const _onLoadStart = ()=> {
         setLoading(true)
     }
-    
+  
+    //Sending data to server
+    const  sendDataToServer= ()=> {
+        RNFetchBlob.fetch('POST', 'http://www.example.com/upload-form', {
+            Authorization : "Bearer access-token",
+            otherHeader : "foo",
+            // this is required, otherwise it won't be process as a multipart/form-data request
+            'Content-Type' : 'multipart/form-data',
+          }, [
+            // append field data from file path
+            {
+              name : 'avatar',
+              filename : 'avatar.png',
+              // Change BASE64 encoded data to a file path with prefix `RNFetchBlob-file://`.
+              // Or simply wrap the file path with RNFetchBlob.wrap().
+              data: RNFetchBlob.wrap(PATH_TO_THE_FILE)
+            },
+            
+            // elements without property `filename` will be sent as plain text
+            { name : 'name', data : 'user'},
+            { name : 'info', data : JSON.stringify({
+              mail : 'example@example.com',
+              tel : '12345678'
+            })},
+          ]).then((resp) => {
+            console.log( "FETCH BLOB"+ resp);
+          }).catch((err) => {
+            // ...
+          })
+    }
+
     /**
     * This method clears Storage and gallery on submit, to 
     * allow new images into storage and gallery
@@ -108,6 +144,7 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
         await mainActivityListData();
         // navigate to submit form
         navigation.navigate('Home');
+       
     }
 
     /**save incidence type and description */
@@ -213,8 +250,13 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
         setDescription("")
         setSelectedIncidence("")
     }
+
+    /** Get items in mainActivityList to send to the server */
+        getMainActivityListData = async ()=> {
+
+            
+        }
     
-   
     //this method stores video path
     const storeData =async (value)=> {
         try{
