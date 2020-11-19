@@ -6,7 +6,7 @@ import {
     TextInput, FlatList,ActivityIndicator, Platform
 } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
-
+import KeyboardSpacer from 'react-native-keyboard-spacer';
 
 export default class SignUp extends React.Component{
     constructor(props){
@@ -299,6 +299,7 @@ export default class SignUp extends React.Component{
                                     </Text>
                                 </TouchableOpacity>
                             </View>  
+                            <KeyboardSpacer />
                             <Text style={{fontFamily:'roboto',
                                 fontSize:14,
                                 fontWeight:'bold', 

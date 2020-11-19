@@ -218,6 +218,7 @@ export default class ActivityList extends React.Component{
         return(
         <View style= {styles.container}>
             <StatusBar barStyle="light-content" backgroundColor="#174060"/>
+            <View />
             <View style={{width:Dimensions.get('window').width, height: 60,
                 backgroundColor:'#1D5179', elevation: 5, flexDirection: 'row',}}>
                 <TouchableOpacity

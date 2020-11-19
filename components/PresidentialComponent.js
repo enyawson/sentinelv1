@@ -271,7 +271,7 @@ export default class PresidentialComponent extends React.Component{
     inputtedItems=(item1, item2, index)=> {
         let itemData = {};
         itemData.result = item1;
-        itemData.party = item2;
+        itemData.partyName = item2;
         itemData.index = index ;
 
         if(this.state.inputFocused == false){

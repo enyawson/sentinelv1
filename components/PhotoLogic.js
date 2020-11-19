@@ -215,7 +215,7 @@ export default function PhotoLogic ({ props, navigation }) {
         } catch (e){
        //     console.log('pic details not saved');
         }
-        console.log('ACTIVITY_LIST_PIC_DETAIL '+ newData);
+        //console.log('ACTIVITY_LIST_PIC_DETAIL '+ newData);
         
     }
 
@@ -259,9 +259,9 @@ const saveImage2 = async (res) => {
     if (res) {
         photos.push(res);
         await AsyncStorage.setItem('photos', JSON.stringify(photos), () => {
-            console.log('rendering status before turned off ,'+ renderingImage)
+           // console.log('rendering status before turned off ,'+ renderingImage)
             setRenderingImage(false);
-            console.log("renderingImage status after image saved "+ renderingImage)
+           // console.log("renderingImage status after image saved "+ renderingImage)
             
             navigation.navigate('EvidenceSubmission');
         });
@@ -276,7 +276,7 @@ const saveImage = async(res) => {
         const photo = photos ? JSON.parse(photos) : [];
         photo.push(res);
         AsyncStorage.setItem('photos', JSON.stringify(photo));
-        console.log("ASYNC STORAGE WORKED : "+photo)
+       // console.log("ASYNC STORAGE WORKED : "+photo)
        
         // /**Navigate to Evidence page */
         //navigation.navigate('EvidenceSubmission')
@@ -313,7 +313,7 @@ const createNewWaterMark = (path) => new Promise((resolve, reject) => {
         }
     })
     .then(async (res) => {
-        console.log("renderingImage status after picture taken, "+ renderingImage)
+        //console.log("renderingImage status after picture taken, "+ renderingImage)
         saveInFolder(res);
         saveImage2(res);
         resolve(true)
@@ -325,7 +325,7 @@ const createNewWaterMark = (path) => new Promise((resolve, reject) => {
 //get image with printed logo 
 const getImageWithLogo= (uri) => {
     setImageWithIcon (uri);
-    console.log("LOGO imprinted on Image")
+   // console.log("LOGO imprinted on Image")
 
 }
 // function to create water mark
@@ -391,7 +391,7 @@ const createIconMark = (imageUri) => new Promise((resolve, reject) => {
             uri: Platform.OS === 'android'? 'file://' + path : path,
             loading: false
         })
-        console.log("IMAGE water mark set " + path);
+       // console.log("IMAGE water mark set " + path);
         saveImage2(path);
         savePicture(path);
         getImageWithLogo(path);
@@ -419,7 +419,7 @@ const  navigateToEvidenceScreen = (path) =>{
         // getTimeTransferred: capturedImageState.capturedImageDateTime,
         // getTimeOfTransfer: camState.timeForCapture,
     })
-        console.log("NAVIGATION output of path " + path)
+       // console.log("NAVIGATION output of path " + path)
 }
 
 /**set video uri */
@@ -447,11 +447,11 @@ const takePicture = async () => {
         //set status of image state
         if(imageUri){
             setImageState(true)
-            console.log("image state"+ imageState)
+           // console.log("image state"+ imageState)
         }
         //print date and time on image
         const status  = await  createNewWaterMark(data.uri);
-        console.log("Done creating a water and Status is: ", status);
+       // console.log("Done creating a water and Status is: ", status);
        
     }
     //count number of pictures added
@@ -472,7 +472,7 @@ const takeVideo = async () => {
                     const data = await promise;
                     
                     const videoPath = await data.uri
-                    console.log(data)
+                   // console.log(data)
                     setVideoUri( await videoPath);
                     //save video asynchronously
                    
@@ -495,7 +495,7 @@ const takeVideo = async () => {
 const stopVideo = async () => {
     await camera.stopRecording();
     setIsRecording(false);
-    console.log('recording '+ isRecording)
+   // console.log('recording '+ isRecording)
    // console.log('is Recording value after stop video :'+ isRecording)
  
 };
@@ -628,8 +628,8 @@ const renderPauseButton=()=>{
      setVideoComponent({
          togglePauseButton: togglePause,
     })
-    console.log("status pause onclick : "+ videoComponent.togglePauseButton)
-    console.log("status of toggle pause "+ togglePause);
+    //console.log("status pause onclick : "+ videoComponent.togglePauseButton)
+    //console.log("status of toggle pause "+ togglePause);
 }
 
 /**

@@ -123,34 +123,34 @@ export default class EnterResult extends React.Component{
 
     componentDidUpdate(prevProps, prevState){
         if(prevState.selectedText !== this.state.selectedText){
-            console.log("selected Text : "+ this.state.selectedText)
+            //console.log("selected Text : "+ this.state.selectedText)
         }
         if(prevState.result !== this.state.result){
-            console.log("selected result : "+ this.state.result)
+           // console.log("selected result : "+ this.state.result)
         }
         if(prevState.presPressed !== this.state.presPressed){
-            console.log("presStatus : "+ this.state.presPressed)
+            //console.log("presStatus : "+ this.state.presPressed)
         }
         if(prevState.focusedPresButtonColor!== this.state.focusedPresButtonColor){
-            console.log("presBut: "+ this.state.focusedPresButtonColor)
+            //console.log("presBut: "+ this.state.focusedPresButtonColor)
         }
         if(prevState.focusedPresTextColor!== this.state.focusedPresTextColor){
-            console.log("presText: "+ this.state.focusedPresTextColor)
+           // console.log("presText: "+ this.state.focusedPresTextColor)
         }
         if(prevState.parliaPressed !== this.state.parliaPressed){
-            console.log("parliaStatus : "+ this.state.parliaPressed)
+            //console.log("parliaStatus : "+ this.state.parliaPressed)
         }
         if(prevState.focusedParliaButtonColor!== this.state.focusedParliaButtonColor){
-            console.log("parliaBut: "+ this.state.focusedParliaButtonColor)
+            //console.log("parliaBut: "+ this.state.focusedParliaButtonColor)
         }
         if(prevState.focusedParliaTextColor!== this.state.focusedParliaTextColor){
-            console.log("parliaText: "+ this.state.focusedParliaTextColor)
+            //console.log("parliaText: "+ this.state.focusedParliaTextColor)
         }
         if(prevState.toggleCandidates!== this.state.toggleCandidates){
-            console.log("parliaText: "+ this.state.toggleCandidates)
+            //console.log("parliaText: "+ this.state.toggleCandidates)
         }
         if(prevState.toggleParliamentaryView!== this.state.toggleParliamentaryView){
-            console.log("view: "+ this.state.toggleParliamentaryView)
+            //console.log("view: "+ this.state.toggleParliamentaryView)
         }
         
     }
@@ -164,7 +164,7 @@ export default class EnterResult extends React.Component{
     }
     /** This method sets the state result to the entered total votes */
     _enteredResult(text){
-        console.log("TEXT : "+ text)
+        //console.log("TEXT : "+ text)
         
         this.setState({
             result : text,
@@ -369,6 +369,7 @@ export default class EnterResult extends React.Component{
                         </TouchableOpacity>
                 </View>
                  {/* This view displays the type of candidate (presidential or parliamentary) */}
+                 
                         {this.state.toggleParliamentaryView == false? 
                             <PresidentialComponent navigation={this.props.navigation} />
                             :

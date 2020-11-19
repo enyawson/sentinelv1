@@ -129,7 +129,7 @@ const turnPopUpOn =()=>{
               <Text>Stories</Text>
             </TouchableOpacity>
             <TouchableOpacity
-             onPress={()=>navigation.navigate('EvidenceSubmission')}>
+            onPress={()=>{navigation.navigate('EvidenceSubmission')}}>
                 <Text>Help</Text>
             </TouchableOpacity>
       </View>
@@ -145,9 +145,7 @@ const turnPopUpOn =()=>{
         color='#ed7055'
         marginRight={10}/>
          <Text style={styles.textBottom}> SOFTMASTERS </Text>
-      </View>
-      
-     
+      </View> 
      </View>
     </View>
     );
@@ -171,10 +169,6 @@ const styles = StyleSheet.create({
     marginLeft:75,
     margin: 0,
     color: '#ed7055',
-
-    
-    
-   
   },
   headerContainer: {
     flex: 0.45,

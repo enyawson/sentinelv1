@@ -105,7 +105,7 @@ export default function App() {
         name="EvidenceSubmission" 
         component ={EvidenceSubmission}
         options={{
-          title: 'Evidence Submission',
+          title: '       REPORT',
           headerStyle: {
           backgroundColor: '#1D5179',
           },
@@ -391,7 +391,7 @@ export default function App() {
           component ={ScannedDocumentPage}
           options={{
           headerLeft:null,
-          title:'Report on Result',
+          title:'RESULTS',
           headerShown: false,
           headerStyle: {
           backgroundColor: '#1D5179',
