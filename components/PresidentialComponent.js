@@ -107,8 +107,8 @@ export default class PresidentialComponent extends React.Component{
     componentDidMount(){
         console.log("presidential mounted")
         //get presidential data stored
-        //  this.getPresidentialData();
-        //  console.log("Item "+this.state.partyName + " result "+ this.state.result)
+        this.getPresidentialData();
+        
     }
 
     componentDidUpdate(prevProps, prevState){  
@@ -262,12 +262,12 @@ export default class PresidentialComponent extends React.Component{
             //check if latestEntry already has an old value in the array, replace it result value
             let array = this.state.resultAfterEachEntry;
             array.forEach(function(item){
-                console.log("old result",item.result)
+               
                if(item.partyName === latestEntry.partyName){
                    item.result = latestEntry.result;
                    latestEntry.result = null;// result is made null to prevent duplicated entry
                }
-               console.log("new result",latestEntry.result);
+              
             });
         } 
          
@@ -278,27 +278,44 @@ export default class PresidentialComponent extends React.Component{
             });
         } 
         
-    //    // await AsyncStorage.setItem('presidentialData', JSON.stringify(this.state.resultAfterEachEntry), () => {    
-    //     console.log('PRESIDENTIAL  SAVED'+ this.state.resultAfterEachEntry);
-    //     
-    //     });
-      
+        await AsyncStorage.setItem('presidentialData', JSON.stringify(this.state.resultAfterEachEntry), () => {    
+       // console.log('PRESIDENTIAL  SAVED'+ this.state.resultAfterEachEntry);
+        });
     }
 
     /**This method retrieves presidential data from async storage */
     getPresidentialData = async () => {
+        let presidentialCandidate = this.state.presidential;
+        console.log(presidentialCandidate);
        
         try {
             const data = await AsyncStorage.getItem('presidentialData')
             const value = JSON.parse(data);
-            console.log('PRESIDENTIAL DATA,'+ data);
+            //console.log(typeof value);
+           // console.log("index",value[0].index)
            
             if(value !== null){
-                //setPicDetails(value);
+               // set the state of the presidential data result to previously not submitted result,
+                value.forEach(function(item,id){
+                    let currentId = id
+                    let currentResult = item.result
+                    //loop through values to compare
+                    presidentialCandidate.forEach(function(item, id){
+                        if (currentId === id){
+                            item.result = currentResult
+                        }
+                    })
+                })
+                console.log(presidentialCandidate)
+                //set the state of presidential to current state
+                this.setState({
+                    presidential: presidentialCandidate,
+                })
+              //  console.log(this.state.presidential)
             }
-            console.log("PRESIDENTIAL ID & RESULT"+ value.id + " " + value.result);
-        }catch(e){
-            console.log('error with async getData');
+           
+            }catch(e){
+            //console.log('error with async getData');
         }     
        
     }
@@ -363,6 +380,7 @@ export default class PresidentialComponent extends React.Component{
                                             </View>
 
                                             <TextInput 
+                                                defaultValue={item.result}
                                                 style={{height:30, 
                                                 width: 185,
                                                 borderRadius: 50,
