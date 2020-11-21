@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 
 import {
     StyleSheet, View, KeyboardAvoidingView,Text, Image, TouchableOpacity,StatusBar,
-    TextInput, FlatList,ActivityIndicator, Platform,Dimensions, Button,
+    TextInput, FlatList,ActivityIndicator, Platform,Dimensions, Button, Keyboard,
 } from 'react-native';
 import globalStyle from '../components_styles/globalStyle';
 import { ScrollView, State, TouchableWithoutFeedback } from 'react-native-gesture-handler';
@@ -18,6 +18,7 @@ import ArrowBack from 'react-native-vector-icons/Ionicons';
 import { set } from 'react-native-reanimated';
 import Play from 'react-native-vector-icons/Ionicons';
 import RNFetchBlob from 'rn-fetch-blob';
+import KeyboardSpacer from 'react-native-keyboard-spacer';
 import axios from 'axios';
 import {APIKEY, TOKEN_URL, SUBMIT_INCIDENT} from '../components/ConstantUrls';
 
@@ -141,38 +142,80 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
     navigation.goBack();
    }
 
-  //Sending data to server
-    const sendDataToServer= async()=> { 
+   //this method loops array images into Fetchblob path
+const sendDataToServer =()=> {
     
-        // let myHeaders = new Headers();
-        // myHeaders.append("Authorization", generateToken);
-        // myHeaders.append("apikey",APIKEY)
+    
+//    // for loop to separate .jpg and .mp4 files
+//     photos.forEach(function(item){
+//         let ext = item.split('.').pop(); 
+//         if (ext == 'mp4'){
+//             evidenceVideos.push(item)
+//             }else{
+//             evidenceImages.push(item)
+//         }
+//     });
+    //console.log(picDetails)
+    //console.log("VIDEOS", evidenceVideos)
+    // console.log("PHOTOS", evidenceImages)
 
+    //This loop sends images
+    for (let i=0; i < photos.length; i++){
+        const evidenceImage = '';
+        const evidenceVideo = '';
+       let ext = photos[i].split('.').pop();
+       if (ext == 'mp4'){
+             evidenceVideo = photos[i];
+        }
+        if (ext == 'jpg'){
+            evidenceImage = photos[i];
+            console.log("image"+ i + " "+evidenceImage)
+        }
+        //pass individual files to server
+        callRNFetchBlob(evidenceImage, evidenceVideo);  
+        
+    }
+
+   }
+   
+
+  //Sending data to server RNFetchBlob
+    const callRNFetchBlob = async(item1, item2)=> { 
+    
         RNFetchBlob.fetch('POST', SUBMIT_INCIDENT, {
             Authorization : generateToken,
             otherHeader : APIKEY,
             // this is required, otherwise it won't be process as a multipart/form-data request
             'Content-Type' : 'multipart/form-data',
           }, [
-            // append field data from file path
+            // incident image
+            
             {
+              
               name : 'incidentimage',
               filename : 'incidentImage.png',
               // Change BASE64 encoded data to a file path with prefix `RNFetchBlob-file://`.
               // Or simply wrap the file path with RNFetchBlob.wrap().
-            
-              data: RNFetchBlob.wrap(photos[0])
+              data: RNFetchBlob.wrap(item1),
             },
-            
-            // elements without property `filename` will be sent as plain text
-            { name : 'description', data : 'eating'},
-            { name : 'latitude', data : '00393938'},
-            { name : 'longitude', data : '030938383'},
-            { name : 'address', data : 'ghana'},
-            // { name : 'n', data : JSON.stringify({
-            //   mail : 'eky@gmail.com',
-            //   tel : '0501427129'
-            // })},
+            //incident video
+            {
+            name : 'incidentvideo',
+            filename : 'incidentImage.png',
+            // Change BASE64 encoded data to a file path with prefix `RNFetchBlob-file://`.
+            // Or simply wrap the file path with RNFetchBlob.wrap().
+            data: RNFetchBlob.wrap(item2)
+            },
+            // incidence type
+            { name : 'type', data : selectedIncidence },
+            // description
+            { name : 'description', data : description },
+            //latitude
+            { name : 'latitude', data : picDetails.locationLat},
+            //longitude
+            { name : 'longitude', data : picDetails.locationLng},
+            //street address
+            { name : 'address', data : picDetails.streetName },
           ]).then((resp) => {
             console.log(resp);
           }).catch((err) => {
@@ -202,12 +245,14 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
         /**Clears storage*/
         //clearStorage();
         /**save data to be displayed on the activityList  in storage */
-        console.log("PHOTOS : "+ photos);
-        await removeDataStored();
+       // console.log("PHOTOS : "+ photos);
+        //await removeDataStored();
         await mainActivityListData();
+        
+        sendDataToServer(); 
         // navigate to submit form
         navigation.navigate('Home'); 
-        sendDataToServer(); 
+        
     }
 
     /**save incidence type and description */
@@ -226,7 +271,7 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
     }
     }
      /** This method gets incidence type and description*/
-     const  getIncidenceDescription = async () => {
+    const  getIncidenceDescription = async () => {
         try {
             let resObject = {};
             let infoValue = await AsyncStorage.getItem('allTextValue')
@@ -241,7 +286,6 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
             console.log(error);
         }
     }
-
 
     /**Get Photos from async storage */
     const getData = async () => {
@@ -274,8 +318,7 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
          console.log('state picDetails '+ picDetails);
         // console.log('one of it '+ picDetails.locationLat);
     }
-
-   
+ 
     /**This method clears storage for photos submitted to receive new ones */
     const removeDataStored = async () =>{
         try{
@@ -405,14 +448,14 @@ const checkExtensionOfFile=(item)=>{
             
     }
  }
-
     return(
-        <View style= {{flex:1}}>
+        <View style= {{flex:1,}}>
          <StatusBar barStyle="light-content" backgroundColor="#174060"/>
+
+         <ScrollView >
             <View flexDirection='column' flex={1.1} marginTop={30}  alignItems={'center'}
                 marginRight ={5}
                 marginLeft ={5}
-                borderWidth={0.5}
                 borderRadius={3}
                 borderColor='#7E7E7E'>
                 <FlatList
@@ -422,30 +465,14 @@ const checkExtensionOfFile=(item)=>{
                     renderItem={ ({ item}) => (  
                         <TouchableOpacity onPress={() => navigateToPhotoPreview(item) }>
                         {checkExtensionOfFile(item)}
-                            {/* <Image
-                            onLoadStart={_onLoadStart}
-                            onLoadEnd={_onLoadEnd}
-                            style={{ width:70, height:75,margin:1, resizeMode:'cover'}}   
-                            source = {{ uri: "file://"+ item}} 
-                            
-                            // source = {{ uri: item}} 
-                            //source = {{ uri: item.node.image.uri}} 
-                        /> */}
-                        {/* {loading && <ActivityIndicator
-                            size='small'
-                            color='#1D5179'
-                            style={styles.activityIndicator}
-                            animating={loading}
-                        />} */}
-                            
-                        
+                      
                         </TouchableOpacity>   
                         )   
                     }
                 
                 />
-                    <Text>{picDetails.locationLat}  {picDetails.locationLng}</Text>
-                    <Text>{picDetails.dateTaken}</Text>
+                    <Text style={{fontSize:12}}>{picDetails.locationLat}  {picDetails.locationLng}</Text>
+                    <Text style={{fontSize:12}}>{picDetails.dateTaken}</Text>
             </View>
             <TouchableOpacity style={styles.addPhotoButton}
                 onPress={()=> addAnotherPhoto()}>
@@ -454,26 +481,28 @@ const checkExtensionOfFile=(item)=>{
                 size={30}
                 color="white"/>   
             </TouchableOpacity>
-            <View style={{justifyContent: 'center',flex: 1.0,}}>
-                <View style={{borderWidth: 1, flex:0.26,
+            <View style={{justifyContent: 'center',flex: 1.1, marginTop:'5%'}}>
+                <View style={{borderWidth: 1,
                     alignSelf: 'center',
                     width:'90%',
                     borderColor:'#C4C4C4',
-                    borderRadius:5,
+                    borderRadius:8,
                     marginBottom: 0,
     
                     marginTop: 10}}>
                     <Picker
                         selectedValue={selectedIncidence}
-                        style={{height:45,  
-                        fontFamily:'roboto', 
-                        fontStyle:'normal',
-                        fontWeight:'normal'}}
+                        style={{height:40, fontSize: 0,
+                        transform:[{scaleX:1.0},{scaleY:0.9}]
+                        }}
+                        
+                        textStyle={{fontSize:10}}
                         onValueChange={(itemValue, itemIndex) =>
                         setIncidence(itemValue)
                         }
                     >
-                    <Picker.Item label="select incidence type" value="" color="#898989" />    
+                    <Picker.Item label="select incidence type" value="" color="#898989"  />   
+                    <Picker.Item label="No Incidence" value="non-Compliance"/> 
                     <Picker.Item label="Non-Compliance" value="non-Compliance"/>
                     <Picker.Item label="Logistics" value="logistics"/>
                     <Picker.Item label="Harassment" value="harassment"/>
@@ -485,7 +514,7 @@ const checkExtensionOfFile=(item)=>{
                     <Picker.Item label="Power Failure" value="power failure"/>
                     </Picker>
                 </View>
-                <View flex={0.2} marginBottom={0} marginLeft={5} marginTop={30} 
+                <View marginBottom={0} marginLeft={'3%'} marginTop={'5%'} 
                  justifyContent={'center'} width={'90%'} alignSelf={'center'}>
                     <Text style={styles.textStyle}>
                         Description
@@ -496,14 +525,14 @@ const checkExtensionOfFile=(item)=>{
                         value={description}
                         style={{height: 70, 
                         width: '70%',
-                        borderRadius: 8,
+                        fontWeight:'600',
+                        borderRadius: 10,
                         borderColor:'#C4C4C4',
                         borderWidth: 1, marginLeft: 0}}
                         onChangeText={(text) => 
                             setInputtedText(text)
                         }
                         textAlignVertical={'top'}
-    
                         multiline={true}
                         placeholder={' enter text'}
                         fontSize={14}
@@ -518,31 +547,30 @@ const checkExtensionOfFile=(item)=>{
                         /> 
                     </TouchableOpacity>
                 </View>
-                
-               
-               
-            </View>
-                    
-            <View style={{flex:0.2, 
-                backgroundColor:'#1D5179',
-                marginTop: 15,
-                }}>
-                    <TouchableOpacity
+                <TouchableOpacity
                         style={{ 
-                        padding: 5,
-
-                        justifyContent: 'center',
-                        alignSelf:'center'}}
+                        
+                       
+                        position:'absolute',
+                        bottom: 0,
+                        left:0,
+                        
+                        backgroundColor:'blue',
+                       
+                        }}
                         onPress={()=> evidenceSubmit()}>
                         <Text style={{color:'white', 
-                            alignSelf:'center',
-                            fontSize: 18,
+                            alignSelf:'center',padding:5,
+                            fontSize: 16,
                             }}>
                             Submit
                         </Text>
-                    </TouchableOpacity>    
-            </View>
-        
+                </TouchableOpacity> 
+                <KeyboardSpacer /> 
+            </View>       
+           
+        </ScrollView>
+
         </View> 
     );
 }

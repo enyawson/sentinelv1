@@ -19,7 +19,13 @@ export default class PresidentialComponent extends React.Component{
         super(props);
        // console.log({...props});
         this.state ={
-
+            itemData: {
+                result : null,
+                partyName: null,
+                index: null,
+            },
+            resultAfterEachEntry: [],
+            onTextInputFocused: false,
             inputItems: [{}],
             individualID: '',    // Id number or position of candidate on ballot paper
             result: " ",        // The total number of votes for each candidate
@@ -101,13 +107,16 @@ export default class PresidentialComponent extends React.Component{
     componentDidMount(){
         console.log("presidential mounted")
         //get presidential data stored
-         this.getPresidentialData();
-         console.log("Item "+this.state.partyName + " result "+ this.state.result)
+        //  this.getPresidentialData();
+        //  console.log("Item "+this.state.partyName + " result "+ this.state.result)
     }
 
     componentDidUpdate(prevProps, prevState){  
-        if(prevState.inputFocused !== this.state.inputFocused){
-            console.log(" TextInput Focus: "+ this.state.inputFocused)
+        if(prevState.onTextInputFocused !== this.state.onTextInputFocused){
+            //console.log(" TextInput Focus: "+ this.state.onTextInputFocused)
+        }
+        if(prevState.resultAfterEachEntry !== this.state.resultAfterEachEntry){
+           // console.log(this.state.resultAfterEachEntry)
         }
     }
 
@@ -126,20 +135,40 @@ export default class PresidentialComponent extends React.Component{
         });
         //console.log('Result : '+ this.state.result)
     }
+    /**This method checks if text input is focussed */
+    setOnFocus =()=> {
+        let value = this.state.onTextInputFocused
+      
+        this.setState({
+            onTextInputFocused: !value,
+        });
+    }
+    /**Clear item data to receive new item on text input focused */
+    clearItemData=()=> {
+            this.setState({
+                itemData: {
+                    result : null,
+                    partyName: null,
+                    index: null,
+                },
+            })
+  
+    }
+
     /**set individualID state */
-    setIndividualID(value){
-        this.setState({
-            individualID: value,
-        })
-        //console.log('id '+ this.state.individualID)
-    }
+    // setIndividualID(value){
+    //     this.setState({
+    //         individualID: value,
+    //     })
+    //     //console.log('id '+ this.state.individualID)
+    // }
     /** set partyName state*/
-    setPartyName(value){
-        this.setState({
-            partyName: value,
-        })
-       // console.log('party name: '+ this.state.partyName)
-    }
+    // setPartyName(value){
+    //     this.setState({
+    //         partyName: value,
+    //     })
+    //    // console.log('party name: '+ this.state.partyName)
+    // }
     /**set onFocus and onblur when textInput gain focus or loose focus */
     setInputIsOnFocus(){
         this.setState({
@@ -210,23 +239,50 @@ export default class PresidentialComponent extends React.Component{
         this.props.navigation.navigate('ScannerDoc');  
     }
 
+    /**function to save last inputted value onBlur or focus loss */
+    saveLastInputOnFocusLoss=()=>{
+         if (this.state.inputFocused == true){
+             //save last inputted value or result in async storage
+
+         }
+    }
+
     /**
      * This method saves entered result in async storage
      */
-    _savePresidentialResultList = async()=> {
-        //Create an object to save presidential details
-        let eachPresidentialTotalVote= {};
-        eachPresidentialTotalVote.id = this.state.individualID; 
-        eachPresidentialTotalVote.partyName = this.state.partyName; 
-        eachPresidentialTotalVote.result = this.state.result;
-
+    _savePresidentialResult = async()=> {
+        
         // This saves data retrieved from each item in async storage
-        let data = await AsyncStorage.getItem('presidentialData');
-        data = data? JSON.parse(data) : [];
-        data.push(eachPresidentialTotalVote);
-        await AsyncStorage.setItem('presidentialData', JSON.stringify(data), () => {    
-            console.log('PRESIDENTIAL DATA '+ data);
-        });
+       
+        let latestEntry = this.state.itemData; // data item in current focused text input
+        
+        
+        //on previous value changed
+        if (this.state.resultAfterEachEntry != null ){
+            //check if latestEntry already has an old value in the array, replace it result value
+            let array = this.state.resultAfterEachEntry;
+            array.forEach(function(item){
+                console.log("old result",item.result)
+               if(item.partyName === latestEntry.partyName){
+                   item.result = latestEntry.result;
+                   latestEntry.result = null;// result is made null to prevent duplicated entry
+               }
+               console.log("new result",latestEntry.result);
+            });
+        } 
+         
+         // if latest entry is not empty, add new entry
+        if (latestEntry.result != null){
+            this.setState({
+            resultAfterEachEntry : [...this.state.resultAfterEachEntry, latestEntry]
+            });
+        } 
+        
+    //    // await AsyncStorage.setItem('presidentialData', JSON.stringify(this.state.resultAfterEachEntry), () => {    
+    //     console.log('PRESIDENTIAL  SAVED'+ this.state.resultAfterEachEntry);
+    //     
+    //     });
+      
     }
 
     /**This method retrieves presidential data from async storage */
@@ -268,20 +324,7 @@ export default class PresidentialComponent extends React.Component{
         console.log("SAVE RESULT ON FOCUS FALSE")
     }
 
-    inputtedItems=(item1, item2, index)=> {
-        let itemData = {};
-        itemData.result = item1;
-        itemData.partyName = item2;
-        itemData.index = index ;
-
-        if(this.state.inputFocused == false){
-            this.setState({
-            inputItems:[...this.state.inputItems, itemData]
-            })
-            console.log(itemData);
-        }
-    }
-
+  
 
     render()
     {
@@ -330,9 +373,6 @@ export default class PresidentialComponent extends React.Component{
                                                 }}
                                                 keyboardAppearance={'default'}
                                                 keyboardType={'numeric'}
-                                                onFocus={()=>this.setInputIsOnFocus()}
-                                                onBlur={()=> this.setInputIsOnBlur()}
-
                                                 onChangeText={(text) =>{
                                                     item.result = text //change the value of result in object
                                                     // this._enteredResult(text); //  this method set new result to result state
@@ -340,9 +380,33 @@ export default class PresidentialComponent extends React.Component{
                                                     // this.setPartyName(item.partyName) // save the name of party 
                                                     // this._presidentialResultList();
                                                     //this.removeDataStored();
-                                                    this.inputtedItems(text, item.partyName, item.id)
+                                                    this.setState({
+                                                        itemData:{
+                                                            result: item.result,
+                                                            partyName: item.partyName,
+                                                            index: index  
+                                                        }
+                                                    });
                                                     //this._saveResult();
-                                                }}    
+                                                }}  
+                                                onFocus = {()=>{
+                                                //    this.setOnFocus();
+                                                //check the state of result entry before adding new
+                                                   console.log(this.state.resultAfterEachEntry);
+                                                   console.log(this.state.itemData)
+                                                }}
+                                                onBlur = {()=>{
+                                                    //turn false on loose focus
+                                                    this.setOnFocus();
+                                                     //on loose focus save the data in the test input
+                                                    this._savePresidentialResult();
+                                                    //clear state of itemData to receive new one
+                                                   this.clearItemData();
+                                                   
+
+                                                     
+                                                }}
+                                                 
                                                 textAlign={'center'}
                                                 placeholder={'enter total votes'}
                                                 fontSize={14}
@@ -350,7 +414,7 @@ export default class PresidentialComponent extends React.Component{
                                                 padding={0}
                                                 enablesReturnKeyAutomatically={true}
                                             /> 
-                                            {/* {console.log('item'+ item.id + " " + " result" + item.result)} */}
+
                                         </View>
                                     </View>  
                                 </View>
@@ -359,8 +423,8 @@ export default class PresidentialComponent extends React.Component{
                         }
                         ListFooterComponent={
                             <View>
-                                 {/* Rejected Ballot Papers */}
-                                 {this._rejectedBallotPapers()}
+                                {/* Rejected Ballot Papers */}
+                                {this._rejectedBallotPapers()}
                             </View>
                         }
                     />
