@@ -26,6 +26,7 @@ export default class PresidentialComponent extends React.Component{
             },
             resultAfterEachEntry: [],
             onTextInputFocused: false,
+            pointerValue: 'none',
             inputItems: [{}],
             individualID: '',    // Id number or position of candidate on ballot paper
             result: " ",        // The total number of votes for each candidate
@@ -286,7 +287,7 @@ export default class PresidentialComponent extends React.Component{
     /**This method retrieves presidential data from async storage */
     getPresidentialData = async () => {
         let presidentialCandidate = this.state.presidential;
-        console.log(presidentialCandidate);
+        //console.log(presidentialCandidate);
        
         try {
             const data = await AsyncStorage.getItem('presidentialData')
@@ -306,7 +307,7 @@ export default class PresidentialComponent extends React.Component{
                         }
                     })
                 })
-                console.log(presidentialCandidate)
+               // console.log(presidentialCandidate)
                 //set the state of presidential to current state
                 this.setState({
                     presidential: presidentialCandidate,
@@ -346,7 +347,10 @@ export default class PresidentialComponent extends React.Component{
     render()
     {
         return(
-            <View style={styles.container}>
+            <View style={{flex: 1,
+                flexDirection: 'column',
+                marginTop: 0,
+                backgroundColor: '#F2F2F2',}} >
                 {/* This flat list populates the list of candidates for presidential */}
              
                     <View>

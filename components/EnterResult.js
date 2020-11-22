@@ -13,6 +13,11 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 import PresidentialComponent from './PresidentialComponent';
 import ParliamentaryComponent from './ParliamentaryComponent';
+import axios from 'axios';
+import {APIKEY, TOKEN_URL, POLLING_STATION} from '../components/ConstantUrls';
+import AsyncStorage from '@react-native-community/async-storage';
+import { set, Value } from 'react-native-reanimated';
+
 
 
 export default class EnterResult extends React.Component{
@@ -98,27 +103,32 @@ export default class EnterResult extends React.Component{
                 
               ],
             placeHolderText: "Select polling Station",
-            selectedText: " ",
+            selectedText: null,
             result: " ",
             focusedPresButtonColor:'',
             focusedPresTextColor: 'black',
-            presPressed: false,
+            presPressed: null,
             focusedParliaButtonColor:'',
             focusedParliaTextColor: 'black',
-            parliaPressed: false,
+            parliaPressed: null,
             toggleCandidates: false,
             scannerReady: true,
-           // selectedPollStation: '',
             toggleParliamentaryView: false,
-            
+            generatedToken: '', 
         } 
-    };
-    
+    };   
+
     componentDidMount(){
-          
+        console.log('Enter Result mounted')
+        this.closeViewIfNoPollSelected();  
+     
+        this.getData();
+        //this.getPollingStations();
+   
     }
 
     componentWillUnmount(){
+        console.log("Enter Result unmounted")
     }
 
     componentDidUpdate(prevProps, prevState){
@@ -152,15 +162,56 @@ export default class EnterResult extends React.Component{
         if(prevState.toggleParliamentaryView!== this.state.toggleParliamentaryView){
             //console.log("view: "+ this.state.toggleParliamentaryView)
         }
+        if(prevState.generatedToken !== this.state.generatedToken){
+           // console.log("Token: "+ this.state.generatedToken)
+        }
         
     }
 
+    setGeneratedToken = (value)=> {
+        this.setState({
+            generatedToken: value,
+        })
+        console.log('set token successful');
+    }
+    getData = async () => {
+        try {
+          const value = await AsyncStorage.getItem('homeToken')
+          if(value !== null) {
+            console.log(typeof value)
+            this.setGeneratedToken(value)
+          }
+        } catch(e) {
+          // error reading value
+        }
+        const keepToken = this.state.generatedToken
+        console.log(keepToken)
+        this.getPollingStations(keepToken);
+      }
+   
+    /**this method set the state of generated  token */
+    getPollingStations = (token)=> {
+        
+        axios({
+            method: 'get',
+            url: POLLING_STATION,
+            headers: {
+                'Authorization': 'Bearer '+token,
+                'apikey': APIKEY,
+            }
+        }).then( function (response){
+            //console.log("Just appeared ",(response.data.data.pollingstations[1]));
+        }).catch(function (error){
+            console.log(error);
+        });
+    }
+    
     /**The method that set state of selected Item(polling Station)*/
     _selectedValue(index, item){
         this.setState({
             selectedText: item.name
         });
-        //console.log("Value selected : "+ this.state.selectedText)
+        console.log("Value selected : "+ this.state.selectedText)
     }
     /** This method sets the state result to the entered total votes */
     _enteredResult(text){
@@ -170,6 +221,36 @@ export default class EnterResult extends React.Component{
             result : text,
         });
     }
+
+    /**Disable View on mount if polling station and candidate type is not selected */
+    closeViewIfNoPollSelected=()=> {
+        // if ((this.state.presPressed || this.state.parliaPressed == null)&& this.selectedText == null  ){
+        return(
+              
+            <View>
+                {this.state.toggleParliamentaryView == false? 
+                    <PresidentialComponent navigation={this.props.navigation} />
+                    :
+                    <ParliamentaryComponent navigation={this.props.navigation}/>
+                }  
+            </View>
+        )  
+        
+        // }else {
+        //     return(
+        //         <View>
+        //            {this.state.toggleParliamentaryView == false? 
+        //                 <PresidentialComponent navigation={this.props.navigation} />
+        //                 :
+        //                 <ParliamentaryComponent navigation={this.props.navigation}/>
+        //             }  
+        //         </View>
+        //     )
+
+        // }
+    }
+    
+
     /**Method that handles on press buttons color changes*/
     // changePresStatus(){
     //     this.setState({
@@ -216,16 +297,7 @@ export default class EnterResult extends React.Component{
        
     }
 
-    // getVerificationCode= (text) => {
-    //     setVerificationCode(text);
-    // }
-
-    //  onFormSubmit (){
-    //     //set the onSubmit state to true
-    //     setOnSubmit(true);
-    // }
-
-
+ 
     /**This method creates rejected ballot view */
     _rejectedBallotPapers=()=> {
     return(
@@ -369,13 +441,26 @@ export default class EnterResult extends React.Component{
                         </TouchableOpacity>
                 </View>
                  {/* This view displays the type of candidate (presidential or parliamentary) */}
-                 
-                        {this.state.toggleParliamentaryView == false? 
+                    {/* {this.state.toggleParliamentaryView == false? 
+                        <PresidentialComponent navigation={this.props.navigation} />
+                        :
+                        <ParliamentaryComponent navigation={this.props.navigation}/>       
+                    }   */}
+                    {this.state.selectedText == null?
+                    <View>
+                        <Text>
+                            Please select Polling Station Code
+                        </Text>
+                    </View>
+                    :
+                        [
+                          ( this.state.toggleParliamentaryView == false? 
                             <PresidentialComponent navigation={this.props.navigation} />
                             :
-                            <ParliamentaryComponent navigation={this.props.navigation}/>
-                        }       
-                
+                            <ParliamentaryComponent navigation={this.props.navigation}/>       
+                           )
+                        ]
+                     }
             </View>
             
         );

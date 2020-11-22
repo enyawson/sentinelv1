@@ -13,7 +13,9 @@ import {
 import CopyRight from 'react-native-vector-icons/FontAwesome5';
 import  More from 'react-native-vector-icons/Ionicons';
 import {Menu,MenuProvider, MenuOptions, MenuOption, MenuTrigger, } from 'react-native-popup-menu';
-
+import axios from 'axios';
+import {APIKEY, TOKEN_URL, POLLING_STATION} from '../components/ConstantUrls';
+import AsyncStorage from '@react-native-community/async-storage';
 
 
 export default function Home ({ navigation }){
@@ -21,7 +23,8 @@ export default function Home ({ navigation }){
   const [isOpen, setOpened]=useState('false')
 
 useEffect(() => {
-
+//generate Token
+  getToken();
   return () => {
   
   }
@@ -30,6 +33,32 @@ useEffect(() => {
 const turnPopUpOn =()=>{
   setTurnPop(true);
   console.log('pop up')
+}
+const getToken = () => {
+  let tokenValue ="";
+  
+  const data = JSON.stringify({"apikey": APIKEY});
+  const config = {
+      method: 'post',
+      url: TOKEN_URL,
+      headers:{
+          'Accept': 'application/json',
+          'content-Type': 'application/json'
+      },
+      data : data,
+  };
+  axios(config)
+  .then(function (response){
+  console.log("VALUE ",response.data.data.accessToken);
+  tokenValue = response.data.data.accessToken;
+  AsyncStorage.setItem('homeToken', tokenValue);
+  
+  })
+  .catch(function (error){
+  console.log(error);
+  }) 
+  
+  
 }
 
 

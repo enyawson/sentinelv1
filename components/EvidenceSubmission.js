@@ -77,7 +77,7 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
         //console.log(JSON.stringify(response.data.data.accessToken));
         let tokenValue = JSON.stringify(response.data.data.accessToken);
         setGenerateToken(tokenValue);
-        //console.log("jsut appeared",tokenValue)
+        //console.log("just appeared",tokenValue)
         
         })
         .catch(function (error){
