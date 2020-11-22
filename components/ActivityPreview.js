@@ -8,14 +8,14 @@ import ArrowBack from 'react-native-vector-icons/Ionicons';
 import LocationMap from './LocationMap';
 import { ThreeDRotationSharp } from '@material-ui/icons';
 import Play from 'react-native-vector-icons/Ionicons';
-import LocationMapStatic from './LocationMapStatic';
+
 
 
 
 
 /**This functional component is called when any individual audio file is clicked */
 
-export default class ActivityList extends React.Component{
+export default class ActivityPreview extends React.Component{
     
     constructor(props,navigation){
         super(props);
@@ -36,9 +36,6 @@ export default class ActivityList extends React.Component{
     componentDidMount (){
         //this.getData();
         // this.getItemParam();
-        
-       
-
 
     }
     componentWillUnmount (){
@@ -47,12 +44,12 @@ export default class ActivityList extends React.Component{
 
     componentDidUpdate(prevProps, prevState){
         if(prevState.imageClicked !== this.state.imageClicked){
-            console.log("imageClick state changed");
-            console.log("new selected is : "+ this.state.imageClicked);
+           // console.log("imageClick state changed");
+           // console.log("new selected is : "+ this.state.imageClicked);
         }
         if (prevState.imageClickedState !==this.state.imageClickedState){
-            console.log("imageClickState state changed");
-            console.log("new selected is : "+ this.state.imageClickedState);
+           // console.log("imageClickState state changed");
+            //console.log("new selected is : "+ this.state.imageClickedState);
         }  
     }
     //get item itemIndex on each activity click
@@ -125,8 +122,8 @@ export default class ActivityList extends React.Component{
     receivedData  = (value) =>
     { 
         let data = value;
-        console.log ("ITEM SELECTED "+ data);
-        console.log ("ITEM STATE "+ this.state.imageClickedState);
+        //console.log ("ITEM SELECTED "+ data);
+        //console.log ("ITEM STATE "+ this.state.imageClickedState);
 
         
         this.setState({
@@ -138,37 +135,36 @@ export default class ActivityList extends React.Component{
         // console.log("ITEM CLICKED STATE : "+ this.state.imageClickedState);
     }
  /**This method checks for the extension of file (jpg or mp4) */
-     checkExtensionOfFile=(item)=>{
+ checkExtensionOfFile=(item)=>{
     //set the state of extension 
     let ext = item.split('.').pop();
     //console.log("Extension "+ ext);
     if (ext == 'jpg'){
          return(
             <Image
-            style={styles.imageInBox}   
+            style={{ width:115, height:214,margin:1, resizeMode:'cover'}}   
             source = {{ uri: "file://"+ item}}/>
-        )
+     )
     } 
     if (ext == 'mp4'){
         return(
             <View>
                 <Image
-                style={styles.imageInBox}  
+                style={{ width:115, height:214,margin:1, resizeMode:'cover'}}   
                 source = {{ uri: "file://"+ item}}/>
                 <View style={{ backgroundColor: 'black',
-                 position:'absolute',justifyContent:'center',alignItems: 'center',margin:2,
-                 width: 80 , height: 85,opacity:0.5}}>
+                 position:'absolute',justifyContent:'center',alignItems: 'center',margin:1,
+                 width: 115 , height: 214,opacity:0.5}}>
                     <Play
                     name={'play-circle-outline'}
                     size={35}
                     color="white"/>   
-                </View>      
-              
+                </View>  
             </View>
             )
             
     }
-    }
+ }
     //save path of video to display in videoPreview
     storeData =async (value)=> {
     try{
@@ -181,8 +177,8 @@ export default class ActivityList extends React.Component{
     showPreview =(path)=>{
      //set the state of extension 
     let ext = path.split('.').pop();
-    console.log("show Preview ready")
-    console.log(path)
+    //console.log("show Preview ready")
+    //console.log(path)
     if (ext == 'mp4'){
         this.storeData(path);
         return(
@@ -199,22 +195,11 @@ export default class ActivityList extends React.Component{
  
 }
     render () {
-        // const { navigation } = this.props;
-        // const itemIndex = navigation.getParam('itemIndex', 'NO-ID');
-       
-        // console.log("INDEX "+ itemIndex);
         
-        // console.log("INDEX " + itemIndex);
-         //console.log(itemIndex);
-         //console.log("ITEMS PHOTOS")
-        // console.log("time "+itemIndex.picDetail.timeTaken)
-        // console.log("date "+itemIndex.picDetail.dateTaken)
-        // console.log("incidence "+itemIndex.incidenceValue)
-        // console.log("des "+itemIndex.description)
         const { itemIndex } = this.props.route.params; //list of items received from an activityList
-        console.log(itemIndex)
-        console.log("file:/"+itemIndex.evidenceFiles[0]);
-       
+        console.log(itemIndex.picDetail.locationLat)
+        console.log(typeof Number(itemIndex.picDetail.locationLat))
+     
         return(
         <View style= {styles.container}>
             <StatusBar barStyle="light-content" backgroundColor="#174060"/>
@@ -277,12 +262,12 @@ export default class ActivityList extends React.Component{
                     
                 </View> */}
                
-                <View style={{flex: 1.2,marginRight: 5, backgroundColor:'', marginLeft:5,
+                <View style={{flex: 1.5,marginRight: 5, backgroundColor:'', marginLeft:5,
                  marginTop: 10, borderWidth:0.5,padding:2, }}>
                     <FlatList
                         data= {itemIndex.evidenceFiles}
                         keyExtractor={(item, index)=> index.toString()}
-                        horizontal={false}
+                        horizontal={true}
                         renderItem={ ({ item }) => (  
                         <TouchableOpacity
                             onPress={()=> this.showPreview(item)}>
@@ -292,7 +277,7 @@ export default class ActivityList extends React.Component{
                         </TouchableOpacity>
                         
                     )}
-                    numColumns={4}
+                   
                     />
                 </View>
                 <View style={{flexDirection:'row', backgroundColor:'', marginTop: 10, marginLeft: 10, marginRight: 10,}}>
@@ -326,7 +311,12 @@ export default class ActivityList extends React.Component{
                  </View>
                         <Text style={{marginLeft:10}}>Location</Text>
                         <View style={{flex:2, backgroundColor:'',}}>
-                        <LocationMap  incident={"Yes"} describe/>
+                        <LocationMap 
+                            incidence={itemIndex.incidenceValue} 
+                            description={itemIndex.description} 
+                            lat={Number(itemIndex.picDetail.locationLat)}
+                            lng={Number(itemIndex.picDetail.locationLng)}
+                        />
                     </View>
             </View>   
                 

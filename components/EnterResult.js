@@ -6,6 +6,7 @@ import {
 } from 'react-native';
 import SearchableDropdown from 'react-native-searchable-dropdown';
 import ArrowBack from 'react-native-vector-icons/Ionicons';
+import AlertIcon from 'react-native-vector-icons/Ionicons';
 import ArrowDown from 'react-native-vector-icons/Ionicons';
 import { Picker } from '@react-native-community/picker';
 import RNPicker from "rn-modal-picker";
@@ -447,9 +448,16 @@ export default class EnterResult extends React.Component{
                         <ParliamentaryComponent navigation={this.props.navigation}/>       
                     }   */}
                     {this.state.selectedText == null?
-                    <View>
+                    <View style={{alignItems:'center', justifyContent:'center', marginTop: '40%',
+                        alignSelf:'center', borderRadius:10, backgroundColor:'white',
+                        elevation:5, padding: 15}}>
+                        <ArrowBack
+                        name={'alert-circle'}
+                        size={35}
+                        color="red"
+                        />
                         <Text>
-                            Please select Polling Station Code
+                            Please select polling station code
                         </Text>
                     </View>
                     :

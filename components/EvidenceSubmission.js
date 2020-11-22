@@ -246,7 +246,7 @@ const sendDataToServer =()=> {
         //clearStorage();
         /**save data to be displayed on the activityList  in storage */
        // console.log("PHOTOS : "+ photos);
-        //await removeDataStored();
+        await removeDataStored();
         await mainActivityListData();
         
         sendDataToServer(); 

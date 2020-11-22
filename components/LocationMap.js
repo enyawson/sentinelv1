@@ -20,24 +20,32 @@ export default class LocationMap extends React.Component{
 
 
   render(){
+
+
     return(
       <View style={styles.container}>
         <MapView
       style={styles.map}
-       LatLng ={{
-      latitude: 37.78825,
-      longitude: -122.4324,
-        
+       region ={{
+      latitude: this.props.lat,
+      longitude: this.props.lng,
+      latitudeDelta: 0.0,
+      longitudeDelta: 0.001,
        }}
-     >
+       mapType = { 'satellite'}
+       showPointOfInterest={true}
+       >
+      
       <Marker
+      
       coordinate={ {
-        latitude: 37.78825,
-        longitude: -122.4324,
+        latitude: this.props.lat,
+        longitude: this.props.lng,
       } }
-      title={'Incidence'}
-      description={'Peaceful voting'}
+      title={this.props.incidence}
+      description={this.props.description}
     />
+
      </MapView>
      
      
