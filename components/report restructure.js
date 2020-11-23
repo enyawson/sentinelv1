@@ -20,7 +20,7 @@ import Play from 'react-native-vector-icons/Ionicons';
 import RNFetchBlob from 'rn-fetch-blob';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 import axios from 'axios';
-import {APIKEY, TOKEN_URL, SUBMIT_INCIDENT} from '../components/ConstantUrls';
+import {APIKEY, TOKEN_URL, SUBMIT_INCIDENT} from './ConstantUrls';
 
 
 
@@ -449,53 +449,47 @@ const checkExtensionOfFile=(item)=>{
     }
  }
     return(
-        <View style= {{flex:6,}}>
+        <View style= {{flex:1,}}>
          <StatusBar barStyle="light-content" backgroundColor="#174060"/>
 
-            <ScrollView contentContainerStyle={{flexGrow: 1, justifyContent: 'space-between'}}>
-
-           
-            
-            <View style={{flex:0,}}>
-                <View flexDirection='column' marginTop={30}  alignItems={'center'}
-                    marginRight ={5}
-                    marginLeft ={5}
-                    borderRadius={3}
+            <View flexDirection='column' marginTop={30}  alignItems={'center'}
+                marginRight ={5}
+                marginLeft ={5}
+                borderRadius={3}
+                backgroundColor={'blue'}
+                borderColor='#7E7E7E'>
+                <FlatList
+                    data= {photos}
+                    keyExtractor={(item, index)=> index}
+                    horizontal={true}
+                    renderItem={ ({ item}) => (  
+                        <TouchableOpacity onPress={() => navigateToPhotoPreview(item) }>
+                        {checkExtensionOfFile(item)}
+                      
+                        </TouchableOpacity>   
+                        )   
+                    }
                 
-                    borderColor='#7E7E7E'>
-                    <FlatList
-                        data= {photos}
-                        keyExtractor={(item, index)=> index}
-                        horizontal={true}
-                        renderItem={ ({ item}) => (  
-                            <TouchableOpacity onPress={() => navigateToPhotoPreview(item) }>
-                            {checkExtensionOfFile(item)}
-                        
-                            </TouchableOpacity>   
-                            )   
-                        }
-                    
-                    />
-                        <Text style={{fontSize:12}}>{picDetails.locationLat}  {picDetails.locationLng}</Text>
-                        <Text style={{fontSize:12}}>{picDetails.dateTaken}</Text>
-                </View>
-                <TouchableOpacity style={styles.addPhotoButton}
-                    onPress={()=> addAnotherPhoto()}>
-                    <Add
-                    name={'add'}
-                    size={30}
-                    color="white"/>   
-                </TouchableOpacity>
+                />
+                    <Text style={{fontSize:12}}>{picDetails.locationLat}  {picDetails.locationLng}</Text>
+                    <Text style={{fontSize:12}}>{picDetails.dateTaken}</Text>
             </View>
-
-
-            <View style={{flex:2.5, justifyContent:'center'}}>
-                 <View style={{borderWidth: 1,
+            <TouchableOpacity style={styles.addPhotoButton}
+                onPress={()=> addAnotherPhoto()}>
+                <Add
+                name={'add'}
+                size={30}
+                color="white"/>   
+            </TouchableOpacity>
+            <View style={{justifyContent: 'center', marginTop:'5%', backgroundColor:'yellow'}}>
+                <View style={{borderWidth: 1,
                     alignSelf: 'center',
                     width:'90%',
                     borderColor:'#C4C4C4',
                     borderRadius:8,
-                    }}>
+                    marginBottom: 0,
+    
+                    marginTop: 10}}>
                     <Picker
                         selectedValue={selectedIncidence}
                         style={{height:40, fontSize: 0,
@@ -552,30 +546,25 @@ const checkExtensionOfFile=(item)=>{
                         color='white'
                         /> 
                     </TouchableOpacity>
-                </View> 
-            </View>
-
-
-            <View style={{flex:0.2, backgroundColor:'yellow'}}>
-                 <TouchableOpacity
+                </View>
+            </View>   
+            <View style={{backgroundColor:"green"}}>
+                <TouchableOpacity
                     style={{ 
                     backgroundColor:'#1D5179',
-                    height:'100%', justifyContent:'center'
                     }}
                     onPress={()=> evidenceSubmit()}>
                     <Text style={{color:'white', 
                         alignSelf:'center',padding:5,
-                        fontSize: 18,
+                        fontSize: 16,
                         }}>
                         Submit
                     </Text>
                 </TouchableOpacity> 
-                
-            </View>
-            </ScrollView>
-            <KeyboardSpacer />
+            </View>    
            
-           
+     
+
         </View> 
     );
 }
