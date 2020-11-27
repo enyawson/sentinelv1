@@ -19,7 +19,6 @@ import {APIKEY, TOKEN_URL, POLLING_STATION, POLLING_SEARCH} from '../components/
 import AsyncStorage from '@react-native-community/async-storage';
 import { set, Value } from 'react-native-reanimated';
 import SQLite from 'react-native-sqlite-storage';
-import { Button } from '@material-ui/core';
 
    // let db = SQLite.openDatabase({name : "pollingStation.db", createFromLocation : "data_electorral.sqlite"});
 
@@ -28,10 +27,11 @@ let db
 export default class EnterResult extends React.Component{
     constructor(props){
         super(props);
-  
+       // console.log({...props});
+       //let db = SQLite.openDatabase({name : "pollingStation.db", createFromLocation : "~data_electorral.sqlite"});
 
         this.state ={
-            constituencyDataSource:'',
+            constituencyDataSource: [],
             placeHolderText: "Select polling Station",
             selectedText: null,
             result: " ",
@@ -45,11 +45,10 @@ export default class EnterResult extends React.Component{
             scannerReady: true,
             toggleParliamentaryView: false,
             generatedToken: '', 
-            cdata : []
+            ///db: SQLite.openDatabase({name : "pollingStation.db", createFromLocation : "data_electorral.sqlite"})
+        } 
 
-        }             
-
-    db = SQLite.openDatabase({
+        db = SQLite.openDatabase({
             name:'electionsdb.sqlite',
             createFromLocation:1,
         },
@@ -61,75 +60,83 @@ export default class EnterResult extends React.Component{
     dbFailure(err){
      console.log(err)
     }
-   
+    // db.transaction(function (txn) {
+    //     txn.executeSql(
+    //       "SELECT name FROM sqlite_master WHERE type='table' AND name='table_user'",
+    //       [],
+    //       function (tx, res) {
+    //         console.log('item:', res.rows.length);
+    //     );
+    //   });
+    // }
     populateDataSource(value){
         this.setState({
             constituencyDataSource: value,
         })
     }
 
-    dataForPicker(){
-        
-        let temp = [];
+    sqliteData(){
+        console.log('Prince')
         db.transaction(function (txn){
         txn.executeSql(
-            "select pollingcode, pollingname from electoralareas limit 0,5",
+            "select pollingcode,pollingname from electoralareas limit 0,3",
             [],
             function(tx, res){
+                let temp = [];
+                for (let i = 0; i < res.rows.length; ++i)
+                    temp.push(res.rows.item(i));
+                    pickerValues(temp);
+                    console.log('data')
+                    console.log(this.state.constituencyDataSource)
+
+                    
               
-                for (let i = 0; i < res.rows.length; ++i){
-                    temp.push(res.rows.item(i));  
-                     this.setState({cdata:temp})
-                } 
-                console.log('let temp', this.state.cdata)    
+               // console.log('item :', res.rows.length);
                
+                
+               
+        
             }
-
-           
         )
-        console.log(this.state.cdata)
     });
- 
-
 }
     componentDidMount(){
         console.log('Enter Result mounted')
         this.closeViewIfNoPollSelected();
-  
-        this.getData();
-        this.dataForPicker()
-        //this.getPollingStations();
 
-       // this.sqliteData()
+       
+       
+        this.getData();
+        //this.getPollingStations();
        
     
     }
-    // pickerValues(temp){
-    //     return(
-    //         <RNPicker
-    //                 dataSource={temp}
-    //                 dummyDataSource={temp}
-    //                 defaultValue={false}
-    //                 pickerTitle ={"Polling Stations"}
-    //                 showSearchBar={true}
-    //                 disablePicker={false}
-    //                 changeAnimation={"none"}
-    //                 searchBarPlaceHolder = {"Search....."}
-    //                 showPickerTitle ={true}
-    //                 searchBarContainerStyle={this.props.searchBarContainerStyle}
-    //                 pickerStyle={styles.pickerStyle}
-    //                 pickerItemTextStyle={styles.listTextViewStyle}
-    //                 selectedLabel={this.state.selectedText}
-    //                 placeHolderLabel={this.state.placeHolderText}
-    //                 selectLabelTextStyle={styles.selectLabelTextStyle}
-    //                 placeHolderTextStyle={styles.placeHolderTextStyle}
-    //                 dropDownImageStyle={styles.dropDownImageStyle}
-    //                 dropDownImage= {require("../assets/ic_drop_down.png") }
-    //                 selectedValue={(index, item) => this._selectedValue(index, item)}
+    pickerValues(temp){
+        return(
+            <RNPicker
+                    dataSource={temp}
+                    dummyDataSource={temp}
+                    defaultValue={false}
+                    pickerTitle ={"Polling Stations"}
+                    showSearchBar={true}
+                    disablePicker={false}
+                    changeAnimation={"none"}
+                    searchBarPlaceHolder = {"Search....."}
+                    showPickerTitle ={true}
+                    searchBarContainerStyle={this.props.searchBarContainerStyle}
+                    pickerStyle={styles.pickerStyle}
+                    pickerItemTextStyle={styles.listTextViewStyle}
+                    selectedLabel={this.state.selectedText}
+                    placeHolderLabel={this.state.placeHolderText}
+                    selectLabelTextStyle={styles.selectLabelTextStyle}
+                    placeHolderTextStyle={styles.placeHolderTextStyle}
+                    dropDownImageStyle={styles.dropDownImageStyle}
+                    dropDownImage= {require("../assets/ic_drop_down.png") }
+                    selectedValue={(index, item) => this._selectedValue(index, item)}
                    
-    //             />
-    //     )
-    // }
+                />
+        )
+    }
 
     componentWillUnmount(){
         console.log("Enter Result unmounted")
@@ -241,14 +248,35 @@ export default class EnterResult extends React.Component{
             </View>
         )  
         
-     
+        // }else {
+        //     return(
+        //         <View>
+        //            {this.state.toggleParliamentaryView == false? 
+        //                 <PresidentialComponent navigation={this.props.navigation} />
+        //                 :
+        //                 <ParliamentaryComponent navigation={this.props.navigation}/>
+        //             }  
+        //         </View>
+        //     )
+
+        // }
     }
     
 
-   
+    /**Method that handles on press buttons color changes*/
+    // changePresStatus(){
+    //     this.setState({
+    //         presPressed: true,
+    //         parliaPressed: false,
+    //     })
+    // }
     changePresButtonColor() {
         
-       
+        // this.changePresStatus();
+        // this.setState({
+        //     presPressed: true,
+        //     parliaPressed: false,
+        // })
 
         if(!this.state.presPressed){
             this.setState({
@@ -286,8 +314,7 @@ export default class EnterResult extends React.Component{
     _rejectedBallotPapers=()=> {
     return(
         <View>
-          
-            
+       
             <View style={{flex:1,backgroundColor: '',flexDirection:'column',margin:15 }}>
                 <View style={{backgroundColor:'', flexDirection:'row', flex:0.2,borderRadius:7,elevation:2}}>
                     {/* candidate Image */}
@@ -382,39 +409,10 @@ export default class EnterResult extends React.Component{
         });
     }
 
-    renderPicker(temp){
-        return(
-            <RNPicker
-                    dataSource={temp}
-                    dummyDataSource={temp}
-                    defaultValue={false}
-                    pickerTitle ={"Polling Stations"}
-                    showSearchBar={true}
-                    disablePicker={false}
-                    changeAnimation={"none"}
-                    searchBarPlaceHolder = {"Search....."}
-                    showPickerTitle ={true}
-                    searchBarContainerStyle={this.props.searchBarContainerStyle}
-                    pickerStyle={styles.pickerStyle}
-                    pickerItemTextStyle={styles.listTextViewStyle}
-                    selectedLabel={this.state.selectedText}
-                    placeHolderLabel={this.state.placeHolderText}
-                    selectLabelTextStyle={styles.selectLabelTextStyle}
-                    placeHolderTextStyle={styles.placeHolderTextStyle}
-                    dropDownImageStyle={styles.dropDownImageStyle}
-                    dropDownImage= {require("../assets/ic_drop_down.png") }
-                    selectedValue={(index, item) => this._selectedValue(index, item)}
-                   
-                />
-        )
-    }
-
     render()
     {
-
         return(
         <View style={styles.container}>
-        
             <View style={{backgroundColor: 'white',borderBottomLeftRadius: 5, borderBottomRightRadius:5,elevation:10}}>
                 <View style={{flexDirection:'row',}}>
                     <ArrowBack
@@ -429,9 +427,8 @@ export default class EnterResult extends React.Component{
                     fontFamily:'roboto',fontWeight: 'bold', alignSelf: 'center'}}>
                     POWERED BY SOFTMASTERS</Text>
                 </View>
-                {this.dataForPicker()}
                 {/*********************PICKER************************* */}
-                
+                {this.sqliteData}
                 
                     {/* <TextInput 
                         style={{height:30, 

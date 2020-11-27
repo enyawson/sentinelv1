@@ -236,8 +236,8 @@ export default class PresidentialComponent extends React.Component{
     }
 
     /**This method navigates to scanner */
-    openScanner=()=>{  
-        this.props.navigation.navigate('ScannerDoc');  
+    recheckResult=()=>{  
+        this.props.navigation.navigate('ResultPreviewPresidential');  
     }
 
     /**function to save last inputted value onBlur or focus loss */
@@ -292,7 +292,7 @@ export default class PresidentialComponent extends React.Component{
         try {
             const data = await AsyncStorage.getItem('presidentialData')
             const value = JSON.parse(data);
-            //console.log(typeof value);
+            //console.log( value);
            // console.log("index",value[0].index)
            
             if(value !== null){
@@ -414,8 +414,8 @@ export default class PresidentialComponent extends React.Component{
                                                 onFocus = {()=>{
                                                 //    this.setOnFocus();
                                                 //check the state of result entry before adding new
-                                                   console.log(this.state.resultAfterEachEntry);
-                                                   console.log(this.state.itemData)
+                                                   //console.log(this.state.resultAfterEachEntry);
+                                                   //console.log(this.state.itemData)
                                                 }}
                                                 onBlur = {()=>{
                                                     //turn false on loose focus
@@ -456,11 +456,11 @@ export default class PresidentialComponent extends React.Component{
                     <TouchableOpacity style={{backgroundColor:'#1D5179', width: Dimensions.get('window').width, height:50, 
                         justifyContent:'center',alignSelf:'flex-end', margin: 0,borderRadius:0}}
                         onPress={()=>{ 
-                           this.openScanner();
+                           this.recheckResult();
                         }}>
                         <Text style={{color: '#ffffff', justifyContent: 'center',
                             alignSelf:'center',  fontFamily:'Roboto', fontSize: 16}}>
-                            Scan Result Slip/PinkSheet
+                            Confirm Result
                             {/* {console.log("NEXT PRESSED")} */}
                         </Text>
                     </TouchableOpacity>  

@@ -8,6 +8,8 @@ import {
   View,
   Text,
   Image,
+  BackHandler,
+  ToastAndroid,
   TouchableOpacity,
 } from 'react-native';
 import CopyRight from 'react-native-vector-icons/FontAwesome5';
@@ -25,10 +27,14 @@ export default function Home ({ navigation }){
 useEffect(() => {
 //generate Token
   getToken();
+//BackHandler.addEventListener('hardwareBackPress', handleBackButton);
+
+
   return () => {
-  
-  }
+   // BackHandler.removeEventListener('hardwareBackPress', handleBackButton);
+  } 
 }, [])
+
 
 const turnPopUpOn =()=>{
   setTurnPop(true);
@@ -59,7 +65,13 @@ const getToken = () => {
   }) 
   
   
+  
 }
+// const handleBackButton =()=>{
+//   ToastAndroid.show('Back button is pressed', ToastAndroid.SHORT)
+//   return true;
+ 
+// }
 
 
     return (
@@ -120,10 +132,10 @@ const getToken = () => {
             </View>
             <View style={styles.box}>
               <TouchableOpacity
-               onPress={()=>navigation.navigate('SignUp')}>
+               onPress={()=>navigation.navigate('ActivityList')}>
                <Image style={styles.imageInBox}
                 source = { require('../assets/add.png') }/>
-                <Text style={styles.text}>Register</Text>
+                <Text style={styles.text}>Incidence</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -148,18 +160,14 @@ const getToken = () => {
                 </View>    
           </View>
       <View style={styles.bottomContainer}>
-           
-            <TouchableOpacity
-            >
-                <Text>Locate</Text>
+            <TouchableOpacity>
+              <Text>Locate</Text>
             </TouchableOpacity>
-            <TouchableOpacity
-            >
+            <TouchableOpacity>
               <Text>Stories</Text>
             </TouchableOpacity>
-            <TouchableOpacity
-            onPress={()=>{navigation.navigate('EvidenceSubmission')}}>
-                <Text>Help</Text>
+            <TouchableOpacity>
+              <Text>Help</Text>
             </TouchableOpacity>
       </View>
      <View style={{alignContent: 'center', marginTop:10,

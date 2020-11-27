@@ -28,6 +28,7 @@ import Marker from 'react-native-image-marker';
 import AsyncStorage from '@react-native-community/async-storage';
 import Geocoder from 'react-native-geocoding';
 import { RFPercentage} from "react-native-responsive-fontsize";
+import VideoCompress from 'react-native-video-compressor';
 
 
 TouchableOpacity.defaultProps = { activeOpacity : 0.3};
@@ -42,6 +43,9 @@ export default function PhotoLogic ({ props, navigation }) {
         permissionEnable : true,
         disableCameraView: '',
         accuracyValue: 0,
+        zoom: 0,
+        focusDepth:1,
+        
     });
 
     //checks if async storage is saved
@@ -328,47 +332,7 @@ const getImageWithLogo= (uri) => {
    // console.log("LOGO imprinted on Image")
 
 }
-// function to create water mark
- const createWaterMark = async (path) => {
-        setCapturedImageState({
-            loading: true,
-    })
-    
-        Marker.markText({
-        src: path,
-        text: capturedImageState.capturedImageLatitude +" " + capturedImageState.capturedImageLongitude +'\n'+
-            capturedImageState.capturedImageDate + ","+ capturedImageState.capturedImageDateTime,
 
-        position: 'bottomCenter',
-        color: '#E6E4E4',
-        fontName: 'Arial-BoldItalicMT',
-        fontSize: 30,
-        shadowStyle: {
-            dx: 10.5,
-            dy: 20.8,
-            radius: 20.9,
-            
-        },
-        scale: 1,
-        saveFormat: capturedImageState.saveFormat,
-        quality :100
-        }).then (async (res) => {
-    
-            //create icon soft masters on image
-            //const imageUri = capturedImageState.markResult;
-            //createIconMark(res)
-            //saves water mark path to camera roll
-            const saveNewImage = capturedImageState.uri
-            /**save image in async photo stor */
-            await saveImage(res);
-        }).catch(( err ) => {
-            console.log(err)
-            setCapturedImageState({
-                loading: false,
-                err
-            })
-        })   
-}
 
 //create icon mark on water marked image
 const createIconMark = (imageUri) => new Promise((resolve, reject) => {
@@ -460,8 +424,13 @@ const takePicture = async () => {
     })  
     
 }; 
-
-
+//this method compresses video
+const compressVideo=(videoUri)=>{
+    VideoCompress.compress(videoUri).then((data) =>{
+        console.log("video compressed")
+        console.log(data)
+     })
+}
 
 const takeVideo = async () => {  
         if (camera && !isRecording) {
@@ -473,11 +442,8 @@ const takeVideo = async () => {
                     
                     const videoPath = await data.uri
                    // console.log(data)
-                    setVideoUri( await videoPath);
-                    //save video asynchronously
-                   
-                   // console.log("VideoPath after video capture : " + videoPath)
-                   // console.log('Video Taken', data)
+                  // compressVideo(data.uri)
+                  
                     setVideoUri( await videoPath);
                     //console.log('video uri : '+ videoUri);
                     saveImage2(videoPath);
@@ -737,7 +703,6 @@ const renderCamera = ()=>{
                         <View>
                             {/* {videoComponent.togglePauseButton == true? 
                                 <View>
-
                                 </View>
                                 : */}
                                 

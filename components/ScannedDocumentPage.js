@@ -41,8 +41,9 @@ export default function ScannedDocumentPage ({route, navigation,navigation:{setP
         
         //get scanned image data
         getData();
-
+       
         return ()=> { 
+            console.log('report unmounted')
         }
     }, []);
 
@@ -84,7 +85,7 @@ export default function ScannedDocumentPage ({route, navigation,navigation:{setP
         /**Clears storage*/
         //clearStorage();
         /**save data to be displayed on the activityList  in storage */
-        console.log("SCANNED IMAGES : "+ scannedSheets);
+        
         await removeDataStored();
         setScannedSheets('');
         navigation.navigate('Home');
@@ -104,19 +105,22 @@ export default function ScannedDocumentPage ({route, navigation,navigation:{setP
         }
     }
 
-    /**Get Images , image details from async storage from scanner doc */
+                
+    /**Get Photos from async storage */
     const getData = async () => {
         try {
-            const value = await AsyncStorage.getItem('croppedImages')
-            console.log('async cropped images values', value);
-            if(value !== null){
-                setScannedSheets((JSON.parse(value)));
-            }
+        const value = await AsyncStorage.getItem('scannerCroppedImage')
+        // console.log('async Photo values', value);
+        if(value !== null){
+            setScannedSheets((JSON.parse(value)));
+        }
+        
         }catch(e){
         console.log('error with async getData');
-        }     
-        
+        }    
     }
+        
+    
 
 
     // /** This method gets form type and description*/
@@ -185,7 +189,7 @@ export default function ScannedDocumentPage ({route, navigation,navigation:{setP
  const removeDataStored = async () =>{
     try{
         await AsyncStorage.removeItem('scannedImages');
-        await AsyncStorage.removeItem('cropScannedImages');
+        await AsyncStorage.removeItem('scannerCroppedImage');
         console.log('images cleared');
 
     }catch(e){
@@ -195,77 +199,67 @@ export default function ScannedDocumentPage ({route, navigation,navigation:{setP
 
 
     return(
-        <SafeAreaView style= {globalStyle.MainContainer}>
+        <View style= {{flex:3,}}>
         <StatusBar barStyle="light-content" backgroundColor="#174060"/>
-            <View flexDirection='row' flex={3.5} marginTop={30} 
+        
+        <ScrollView contentContainerStyle={{flexGrow: 1, justifyContent: 'space-between'}}>
+
+       
+            <View flexDirection='row' flex={1.5} marginTop={30} 
                 marginRight ={5}
                 marginLeft ={5}
                 borderWidth={0}
                 borderRadius={3}
+                justifyContent={'center'}
                 borderColor='#7E7E7E'>
-                <View>
+                <View style={{justifyContent: 'center'}}>
+                {/* <Image
+                style={{ flex:1,width: imageWidth, margin:1, resizeMode:'contain'}}   
+                source = {{ uri: scannedSheets}} 
+                /> */}
                     <FlatList
-                        data= {scannedSheets}
+                        data= {scannedSheets.reverse()}
                         keyExtractor={(item, index)=> index}
                         horizontal={true}
-                        renderItem={ ({ item}) => (  
+                        renderItem={ ({item}) => (  
                           <TouchableOpacity onPress={() => navigateToPhotoPreview(item) }>
                              <Image
                                 style={{ flex:1,width: imageWidth, margin:1, resizeMode:'contain'}}   
-                                source = {{ uri: "file://"+ item}} 
-                            />
+                                source = {{ uri: item}} />
+                                {/* <Image
+                                style={{ width:115, height:214,margin:1, resizeMode:'cover'}}   
+                                source = {{ uri: item}}/> */}
                         </TouchableOpacity>   
                          )   
                         }
                     />
                     
                 </View>  
+                {/* <TouchableOpacity style={styles.addPhotoButton}
+                    onPress={()=> navigation.navigate('CameraScanner')}>
+                    <Add
+                    name={'add'}
+                    size={30}
+                    color="white"/>   
+                </TouchableOpacity> */}
             </View>
-            {/* <TouchableOpacity style={styles.addPhotoButton}
-                onPress={()=>{
-                    navigation.navigate('ScannerDoc');
-                }}>
-                <Add
-                name={'add'}
-                size={30}
-                color="white"/>   
-            </TouchableOpacity> */}
-            
-            <View style={{justifyContent: 'center', margin:0 ,flex: 1.5}}>
-                {/* <View style={{borderWidth: 1, 
-                    borderColor:'#C4C4C4',
-                    borderRadius:5,
-                    width: 270, 
-                    marginLeft: 5,
-                    marginBottom: 0,
-                    marginTop: 0}}>
-                    <Picker
-                        selectedValue={selectedFormType}
-                        style={{height:45, width: 270, 
-                        fontFamily:'roboto', 
-                        fontStyle:'normal',
-                        fontWeight:'normal'}}
-                        onValueChange={(itemValue, itemIndex) =>
-                           setForm(itemValue)
-                        }
-                    >
-                    <Picker.Item label="select form type" value="" color="#898989" />    
-                    <Picker.Item label="Form A" value="Form A"/>
-                    <Picker.Item label="Form B" value="Form B"/>
-                    </Picker>
-                </View> */}
-                <View style={{flexDirection:'column', marginTop:20,
+           
+           
+            <View style={{justifyContent: 'center', margin:0 ,flex: 1, }}>
+              
+                <View style={{flexDirection:'column', marginTop:20, 
                 marginLeft:10, marginRight:10}}>
                     <TextInput 
                         style={{     
-                        width: 270,
-                        height:45,
+                        width: '80%',
+                        height:40,
                         borderRadius: 8,
                         borderColor:'#C4C4C4',
                         borderWidth: 1, 
                         marginLeft: 0,
                         marginRight: 30,
                         paddingTop: 10,
+                        alignSelf:'center',
                         }}
                         onChangeText={(text) => 
                             setReferenceText(text)
@@ -315,45 +309,15 @@ export default function ScannedDocumentPage ({route, navigation,navigation:{setP
                             color='white'
                             /> 
                         </TouchableOpacity>
-                </View>
-                {/* <View marginBottom={0} marginLeft={10}marginTop={30}  marginBottom={0} >
-                    <View style={{flexDirection: 'row', }}>
-                        <Text style={{
-                            fontFamily:'roboto', fontSize: 16, marginRight: 5, marginLeft: 0,
-                            fontWeight:'500', color:'#1D5179',
-                            }}
-                            onPress={()=>navigation.navigate('SignUp')}>
-                            Register 
-                        </Text>
-                        <Text style={{
-                            fontFamily:'roboto', fontSize: 16,marginLeft:5,
-                            fontWeight:'500',color:'#898989'
-                            }}>
-                            and 
-                        </Text>
-                        <Text style={{
-                            fontFamily:'roboto', fontSize: 16,marginLeft:5,
-                            fontWeight:'500',color:'#1D5179'
-                            }}>
-                            Sign In 
-                        </Text>
-                        <Text style={{
-                            fontFamily:'roboto', fontSize: 16,marginLeft:5,
-                            fontWeight:'500',color:'#898989'
-                            }}>
-                            to get feedback
-                        </Text>
-                                  
                     </View>
-                </View> */}
-                
-                    
+                  
             </View>
-            <TouchableOpacity
+            <View>
+                 <TouchableOpacity
                 style={{ width: Dimensions.get('window').width,
                 height: 45,
                 margin: 0,
-                marginTop: 30,
+                marginTop: 0,
                 justifyContent: 'center',
                 backgroundColor: '#1D5179',
                 alignSelf:'center'}}
@@ -365,8 +329,11 @@ export default function ScannedDocumentPage ({route, navigation,navigation:{setP
                     Submit
                 </Text>
             </TouchableOpacity> 
+            </View>
+           
+            </ScrollView>
             <KeyboardSpacer />
-        </SafeAreaView> 
+        </View> 
     );
 }
 

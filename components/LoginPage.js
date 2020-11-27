@@ -2,33 +2,32 @@ import { Email } from '@material-ui/icons';
 import React, { useState, useEffect } from 'react';
 import {
     StyleSheet, View, KeyboardAvoidingView,Text, Image, TouchableOpacity,StatusBar,
-    TextInput, FlatList,ActivityIndicator, Platform
+    TextInput, FlatList,ActivityIndicator, Platform, Alert
 } from 'react-native';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 import axios from 'axios';
 import DeviceInfo from 'react-native-device-info';
 import {getUniqueId} from 'react-native-device-info';
-import {APIKEY, MAIN_URL, LOGIN_URL} from '../components/ConstantUrls'
+import {APIKEY, MAIN_URL, LOGIN_URL, VERIFY_DEVICE} from '../components/ConstantUrls'
 import AsyncStorage from '@react-native-community/async-storage';
+
 //import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function LoginPage({route, navigation}){
 
     const [phoneNumber, setPhoneNumber] = useState("");
     const [uniqueId, setUniqueId] = useState(" ");
-    const [userEmail, setUserEmail] = useState("");
-    const [onLogin, setOnLogin]= useState(false);
-    const [loading, setLoading] = useState(false);
-    const [errorText, setErrorText] = useState('');
+ 
     
     
     useEffect(() => {
             console.log('Login Page Mounted');
-        return () => {
             let deviceId = DeviceInfo.getUniqueId();
+            checkUserAuthentication(deviceId);
             setUniqueId( deviceId);
             console.log(uniqueId)
-            
+
+        return () => {  
         }
     }, [])
 
@@ -36,7 +35,6 @@ export default function LoginPage({route, navigation}){
 
     //sign up 
     const _signUp =()=>{
-        
         if(phoneNumber){
            
         let formData=new FormData();
@@ -56,7 +54,9 @@ export default function LoginPage({route, navigation}){
             ;
             const storeData = async()=> {
                 try{
-                    await AsyncStorage.setItem('loginResponse', JSON.stringify( response.data.data))
+                    await AsyncStorage.setItem('pin', response.data.data.pin)
+                    await AsyncStorage.setItem('deviceid', 
+                    JSON.stringify( response.data.data.deviceid))
                     console.log('login data saved success')
                 }catch (e){
                     console.log('error saving login response')
@@ -77,6 +77,32 @@ export default function LoginPage({route, navigation}){
         alert('please enter your phone number')
     }
 
+    }
+
+    const checkUserAuthentication = (deviceid)=>{
+       
+        let formData=new FormData();
+        formData.append('deviceid', deviceid);
+        axios({
+            method:'POST',
+            url:VERIFY_DEVICE,
+            data:formData,
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                apikey: APIKEY,
+              },
+         }).then(response=>{
+             if(response.data.data.verificationstatus === 'verified'){
+               //perform the action
+               navigation.navigate('Home')
+               console.log("is verified")
+             }else{
+                // remain on the same page
+                navigation.navigate('LoginPage')
+                Alert.alert("Enter number to Sign Up");
+             }
+        })
     }
    
     const userPhoneNumber = (value)=>{
@@ -99,8 +125,6 @@ export default function LoginPage({route, navigation}){
                 source={require('../assets/Election_watch_without_bg.png')}>
             </Image>
        
-       
-        
         <View style={{marginTop: 70,marginBottom: 0}}>
             <View> 
                 <TextInput 
@@ -111,27 +135,12 @@ export default function LoginPage({route, navigation}){
                     value={phoneNumber}
                     multiline={false}
                     keyboardType={'numeric'}
-                    placeholder={'Enter Phone Number'}
-                    enablesReturnKeyAutomatically={true}
-                    
-                > 
-                </TextInput>
-            </View>
-            {/* <View>
-                <TextInput 
-                    style={styles.textInputBoxStyle}
-                    onChangeText={(value) => 
-                        userAddress(value)
-                    }
-                    value={userEmail}
-                    keyboardType={'Email'}
-                    multiline={false}
-                    placeholder={'Email'}
+                    placeholder={'Register Phone Number'}
                     enablesReturnKeyAutomatically={true}
                 > 
                 </TextInput>
             </View>
-             */}
+           
             <View>
                 <TouchableOpacity style={styles.submitButton}
                     onPress={()=> onSubmitForm()}>
@@ -155,10 +164,7 @@ export default function LoginPage({route, navigation}){
             </Text>
         </View>
     </View>
-                   
-       
-        
-    
+ 
     );
 }
 const styles = StyleSheet.create({

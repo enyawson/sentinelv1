@@ -2,23 +2,21 @@ import { Email } from '@material-ui/icons';
 import React, { useState, useEffect } from 'react';
 import {
     StyleSheet, View, KeyboardAvoidingView,Text, Image, TouchableOpacity,StatusBar,
-    TextInput, FlatList,ActivityIndicator, Platform
+    TextInput, FlatList,ActivityIndicator, Platform, ToastAndroid,
 } from 'react-native';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 import AsyncStorage from '@react-native-community/async-storage';
 export default function VerificationCodeForm({route, navigation}){
 
     const [verificationPin, setVerificationPin] = useState("");
-    const [deviceId, setDeviceId] = useState("");
-    const [phoneNumber,setPhoneNumber] = useState("");
-    const [generatedToken, setGeneratedToken] = useState("")
-    
-    const [onCodeVerified, setOnCodeVerified]= useState(false);
+    const [pinReceived, setPinReceived] = useState("");
+   
     
 
     useEffect(() => {
             console.log('Verification page mounted');
             getData();
+            userVerificationPin();
     
         return () => {
             
@@ -27,60 +25,34 @@ export default function VerificationCodeForm({route, navigation}){
 
     // retrieve login Response
     const getData = async ()=> {
-        
        
-            const jsonValue = await AsyncStorage.getItem('loginResponse')
-            // get response from json value
-            const getValue =(JSON.parse(jsonValue));
-            console.log(getValue)
-       
+            const jsonValue = await AsyncStorage.getItem('pin')
+            // get verification pin to login
+            setPinReceived(jsonValue);
+            console.log("Yes"+jsonValue)
+     
         }
 
    
     const userVerificationPin = (value)=>{
         setVerificationPin(value);
     }
-    const userDeviceId = (value)=>{
-        setDeviceId(value);
-    }
-    const userPhoneNumber = (value)=>{
-        setPhoneNumber(value);
-    }
-    const userAccessToken = (value)=>{
-        setGeneratedToken(value);
-    }
-
     
-
-    // const userAddress = (value) => {
-    //     setUserEmail(value);
-    // }
-
-   const toggleOnCodeVerified = ()=> {
-       setOnCodeVerified(true);
-   }
-
-   const onSubmitForm=()=> {
-    //if verified true, move to Home
-        navigation.navigate('Home')
-   }
-
 
     return(
         
     <View style={styles.contentContainer}>
-       
-            <Image
-                style={{padding:10,width:'70%', height:'20%',marginTop:50}}
-                source={require('../assets/Election_watch_without_bg.png')}>
-            </Image>
-       
-       
-        
-        <View style={{marginTop: 70,marginBottom: 0}}>
+{/*        
+        <Image
+            style={{padding:10,width:'70%', height:'20%',marginTop:50}}
+            source={require('../assets/Election_watch_without_bg.png')}>
+        </Image> */}
+    
+        <View style={{marginTop: '50%',marginBottom: 0}}>
             <View> 
                 <TextInput 
-                    style={styles.textInputBoxStyle}
+                    defaultValue={pinReceived}
+                    style={styles.textInputBoxStyle }
                     onChangeText={(value) => 
                         userVerificationPin(value)
                     }
@@ -92,24 +64,19 @@ export default function VerificationCodeForm({route, navigation}){
                 > 
                 </TextInput>
             </View>
-            {/* <View>
-                <TextInput 
-                    style={styles.textInputBoxStyle}
-                    onChangeText={(value) => 
-                        userAddress(value)
-                    }
-                    value={userEmail}
-                    keyboardType={'Email'}
-                    multiline={false}
-                    placeholder={'Email'}
-                    enablesReturnKeyAutomatically={true}
-                > 
-                </TextInput>
-            </View>
-             */}
+           
             <View>
                 <TouchableOpacity style={styles.submitButton}
-                    onPress={()=> onSubmitForm()}>
+                    onPress={()=> {
+                        if(pinReceived ===null){
+                             ToastAndroid.show('Enter Verification code', ToastAndroid.SHORT);
+                        }
+                        if(pinReceived != null){
+                             ToastAndroid.show('Registered Successfully', ToastAndroid.LONG);
+                            navigation.navigate('Home')
+                        }
+                       
+                    }}>
                     <Text style={{alignSelf:'center', color:'white'}}>
                         submit
                     </Text>
@@ -163,6 +130,10 @@ const styles = StyleSheet.create({
         borderWidth: 1, 
         marginBottom: 15,
         paddingLeft: 15,
+        color: '#000',
+        textAlign:'center'
+
+        
         
     },
     submitButton:{

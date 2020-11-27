@@ -30,11 +30,11 @@ export default class LocationMap extends React.Component{
       latitude: this.props.lat,
       longitude: this.props.lng,
       latitudeDelta: 0.0,
-      longitudeDelta: 0.001,
+      longitudeDelta: 0.015,
        }}
-       mapType = { 'satellite'}
+       
        showPointOfInterest={true}
-       >
+      >
       
       <Marker
       
@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
     marginRight: 5,
     justifyContent: 'flex-end',
     alignItems: 'center',
-    borderWidth:3,
+    borderWidth:0,
     borderColor:'#1D5179',
     borderRadius:6,
   },

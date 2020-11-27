@@ -17,10 +17,10 @@ export default class AudioRecorder extends Component{
     constructor(props,navigation){
         super();
         this.state = {
-            // audioUri: '',
-            // isRecordingStart: false,
-            // isRecordingStop:false,
-            // isRecordingSaved:false,
+            audioUri: '',
+            isRecordingStart: false,
+            isRecordingStop:false,
+            isRecordingSaved:false,
             recordSecs: '',
             recordTime: '',
             currentPositionSec: '',

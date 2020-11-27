@@ -425,7 +425,7 @@ const checkExtensionOfFile=(item)=>{
             onLoadEnd={_onLoadEnd}
             style={{ width:115, height:214,margin:1, resizeMode:'cover'}}   
             source = {{ uri: "file://"+ item}}/>
-     )
+        )
     } 
     if (ext == 'mp4'){
         return(
@@ -444,7 +444,7 @@ const checkExtensionOfFile=(item)=>{
                     color="white"/>   
                 </View>  
             </View>
-            )
+        )
             
     }
  }
@@ -509,6 +509,7 @@ const checkExtensionOfFile=(item)=>{
                     >
                     <Picker.Item label="select incidence type" value="" color="#898989"  />   
                     <Picker.Item label="No Incidence" value="non-Compliance"/> 
+                    <Picker.Item label="Status Report" value="non-Compliance"/> 
                     <Picker.Item label="Non-Compliance" value="non-Compliance"/>
                     <Picker.Item label="Logistics" value="logistics"/>
                     <Picker.Item label="Harassment" value="harassment"/>

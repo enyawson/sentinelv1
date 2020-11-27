@@ -8,6 +8,7 @@ import ArrowBack from 'react-native-vector-icons/Ionicons';
 import LocationMap from './LocationMap';
 import { ThreeDRotationSharp } from '@material-ui/icons';
 import Play from 'react-native-vector-icons/Ionicons';
+import  Add from 'react-native-vector-icons/Ionicons';
 
 
 
@@ -28,7 +29,8 @@ export default class ActivityPreview extends React.Component{
             streetName: 'St. Central Park',
             date: '3/5/1998',
             itemsEvidenceFiles: [],
-            initialViewState: false //boolean to check the state of the preview image
+            initialViewState: false, //boolean to check the state of the preview image
+            count: 0,
 
         }
     }
@@ -135,18 +137,19 @@ export default class ActivityPreview extends React.Component{
         // console.log("ITEM CLICKED STATE : "+ this.state.imageClickedState);
     }
  /**This method checks for the extension of file (jpg or mp4) */
- checkExtensionOfFile=(item)=>{
+ checkExtensionOfFile=(item, itemIndex)=>{
     //set the state of extension 
     let ext = item.split('.').pop();
     //console.log("Extension "+ ext);
     if (ext == 'jpg'){
+       
          return(
             <Image
             style={{ width:115, height:214,margin:1, resizeMode:'cover'}}   
             source = {{ uri: "file://"+ item}}/>
      )
     } 
-    if (ext == 'mp4'){
+    if (ext == 'mp4'){ 
         return(
             <View>
                 <Image
@@ -161,9 +164,18 @@ export default class ActivityPreview extends React.Component{
                     color="white"/>   
                 </View>  
             </View>
-            )
-            
-    }
+            )  
+        }
+    //this.countPics(itemIndex);
+    console.log(itemIndex)    
+}
+ countFiles = (value)=> {
+    //  const value = 1;
+    //  let countState = this.state.count;
+     this.setState({
+         count:  value,
+     })
+     console.log("I am in hurraay"+this.state.count)
  }
     //save path of video to display in videoPreview
     storeData =async (value)=> {
@@ -197,14 +209,25 @@ export default class ActivityPreview extends React.Component{
     render () {
         
         const { itemIndex } = this.props.route.params; //list of items received from an activityList
-        console.log(itemIndex.picDetail.locationLat)
-        console.log(typeof Number(itemIndex.picDetail.locationLat))
+         console.log(itemIndex.picDetail)
+        //console.log(typeof Number(itemIndex.picDetail.locationLat))
+        let counter = 0;
+        let myCounterArray  = [];
+        myCounterArray = itemIndex.evidenceFiles;
+        myCounterArray.forEach(function(item){
+            const value = 1;
+            counter = counter + value;  
+        })
+        
+        
+        
      
         return(
         <View style= {styles.container}>
             <StatusBar barStyle="light-content" backgroundColor="#174060"/>
             <View />
-            <View style={{width:Dimensions.get('window').width, height: 60,
+            
+            {/* <View style={{width:Dimensions.get('window').width, height: 60,
                 backgroundColor:'#1D5179', elevation: 5, flexDirection: 'row',}}>
                 <TouchableOpacity
                     onPress={()=> this.props.navigation.goBack()}>
@@ -244,7 +267,9 @@ export default class ActivityPreview extends React.Component{
                     </View>
                   
                 </View>
-            </View>
+            </View> */}
+            
+           
                 {/* <View style={{background: '', margin: 10}}>
                     {this.state.imageClickedState==false? 
                         <Image 
@@ -263,7 +288,7 @@ export default class ActivityPreview extends React.Component{
                 </View> */}
                
                 <View style={{flex: 1.5,marginRight: 5, backgroundColor:'', marginLeft:5,
-                 marginTop: 10, borderWidth:0.5,padding:2, }}>
+                 marginTop: 10, borderWidth:0,padding:2, alignItems:'center'}}>
                     <FlatList
                         data= {itemIndex.evidenceFiles}
                         keyExtractor={(item, index)=> index.toString()}
@@ -273,12 +298,18 @@ export default class ActivityPreview extends React.Component{
                             onPress={()=> this.showPreview(item)}>
                             <View style={{flexDirection: 'row'}}>         
                                 {this.checkExtensionOfFile(item)}
+                               
                             </View>
                         </TouchableOpacity>
                         
                     )}
-                   
+
                     />
+                    <Text style={{fontSize:12}}> {itemIndex.picDetail.locationLat}  {itemIndex.picDetail.locationLng} </Text>
+                    <Text style={{fontSize:12}}> {itemIndex.picDetail.dateTaken} </Text>
+                <TouchableOpacity style={styles.addPhotoButton}>
+                   <Text style={{color:'white', justifyContent:'center',alignSelf:'center'}}> {counter}</Text> 
+                </TouchableOpacity>
                 </View>
                 <View style={{flexDirection:'row', backgroundColor:'', marginTop: 10, marginLeft: 10, marginRight: 10,}}>
                         {/* <Text style={{fontFamily:'roboto',fontSize:16, fontWeight:'500', }}>
@@ -290,13 +321,14 @@ export default class ActivityPreview extends React.Component{
                 </View>
                 <View style={{flexDirection:'row', flex:0.5,backgroundColor:'', marginTop:5, 
                     marginLeft: 10, marginRight: 10, borderWidth: 0}}>
-                    <Text style={{fontFamily:'roboto',fontSize:16, fontWeight:'500', marginRight:0}}>
+                    <Text style={{fontFamily:'roboto',fontSize:15, fontWeight:'500', marginRight:0}}>
                         Description: 
                     </Text>
-                    <View style={{ alignSelf:'center',marginLeft:5,borderWidth: 0, backgroundColor:''}}>
+                    <View style={{ alignSelf:'center',borderWidth: 0, backgroundColor:''}}>
                         <ScrollView 
-                        style={{flex:1}}>
-                            <Text style={{fontFamily:'roboto',fontSize:15, alignSelf:'center', marginLeft:5, alignSelf:'center', 
+                        >
+                            <Text style={{fontFamily:'roboto',fontSize:15, alignSelf:'center',
+                             marginLeft:5, alignSelf:'center', padding:0,
                                 color: '#7E7E7E'}}>
                                 {itemIndex.description}
                                 {/* BUILD SUCCESSFUL in 54s
@@ -309,7 +341,7 @@ export default class ActivityPreview extends React.Component{
                         </ScrollView>  
                     </View>   
                  </View>
-                        <Text style={{marginLeft:10}}>Location</Text>
+                        <Text style={{marginLeft:10}}></Text>
                         <View style={{flex:2, backgroundColor:'',}}>
                         <LocationMap 
                             incidence={itemIndex.incidenceValue} 
@@ -357,6 +389,17 @@ const styles = StyleSheet.create ({
         alignSelf: 'center',
        
       },
+      addPhotoButton:{
+        height: 20,
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: 20,
+        borderRadius: 100,
+        backgroundColor: '#ed7055',
+        position: 'absolute',
+        left: 0,
+        top: 0, 
+    },
     incidence: {
         backgroundColor:'#FFFFFF',
         margin: 2.5,
