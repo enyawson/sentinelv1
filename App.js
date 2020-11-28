@@ -85,15 +85,15 @@ export default function App() {
   
   return (
   <MenuProvider>
-    <NavigationContainer initialRouteName = "LoginPage">
+    <NavigationContainer initialRouteName = "Home">
    {/* Auth Navigator: Include Login and Signup */}
    
     <Stack.Navigator>
-        <Stack.Screen
+        {/* <Stack.Screen
           name="Auth"
           component={Auth}
           options={{headerShown:false}}
-        />
+        /> */}
         <Stack.Screen 
         name="Home"
         component={Home}
@@ -211,6 +211,7 @@ export default function App() {
           headerStyle: {
           backgroundColor: '#1D5179',
           },
+          headerTintColor: '#FFFFFF',
           
         }}/> 
          <Stack.Screen 

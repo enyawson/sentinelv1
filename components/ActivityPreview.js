@@ -290,7 +290,7 @@ export default class ActivityPreview extends React.Component{
                 <View style={{flex: 1.5,marginRight: 5, backgroundColor:'', marginLeft:5,
                  marginTop: 10, borderWidth:0,padding:2, alignItems:'center'}}>
                     <FlatList
-                        data= {itemIndex.evidenceFiles}
+                        data= {itemIndex.evidenceFiles.reverse()}
                         keyExtractor={(item, index)=> index.toString()}
                         horizontal={true}
                         renderItem={ ({ item }) => (  
@@ -340,9 +340,9 @@ export default class ActivityPreview extends React.Component{
                                 </Text>
                         </ScrollView>  
                     </View>   
-                 </View>
+                     </View>
                         <Text style={{marginLeft:10}}></Text>
-                        <View style={{flex:2, backgroundColor:'',}}>
+                        <View style={{flex:1.5, backgroundColor:'',}}>
                         <LocationMap 
                             incidence={itemIndex.incidenceValue} 
                             description={itemIndex.description} 

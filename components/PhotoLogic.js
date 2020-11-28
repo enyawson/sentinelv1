@@ -54,10 +54,7 @@ export default function PhotoLogic ({ props, navigation }) {
     const [imageUri, setImageUri] = useState("");
     const [imageState, setImageState] = useState('false')
     const [renderingImage, setRenderingImage] =useState(false)
-    //timer 
-    const [timerSeconds, setTimerSeconds]=useState(0);
-    const [timerMinute, setTimerMinute] =useState(0)
-    const [timerHour, setTimerHour] = useState(0);
+   
   
     
     //State of Video
@@ -100,32 +97,32 @@ export default function PhotoLogic ({ props, navigation }) {
         base64: false,
         uri: ' '
     })
+    //restructure the state of coordinates and time and date of camera
+    const[capturedImageLatitude, setCapturedImageLatitude] = useState('');
+    const[capturedImageLongitude, setCapturedImageLongitude] = useState('');
+    const[capturedImageDate, setCapturedImageDate] = useState('');
+    const[capturedImageDateTime, setCapturedImageDateTime]= useState('');
+    const[capturedStreetName, setCapturedStreetName] = useState('');
 
     useEffect(() => {
-        console.log("Photo component mounted");
-        
-        console.log("ToggledVideoButton OFF onClick  "+ videoComponent.toggleVideoButton);
-        console.log("ToggledCameraButton OFF onClick "+ videoComponent.toggleCameraButton);
-        console.log("ToggledPauseButton OFF onClick "+ videoComponent.togglePauseButton);
-        console.log('recording :' + isRecording);
-        console.log('video uri : '+ videoUri);
-            //console.log("TogglePauseButton state "+ videoComponent.togglePauseButton);
+        console.log("Camera component mounted");
+
+        //test for undefine
+        console.log('test lat',capturedImageLatitude)
+        console.log('test time',capturedImageDateTime)
+        console.log('test long',capturedImageLongitude)
+        console.log('test date',capturedImageDate)
+            console.log("TogglePauseButton state "+ videoComponent.togglePauseButton);
         return () => {
-            
+            console.log('camera component umnounted')
         }
     }, [imageUri, videoComponent.toggleVideoButton, videoComponent.togglePauseButton, imageWithIcon, 
-    isRecording, videoUri])
+    isRecording, videoUri, capturedImageDate, capturedImageDateTime, capturedImageLongitude, capturedImageLatitude])
     
-    //test function 
-    // const testFunc =()=> {
-    //     const testIt = !text;
-    //     setText(testIt);
-    //     console.log("Text Value After called" + testIt);
-
-    // }
- /**
+   
+    /**
      * This method handles the accuracy of the coordinates  from GPSLocation
-     */
+    */
    let handleData = (value) => {
         
          let setAccuracyValue = value.isWithInAccuracy;
@@ -137,9 +134,6 @@ export default function PhotoLogic ({ props, navigation }) {
          let setPreviewImageDate = value.date;
          let setPreviewImageDateTime = value.dateTime;
 
-        //  console.log('accuracy value on camera: ' +  setAccuracyValue); //text passed accuracy
-        //  console.log('disabled view : '+ setDisableCameraView)
-        //  console.log('coordinates appearing on preview: ' + value.longitude + ',' + value.latitude)
          setState({
             accuracyValue : setAccuracyValue,
             disableCameraView : setDisableCameraView, 
@@ -151,14 +145,19 @@ export default function PhotoLogic ({ props, navigation }) {
              capturedImageDate: setPreviewImageDate,
              capturedImageDateTime: setPreviewImageDateTime,
          })
+         setCapturedImageDate(setPreviewImageDate);
+         setCapturedImageDateTime(setPreviewImageDateTime );
+         setCapturedImageLongitude(setPreviewImageLongitude);
+         setCapturedImageLatitude(setPreviewImageLatitude);
+
+
         //Get street name from coordinates
-        getStreetData(value.latitude, value.longitude);
+
+       getStreetData(value.latitude, value.longitude);
         //Save pictures details(time, date, street name) to async Storage
-        //activityListPicDetail();
+      
         let newData = {}
-        //newData.evidenceFiles = photos;
-        //newData.incidenceValue = selectedIncidence;
-        //newData.description = description;
+        
         newData.timeTaken = value.dateTime;
         newData.streetName =  capturedImageState.capturedStreetName;
         newData.locationLat =  value.latitude;
@@ -292,12 +291,13 @@ const saveImage = async(res) => {
 
 // create water mark - 2
 const createNewWaterMark = (path) => new Promise((resolve, reject) => {
+    
     setRenderingImage(true)
     setCapturedImageState({loading: true})
     Marker.markText({
         src: path,
-        text: "       "+ capturedImageState.capturedImageLatitude +" " + capturedImageState.capturedImageLongitude +'\n'+
-            "Date: "+ capturedImageState.capturedImageDate + " "+"Time: "+ capturedImageState.capturedImageDateTime,
+        text: "       "+ capturedImageLatitude +" " + capturedImageLongitude +'\n'+
+            "Date: "+ capturedImageDate + " "+"Time: "+ capturedImageDateTime,
         X: Dimensions.get('window').width * 0.5,
         Y: Dimensions.get('window').height * 1.20,
         // position:'bottomCenter',
@@ -376,12 +376,7 @@ const  navigateToEvidenceScreen = (path) =>{
     navigation.navigate('EvidenceSubmission',
     {
         transferredImage: path,
-        //countImageAdded: camState.count,
-        // getLatitudeTransferred: capturedImageState.capturedImageLatitude,
-        // getLongitudeTransferred: capturedImageState.capturedImageLongitude,
-        // getDateTransferred: capturedImageState.capturedImageDate,
-        // getTimeTransferred: capturedImageState.capturedImageDateTime,
-        // getTimeOfTransfer: camState.timeForCapture,
+        
     })
        // console.log("NAVIGATION output of path " + path)
 }

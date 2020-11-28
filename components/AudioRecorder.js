@@ -7,7 +7,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import StartRecord from 'react-native-vector-icons/Ionicons';
 import StopRecord from 'react-native-vector-icons/Ionicons';
 import Arrow from 'react-native-vector-icons/FontAwesome5';
-import { Navigation } from '@material-ui/icons';
+import { NavigateBefore, Navigation } from '@material-ui/icons';
 import AudioRecorderPlayer from 'react-native-audio-recorder-player';
 
 
@@ -38,29 +38,6 @@ export default class AudioRecorder extends Component{
 
     }
     permissionToRecord= async()=>{
-        if(Platform.OS === 'android'){
-            try{
-                const granted = await PermissionsAndroid.request(
-                    PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
-                    {
-                        title: 'Permissions for write access',
-                        message: 'Give permission to your storage to write a file',
-                        buttonPositive: 'ok',
-
-                    },
-                );
-                if (granted === PermissionsAndroid.RESULTS.GRANTED){
-                    console.log('')
-                } else{
-                    console.log("permission denied")
-                    return;
-                }
-            }catch(err){
-                console.warn(err)
-                return;
-
-            }
-        }
         if (Platform.OS === 'android') {
             try {
               const granted = await PermissionsAndroid.request(
@@ -72,9 +49,10 @@ export default class AudioRecorder extends Component{
                 },
               );
               if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-                console.log('You can use the camera');
+                console.log('audio permission granted');
               } else {
-                console.log('permission denied');
+                console.log(' permission denied');
+                navigate.goBack();
                 return;
               }
             } catch (err) {
@@ -84,24 +62,44 @@ export default class AudioRecorder extends Component{
           }
     }
 
-   onStartRecord = async ()=>{
+    onStartRecord = async ()=>{
+        //ask for audio prermission
+        this.permissionToRecord();
+       //change isRecordingStart to true to switch button view
+       this.setState({
+
+           isRecordingStart: true,
+        
+       })
        const result = await this.audioRecorderPlayer.startRecorder();
        this.audioRecorderPlayer.addReRecordBackListener((e)=> {
            this.setState({
                recordSecs: e.current_position,
-               recTime: this.audioRecordPlayer.mmssss(Math.floor(e.current_position)),
+               recordTime: this.audioRecordPlayer.mmssss(Math.floor(e.current_position)),
            });
            return;
        });
+       console.log('*****START RECODING*****')
        console.log(result);
-   }
-   onStopRecord = async()=> {
+       console.log("recordSecs", this.state.recordSecs)
+       console.log("recordTime", this.state.recordTime)
+    }
+
+    onStopRecord = async()=> {
+       //set isRecordingStart to false to switch button view
+       this.setState({
+           isRecordingStart: false,
+       }) 
+
        const result = await this.audioRecordPlayer.stopRecorder();
        this.audioRecordPlayer.removeRecordBackListener();
        this.setState({
            recordSecs: 0,
         });
+        console.log('*****STOP*****')
         console.log(result);
+        console.log("recordSecs", this.state.recordSecs)
+        console.log("recordTime", this.state.recordTime)
    }
 
    onStartPlay = async() => {
@@ -158,7 +156,7 @@ export default class AudioRecorder extends Component{
                     </Text>
                     <Text style={{color:'white',justifyContent:'center',fontFamily:'roboto',alignSelf:'center'
                         ,marginBottom: 5, marginTop: 5}}>
-                        07:50am
+                        Time & date
                     </Text>
                 </View>
                     <View style={{flex: 2, backgroundColor: ''}}>

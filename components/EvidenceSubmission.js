@@ -508,8 +508,7 @@ const checkExtensionOfFile=(item)=>{
                         }
                     >
                     <Picker.Item label="select incidence type" value="" color="#898989"  />   
-                    <Picker.Item label="No Incidence" value="non-Compliance"/> 
-                    <Picker.Item label="Status Report" value="non-Compliance"/> 
+                    <Picker.Item label="Status Report" value="Status Report"/> 
                     <Picker.Item label="Non-Compliance" value="non-Compliance"/>
                     <Picker.Item label="Logistics" value="logistics"/>
                     <Picker.Item label="Harassment" value="harassment"/>
