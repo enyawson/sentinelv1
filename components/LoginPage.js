@@ -24,7 +24,9 @@ export default function LoginPage({route, navigation}){
     useEffect(() => {
             console.log('Login Page Mounted');
             let deviceId = DeviceInfo.getUniqueId();
-            checkUserAuthentication(deviceId);
+            const telephone = '';
+            telephone = AsyncStorage.getItem('telephone')
+            checkUserAuthentication(deviceId, telephone);
             setUniqueId( deviceId);
             console.log(uniqueId)
 
@@ -56,6 +58,7 @@ export default function LoginPage({route, navigation}){
             const storeData = async()=> {
                 try{
                     await AsyncStorage.setItem('pin', response.data.data.pin)
+                    await AsyncStorage.setItem('telephone', response.data.data.telephone)
                     await AsyncStorage.setItem('deviceid',
                     JSON.stringify( response.data.data.deviceid))
                     //(response.data.data.pin);
@@ -82,10 +85,12 @@ export default function LoginPage({route, navigation}){
 
     }
 
-    const checkUserAuthentication = (deviceid)=>{
+    const checkUserAuthentication = (deviceid, telephone)=>{
        
         let formData=new FormData();
         formData.append('deviceid', deviceid);
+        formData.append('telephone', telephone);
+        
         axios({
             method:'POST',
             url:VERIFY_DEVICE,
