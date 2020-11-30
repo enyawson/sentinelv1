@@ -1,6 +1,13 @@
 
 Async Storage                        Component found in             retrieved
 'photos' -----------------------------PhotoLogic 
+pin, deviceid ......................... LoginPage
 'mainActivityList'--------------------EvidenceSubmission
 'activityListPicDetail'----------------PhotoLogic--------------EvidenceSubmission  
+'scannedImage'.........................scanner Doc.........ScannedDocumentPage
+'formTextValues' ......................ScannedDocumentPage
+croppedImages .............................ScannedDocumentPage
+Result database:
+presidentialData---------------------found in--presidentialComponent
+scannerCroppedImage --------------------- cropper tool
 

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Geolocation, { stopObserving } from 'react-native-geolocation-service';
 import { AppRegistry,StyleSheet, Text, PermissionsAndroid, View, Image, Alert} from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
 import Geocoder from 'react-native-geocoding';
 
 
@@ -10,7 +11,7 @@ export default class GPSLocationLogic extends Component{
 
     constructor(props){
         super(props);
-     this.state = {
+        this.state = {
         longitude: null,
         latitude: null,
         isPermissionEnabled: false,
@@ -19,7 +20,7 @@ export default class GPSLocationLogic extends Component{
         dateTime: null,
         isWithInAccuracy: null, // receives the accuracy of the coordinates
         disableCameraButton: false,
-        standardAccuracyValue: 4000,
+        standardAccuracyValue: 20,
         streetAddress: '',
         
     };
@@ -28,7 +29,7 @@ export default class GPSLocationLogic extends Component{
     }
    
     componentDidMount = () => {
-
+    console.log('GPS mounted')
         let that = this;
         if (Platform.OS === 'ios'){
             this.callLocation(that)
@@ -102,17 +103,29 @@ export default class GPSLocationLogic extends Component{
                     //this set the disableCameraButton to true
                     if(position.coords.accuracy > this.state.standardAccuracyValue){ //change fifty to this.state.standardAccuracyValue
                         this.setState({disableCameraButton: true,})
-                        //console.log('abooozegi true :' + this.state.disableCameraButton);
+                       // console.log('abooozegi true :' + this.state.disableCameraButton);
                     }
-                     
-                    //setting state to re-render positions
+                    if(position.coords.accuracy < this.state.standardAccuracyValue){ //change fifty to this.state.standardAccuracyValue
+
+                        this.setState({disableCameraButton: false,})
+                        //console.log('abooozegi true :' + this.state.disableCameraButton);
+                         //setting state to re-render positions
+                        this.setState ({ longitude: currentLongitude,
+                        latitude: currentLatitude,
+                        timeStamp: locationTime,
+                        isWithInAccuracy : locationAccuracy,
+
+                        //save the state of GPS
+                    });
+                       
+                    }
+  
                     this.setState({ longitude: currentLongitude,
                         latitude: currentLatitude,
                         timeStamp: locationTime,
                         isWithInAccuracy : locationAccuracy,
                       
                     });
-
                     
                     /*This passes the state of the activity to PhotoLogic,
                     accuracy and disableCameraButton is retrieved from this to 
@@ -131,11 +144,11 @@ export default class GPSLocationLogic extends Component{
                      maximumAge: 5000,
                      distanceFilter: 5, 
                      enableHighAccuracy: true
-                    }
+                }
             );
                 that.watchID = Geolocation.watchPosition((position) => {
-               //console.log('change in position'); //console log
-               // console.log(position); //console log
+               console.log('change in position'); //console log
+                console.log(position); //console log
                 const currentLongitude = JSON.stringify(position.coords.longitude);
                 const currentLatitude = JSON.stringify(position.coords.latitude);
                 const locationTime =  this.state.date;
@@ -146,39 +159,44 @@ export default class GPSLocationLogic extends Component{
                 if(position.coords.accuracy > this.state.standardAccuracyValue){
                     this.setState({disableCameraButton: true,});
                     //console.log('abooozegi true :' + this.state.disableCameraButton);
-                }else{
-                    this.setState({disableCameraButton: false,});
-                    //console.log('abooozegi false :' + this.state.disableCameraButton);
                 }
-
-                that.setState({longitude: currentLongitude,
-                latitude: currentLatitude,
-                timeStamp: locationTime,
-                isWithInAccuracy : locationAccuracy});
-
+                //check if accuracy falls within standard accuracy set
+                
                 that.props.customProp(this.state);
 
-                //console test for state passed to photologic 
-                //console.log('hello '+ this.state); 
+                if(position.coords.accuracy < this.state.standardAccuracyValue){
+                    this.setState({disableCameraButton: false,});
+                    //console.log('abooozegi true :' + this.state.disableCameraButton);
+                    that.setState({longitude: currentLongitude,
+                    latitude: currentLatitude,
+                    timeStamp: locationTime,
+                    isWithInAccuracy : locationAccuracy});
+
+                    that.watchID =  Geolocation.stopObserving();
+                    Geolocation.clearWatch(this.watchID);
+                }
+
+
                 
                            },
-            (error) => {Alert.alert(error.message)},
-            {distanceFilter: 0.1, 
+            (error) => {console.log('still on the search'+error)},
+            {distanceFilter: 0, 
                 interval: 10000, 
                 fastestInterval:5000,
                 enableHighAccuracy: true,
                 useSignificantChanges: true
              });
              
-            //  //Save pictures details(time, date, street name)
-            //  this.activityListPicDetail();
+             //Save pictures details(time, date, street name)
+             this.activityListPicDetail();
 
     }
 
         //remove location updates on component unmount
     componentWillUnmount(){
+        console.log(' GPS  unmounted successfully');
         Geolocation.clearWatch(this.watchID);
-        console.log(' GPS class unmounted successfully'); // console log
+       // console log
         //this fixes react can't set state on an unmount
         this.setState = (state, callback) =>{
             return;
@@ -230,7 +248,15 @@ export default class GPSLocationLogic extends Component{
     render(){
         return (
             <View style={{flexDirection: 'column', marginBottom: 10}}>
-                {/* <View style={styles.gpsContainer}>
+            {this.props.streetName != null? 
+                
+                <View style={{flexDirection: 'row', alignSelf:'center'}}>
+                    <Text style={{fontSize:16, color:'white', alignItems:'center',
+                    alignSelf:'center', marginLeft:65,marginRight:65, marginBottom:0}}>
+                    {this.props.streetName}</Text>
+                </View>
+                :
+                <View style={styles.gpsContainer}>
                     <Text style={{fontSize: 16, color: 'white', marginLeft: 10}} >
                      {this.state.latitude} 
                     </Text>
@@ -241,12 +267,8 @@ export default class GPSLocationLogic extends Component{
                      alignSelf:'center', marginLeft: 5, marginBottom:0}} >
                     acc:{Math.round(this.state.isWithInAccuracy).toFixed(3)} 
                     </Text>
-                </View> */}
-                <View style={{flexDirection: 'row', alignSelf:'center'}}>
-                    <Text style={{fontSize:16, color:'white', alignItems:'center',
-                    alignSelf:'center', marginLeft:65,marginRight:65, marginBottom:0}}>
-                    {this.props.streetName}</Text>
                 </View>
+            }
                 <View style={{marginBottom: 75, alignSelf: 'center',}}>
                     <Text style={{fontSize: 16, color: 'white', marginLeft: 5 ,marginBottom: 10,}} >
                     Date:{this.state.date} time: {this.state.dateTime}

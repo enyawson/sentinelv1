@@ -8,12 +8,16 @@ import {
   View,
   Text,
   Image,
+  BackHandler,
+  ToastAndroid,
   TouchableOpacity,
 } from 'react-native';
 import CopyRight from 'react-native-vector-icons/FontAwesome5';
 import  More from 'react-native-vector-icons/Ionicons';
 import {Menu,MenuProvider, MenuOptions, MenuOption, MenuTrigger, } from 'react-native-popup-menu';
-
+import axios from 'axios';
+import {APIKEY, TOKEN_URL, POLLING_STATION} from '../components/ConstantUrls';
+import AsyncStorage from '@react-native-community/async-storage';
 
 
 export default function Home ({ navigation }){
@@ -21,16 +25,53 @@ export default function Home ({ navigation }){
   const [isOpen, setOpened]=useState('false')
 
 useEffect(() => {
+//generate Token
+  getToken();
+//BackHandler.addEventListener('hardwareBackPress', handleBackButton);
+
 
   return () => {
-  
-  }
+   // BackHandler.removeEventListener('hardwareBackPress', handleBackButton);
+  } 
 }, [])
+
 
 const turnPopUpOn =()=>{
   setTurnPop(true);
   console.log('pop up')
 }
+const getToken = () => {
+  let tokenValue ="";
+  
+  const data = JSON.stringify({"apikey": APIKEY});
+  const config = {
+      method: 'post',
+      url: TOKEN_URL,
+      headers:{
+          'Accept': 'application/json',
+          'content-Type': 'application/json'
+      },
+      data : data,
+  };
+  axios(config)
+  .then(function (response){
+  console.log("VALUE ",response.data.data.accessToken);
+  tokenValue = response.data.data.accessToken;
+  AsyncStorage.setItem('homeToken', tokenValue);
+  
+  })
+  .catch(function (error){
+  console.log(error);
+  }) 
+  
+  
+  
+}
+// const handleBackButton =()=>{
+//   ToastAndroid.show('Back button is pressed', ToastAndroid.SHORT)
+//   return true;
+ 
+// }
 
 
     return (
@@ -91,10 +132,10 @@ const turnPopUpOn =()=>{
             </View>
             <View style={styles.box}>
               <TouchableOpacity
-               onPress={()=>navigation.navigate('SignUp')}>
+               onPress={()=>navigation.navigate('ActivityList')}>
                <Image style={styles.imageInBox}
                 source = { require('../assets/add.png') }/>
-                <Text style={styles.text}>Register</Text>
+                <Text style={styles.text}>Incidence</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -105,7 +146,7 @@ const turnPopUpOn =()=>{
                     <Image 
                     style={styles.imageInBox}
                     source = { require('../assets/microphone.png') } />
-                    <Text style={styles.text}>Voice</Text>
+                    <Text style={styles.text}>Audio Recorder</Text>
                   </TouchableOpacity>
                 </View>
                 <View style={styles.box}>
@@ -114,23 +155,19 @@ const turnPopUpOn =()=>{
                     <Image 
                     style={styles.imageInBox}
                     source = { require('../assets/resultImage.png') } />
-                    <Text style={styles.text}> Results </Text>
+                    <Text style={styles.text}> Submit Results </Text>
                 </TouchableOpacity>
                 </View>    
           </View>
       <View style={styles.bottomContainer}>
             <TouchableOpacity>
-                <Text>Locate</Text>
+              <Text>Locate</Text>
             </TouchableOpacity>
             <TouchableOpacity>
-                <Text>Call</Text>
+              <Text>Stories</Text>
             </TouchableOpacity>
             <TouchableOpacity>
-                <Text>Stories</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-            onPress={()=>navigation.navigate('VideoPreview')}>
-                <Text>Help</Text>
+              <Text>Help</Text>
             </TouchableOpacity>
       </View>
      <View style={{alignContent: 'center', marginTop:10,
@@ -144,10 +181,8 @@ const turnPopUpOn =()=>{
         marginTop={10}
         color='#ed7055'
         marginRight={10}/>
-         <Text style={styles.textBottom}>SOFTMASTERS</Text>
-      </View>
-      
-     
+         <Text style={styles.textBottom}> SOFTMASTERS </Text>
+      </View> 
      </View>
     </View>
     );
@@ -171,10 +206,6 @@ const styles = StyleSheet.create({
     marginLeft:75,
     margin: 0,
     color: '#ed7055',
-
-    
-    
-   
   },
   headerContainer: {
     flex: 0.45,
@@ -265,15 +296,16 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignSelf: 'stretch',
     marginTop:15,
-    marginLeft:15,
+    marginLeft:30,
     marginBottom:15,
-    marginRight: 15,
+    marginRight: 30,
     backgroundColor: '#f0f0f0',
   },
   text: {
     fontSize: 12,
     justifyContent: 'center',
     alignSelf: 'center',
+    padding: 2,
   },
   textBottom: {
     fontSize: 26,

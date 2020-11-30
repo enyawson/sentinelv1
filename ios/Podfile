@@ -12,6 +12,8 @@ target 'Sentinel' do
 
   pod 'react-native-video', :path => '../node_modules/react-native-video'
 
+  pod 'RNImageRotate', :path => '../node_modules/react-native-image-rotate'
+
   target 'SentinelTests' do
     inherit! :complete
     # Pods for testing

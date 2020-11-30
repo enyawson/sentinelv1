@@ -1,5 +1,5 @@
 import React  from 'react';
-import MapView, { PROVIDER_GOOGLE } from 'react-native-maps'; 
+import MapView ,{Marker} from 'react-native-maps'; 
 import { ScrollView } from 'react-native-gesture-handler';
 // remove PROVIDER_GOOGLE import if not using Google Maps
 import {
@@ -20,18 +20,32 @@ export default class LocationMap extends React.Component{
 
 
   render(){
+
+
     return(
       <View style={styles.container}>
         <MapView
-       provider={PROVIDER_GOOGLE} // remove if not using Google Maps
-       style={styles.map}
-       region={{
-         latitude: 37.78825,
-         longitude: -122.4324,
-         latitudeDelta: 0.0922,
-         longitudeDelta: 0.0421,
+      style={styles.map}
+       region ={{
+      latitude: this.props.lat,
+      longitude: this.props.lng,
+      latitudeDelta: 0.0,
+      longitudeDelta: 0.015,
        }}
-     >
+       
+       showPointOfInterest={true}
+      >
+      
+      <Marker
+      
+      coordinate={ {
+        latitude: this.props.lat,
+        longitude: this.props.lng,
+      } }
+      title={this.props.incidence}
+      description={this.props.description}
+    />
+
      </MapView>
      
      
@@ -45,10 +59,13 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     flex: 2,
     bottom: 10,
-    marginLeft: 10,
-    marginRight: 10,
+    marginLeft: 5,
+    marginRight: 5,
     justifyContent: 'flex-end',
     alignItems: 'center',
+    borderWidth:0,
+    borderColor:'#1D5179',
+    borderRadius:6,
   },
   map: {
     ...StyleSheet.absoluteFillObject,

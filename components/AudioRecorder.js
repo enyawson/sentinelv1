@@ -2,12 +2,16 @@ import React, { Component } from 'react';
 import { AppRegistry,
     StyleSheet, Text, 
     PermissionsAndroid, View, StatusBar,
-    Image, TouchableOpacity} from 'react-native';
+    Image, TouchableOpacity, Platform} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import StartRecord from 'react-native-vector-icons/Ionicons';
 import StopRecord from 'react-native-vector-icons/Ionicons';
 import Arrow from 'react-native-vector-icons/FontAwesome5';
-import { Navigation } from '@material-ui/icons';
+import { NavigateBefore, Navigation } from '@material-ui/icons';
+import AudioRecorderPlayer from 'react-native-audio-recorder-player';
+
+
+const audioRecorderPlayer = new AudioRecorderPlayer();
 
 export default class AudioRecorder extends Component{
     constructor(props,navigation){
@@ -17,27 +21,118 @@ export default class AudioRecorder extends Component{
             isRecordingStart: false,
             isRecordingStop:false,
             isRecordingSaved:false,
+            recordSecs: '',
+            recordTime: '',
+            currentPositionSec: '',
+            currentDurationSec:'',
+            playTime: '',
+            duration: '',
 
         }
     }
     
     componentDidMount (){
-        this.startRecording();
-        this.stopRecording();
+        
     }
     componentWillUnmount (){
 
     }
-    //changes state of recording when stated
-    startRecording = ()=> {
-        this.setState({isRecordingStart: true,
-                     isRecordingStop: false})
-        console.log(this.state.isRecordingStart);
+    permissionToRecord= async()=>{
+        if (Platform.OS === 'android') {
+            try {
+              const granted = await PermissionsAndroid.request(
+                PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
+                {
+                  title: 'Permissions for write access',
+                  message: 'Give permission to your storage to write a file',
+                  buttonPositive: 'ok',
+                },
+              );
+              if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+                console.log('audio permission granted');
+              } else {
+                console.log(' permission denied');
+                navigate.goBack();
+                return;
+              }
+            } catch (err) {
+              console.warn(err);
+              return;
+            }
+          }
     }
-    stopRecording = ()=> {
-        this.setState({isRecordingStop:true,
-                        isRecordingStart: false})
+
+    onStartRecord = async ()=>{
+        //ask for audio prermission
+        this.permissionToRecord();
+       //change isRecordingStart to true to switch button view
+       this.setState({
+
+           isRecordingStart: true,
+        
+       })
+       const result = await this.audioRecorderPlayer.startRecorder();
+       this.audioRecorderPlayer.addReRecordBackListener((e)=> {
+           this.setState({
+               recordSecs: e.current_position,
+               recordTime: this.audioRecordPlayer.mmssss(Math.floor(e.current_position)),
+           });
+           return;
+       });
+       console.log('*****START RECODING*****')
+       console.log(result);
+       console.log("recordSecs", this.state.recordSecs)
+       console.log("recordTime", this.state.recordTime)
     }
+
+    onStopRecord = async()=> {
+       //set isRecordingStart to false to switch button view
+       this.setState({
+           isRecordingStart: false,
+       }) 
+
+       const result = await this.audioRecordPlayer.stopRecorder();
+       this.audioRecordPlayer.removeRecordBackListener();
+       this.setState({
+           recordSecs: 0,
+        });
+        console.log('*****STOP*****')
+        console.log(result);
+        console.log("recordSecs", this.state.recordSecs)
+        console.log("recordTime", this.state.recordTime)
+   }
+
+   onStartPlay = async() => {
+        console.log('onStartPlay');
+        const msg = await this.audioRecordPlayer.startPlayer();
+        console.log(msg);
+        this.audioRecordPlayer.addPlayBackListener((e)=> {
+            if (e.current_position === e.duration){
+                console.log("finished");
+                this.audioRecordPlayer.stopPlayer();
+            }
+            this.setState({
+                currentPositionSec: e.current_position,
+                currentDurationSec: e.duration,
+                playTime: this.audioRecorderPlayer.mmssss(Math.floor(e.current_position)),
+                duration: this.audioRecorderPlayer.mmssss(Math.floor(e.duration)),
+            });
+            return;
+        });
+   }
+
+   onPausePlay = async ()=> {
+        await this.audioRecorderPlayer.pausePlayer();
+   }
+
+   onStopPlay = async () => {
+        console.log('onStopPlay');
+        this.audioRecorderPlayer.stopPlayer();
+        this.audioRecorderPlayer.removePlayBackListener();
+    }
+//     Default path for android uri is sdcard/sound.mp4.
+// Default path for ios uri is sound.m4a.
+
     render(){
        
         return(
@@ -61,7 +156,7 @@ export default class AudioRecorder extends Component{
                     </Text>
                     <Text style={{color:'white',justifyContent:'center',fontFamily:'roboto',alignSelf:'center'
                         ,marginBottom: 5, marginTop: 5}}>
-                        07:50am
+                        Time & date
                     </Text>
                 </View>
                     <View style={{flex: 2, backgroundColor: ''}}>
@@ -81,7 +176,7 @@ export default class AudioRecorder extends Component{
                         <View  style={{flex: 0.7, backgroundColor:''}}>
                             <TouchableOpacity
                                 style={styles.startRecord}
-                                onPress={()=>{this.stopRecording()}}>
+                                onPress={()=>{this.onStopRecord()}}>
                                 <StopRecord
                                 name={"square"}
                                 size={25}
@@ -94,7 +189,7 @@ export default class AudioRecorder extends Component{
                         <View  style={{flex: 0.7, backgroundColor:''}}>
                             <TouchableOpacity
                                 style={styles.startRecord}
-                                onPress={()=> { this.startRecording()}}>
+                                onPress={()=> { this.onStartRecord()}}>
                                 <StartRecord
                                 name={"ellipse-outline"}
                                 size={25}

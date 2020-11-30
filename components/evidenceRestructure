@@ -1,0 +1,185 @@
+     <View style= {{flex:1}}>
+         <StatusBar barStyle="light-content" backgroundColor="#174060"/>
+         <View> 
+         </View>
+            <View flexDirection='column' flex={0.456} marginTop={30} 
+            marginRight ={5}
+            marginLeft ={5}
+            borderWidth={0.5}
+            borderRadius={3}
+            backgroundColor={'yellow'}
+            borderColor='#7E7E7E'>
+                <FlatList
+                    data= {photos}
+                    keyExtractor={(item, index)=> index}
+                    renderItem={ ({ item}) => (  
+                        <TouchableOpacity onPress={() => navigateToPhotoPreview(item) }>
+                        {checkExtensionOfFile(item)}
+                            {/* <Image
+                            onLoadStart={_onLoadStart}
+                            onLoadEnd={_onLoadEnd}
+                            style={{ width:70, height:75,margin:1, resizeMode:'cover'}}   
+                            source = {{ uri: "file://"+ item}} 
+                            
+                            // source = {{ uri: item}} 
+                            //source = {{ uri: item.node.image.uri}} 
+                        /> */}
+                        {/* {loading && <ActivityIndicator
+                            size='small'
+                            color='#1D5179'
+                            style={styles.activityIndicator}
+                            animating={loading}
+                        />} */}
+                            
+                        
+                        </TouchableOpacity>   
+                        )   
+                    }
+                    numColumns = {5}
+                />
+                    {/* <Image
+                        style={{ width:70, height:75,margin:0.5, resizeMode:'cover'}}   
+                        source = {{ uri: "file://"+ photos}} 
+                        // source = {{ uri: item}} 
+                        //source = {{ uri: item.node.image.uri}} 
+                    /> */}
+              
+            </View>
+            <TouchableOpacity style={styles.addPhotoButton}
+                onPress={()=>{navigation.goBack()}}>
+                <Add
+                name={'add'}
+                size={30}
+                color="white"/>   
+            </TouchableOpacity>
+
+            <View style={{justifyContent: 'center', margin:5 ,flex: 1.2,}}>
+                <View style={{borderWidth: 1,
+                    alignSelf: 'center',
+                    width:'90%',
+                    borderColor:'#C4C4C4',
+                    borderRadius:5,
+                    marginBottom: 0,
+    
+                    marginTop: 10}}>
+                    <Picker
+                        selectedValue={selectedIncidence}
+                        style={{height:45,  
+                        fontFamily:'roboto', 
+                        fontStyle:'normal',
+                        fontWeight:'normal'}}
+                        onValueChange={(itemValue, itemIndex) =>
+                        setIncidence(itemValue)
+                        }
+                    >
+                    <Picker.Item label="select incidence type" value="" color="#898989" />    
+                    <Picker.Item label="Non-Compliance" value="non-Compliance"/>
+                    <Picker.Item label="Logistics" value="logistics"/>
+                    <Picker.Item label="Harassment" value="harassment"/>
+                    <Picker.Item label="Interference" value="interference"/>
+                    <Picker.Item label="Violence" value="violence"/>
+                    <Picker.Item label="Delays" value="delays"/>
+                    <Picker.Item label="Confusion" value="confusion"/>
+                    <Picker.Item label="Chaos" value="chaos" />
+                    <Picker.Item label="Power Failure" value="power failure"/>
+                    </Picker>
+                </View>
+                <View flex={0.2} marginBottom={0} marginLeft={5} marginTop={30} 
+                 justifyContent={'center'} width={'90%'} alignSelf={'center'}>
+                    <Text style={styles.textStyle}>
+                        Description
+                    </Text>
+                </View>
+                <View style={{flexDirection:'row', alignSelf:'center'}} >
+                    <TextInput 
+                        style={{height: 70, 
+                        width: '70%',
+                        borderRadius: 8,
+                        borderColor:'#C4C4C4',
+                        borderWidth: 1, marginLeft: 0}}
+                        onChangeText={(text) => 
+                            setInputtedText(text)
+                        }
+                        textAlignVertical={'top'}
+                        value={description}
+                        multiline={true}
+                        placeholder={' enter text'}
+                        fontSize={14}
+                        enablesReturnKeyAutomatically={true}
+                    > 
+                    </TextInput> 
+                    <TouchableOpacity style={styles.microphoneButton}
+                    onPress={()=> navigation.navigate('AudioRecorder') } >
+                        <Microphone name="microphone" 
+                        size={21} 
+                        color='white'
+                        /> 
+                    </TouchableOpacity>
+                </View>
+                <View marginBottom={0} marginLeft={10} marginTop={30} 
+                 marginBottom={20} alignSelf={'center'}>
+                    <View style={{flexDirection: 'row', }}>
+                        <Text style={{
+                            fontFamily:'roboto', fontSize: 16, marginRight: 5, marginLeft: 0,
+                            fontWeight:'500', color:'#1D5179',
+                            }}
+                            onPress={()=>navigation.navigate('SignUp')}>
+                            Register 
+                        </Text>
+                        <Text style={{
+                            fontFamily:'roboto', fontSize: 16,marginLeft:5,
+                            fontWeight:'500',color:'#898989'
+                            }}>
+                            and 
+                        </Text>
+                        <Text style={{
+                            fontFamily:'roboto', fontSize: 16,marginLeft:5,
+                            fontWeight:'500',color:'#1D5179'
+                            }}>
+                            Sign In 
+                        </Text>
+                        <Text style={{
+                            fontFamily:'roboto', fontSize: 16,marginLeft:5,
+                            fontWeight:'500',color:'#898989'
+                            }}>
+                            to get feedback
+                        </Text>
+                        {/* <View style={styles.radioCircumference}>
+                            <TouchableOpacity style={styles.radioButton}></TouchableOpacity>
+                        </View>
+                        <Text style={{marginLeft: 5, marginRight: 0, marginTop: 10}}>anonymous</Text>  
+                        <Text style={{marginLeft: 10, marginRight: 10, marginTop: 10, fontWeight:'bold'}}> or </Text>
+                        <View style={styles.radioCircumference}>
+                            <TouchableOpacity style={styles.radioButton}></TouchableOpacity>
+                        </View> */}
+                        {/* <Text style={{marginTop: 10,marginLeft: 5, marginRight: 0}}>Sign In</Text>                    */}
+                    </View>
+                </View>
+                <View style={{flex:0.25, 
+                    width:'30%', 
+                    alignSelf:'center',
+                    
+                    backgroundColor:'#1D5179',
+                    borderRadius: 5,
+                    marginTop: 15,
+                }}>
+                    <TouchableOpacity
+                        style={{ 
+                        padding: 5,
+                        alignSelf:'center'}}
+                        onPress={()=> evidenceSubmit()}>
+                        <Text style={{color:'white', 
+                            alignSelf:'center',
+                            fontSize: 18,
+                            }}>
+                            Submit
+                        </Text>
+                    </TouchableOpacity>   
+                    <KeyboardSpacer />
+                </View>
+               
+            </View>
+           
+        
+        </View> 
+    );

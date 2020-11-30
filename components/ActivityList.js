@@ -106,7 +106,7 @@ export default class ActivityList extends React.Component{
                 keyExtractor={(item, index)=> index.toString()}
                 renderItem={ ({ item }) => (  
                     
-                    <TouchableOpacity style={{flexDirection: 'row', margin: 5}}
+                    <TouchableOpacity style={{flexDirection: 'row', margin:8}}
                         onPress={()=> {this.props.navigation.navigate( 'ActivityPreview', {itemIndex: item}
                         )
                             // let value = item.evidenceFiles[0]
@@ -126,9 +126,9 @@ export default class ActivityList extends React.Component{
                             <Text style={{fontSize:16, fontWeight:'500', fontFamily:'roboto'}}>{item.incidenceValue}</Text>
                             <Text style={{fontSize:12, marginBottom:5,}}>{item.picDetail.streetName}</Text>
                         </View>
-                        <View style={{right: 32,marginTop: 5}}>
+                        <View style={{right: 40,marginTop: 5}}>
                             <Text style={{right:32, fontSize:12}}>{item.picDetail.dateTaken}</Text>
-                            <Text style={{fontSize: 12}}>{item.picDetail.timeTaken}</Text>
+                            <Text style={{fontSize: 12, right: 8}}>{item.picDetail.timeTaken}</Text>
                         </View>
                         
                     </TouchableOpacity>
@@ -156,7 +156,8 @@ const styles = StyleSheet.create ({
         height: 50,
         justifyContent: 'center',
         alignSelf:'center',
-        backgroundColor: '#7E7E7E'
+        backgroundColor: '#7E7E7E',
+        
       },
     incidence: {
         backgroundColor:'#FFFFFF',

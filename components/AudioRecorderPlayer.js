@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, useEffect,useState } from 'react';
 import { AppRegistry,
     StyleSheet, Text, 
     PermissionsAndroid, View, StatusBar,
@@ -20,12 +20,12 @@ export default function AudioRecorderPlayer({navigation, Route}){
            
         
     useEffect(() => {
-        effect
+       
        
         return () => {
-            cleanup
+            
         }
-    }, [input])
+    }, [])
 
 
     

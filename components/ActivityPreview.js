@@ -8,13 +8,15 @@ import ArrowBack from 'react-native-vector-icons/Ionicons';
 import LocationMap from './LocationMap';
 import { ThreeDRotationSharp } from '@material-ui/icons';
 import Play from 'react-native-vector-icons/Ionicons';
+import  Add from 'react-native-vector-icons/Ionicons';
+
 
 
 
 
 /**This functional component is called when any individual audio file is clicked */
 
-export default class ActivityList extends React.Component{
+export default class ActivityPreview extends React.Component{
     
     constructor(props,navigation){
         super(props);
@@ -27,7 +29,8 @@ export default class ActivityList extends React.Component{
             streetName: 'St. Central Park',
             date: '3/5/1998',
             itemsEvidenceFiles: [],
-            initialViewState: false //boolean to check the state of the preview image
+            initialViewState: false, //boolean to check the state of the preview image
+            count: 0,
 
         }
     }
@@ -35,9 +38,6 @@ export default class ActivityList extends React.Component{
     componentDidMount (){
         //this.getData();
         // this.getItemParam();
-        
-       
-
 
     }
     componentWillUnmount (){
@@ -46,12 +46,12 @@ export default class ActivityList extends React.Component{
 
     componentDidUpdate(prevProps, prevState){
         if(prevState.imageClicked !== this.state.imageClicked){
-            console.log("imageClick state changed");
-            console.log("new selected is : "+ this.state.imageClicked);
+           // console.log("imageClick state changed");
+           // console.log("new selected is : "+ this.state.imageClicked);
         }
         if (prevState.imageClickedState !==this.state.imageClickedState){
-            console.log("imageClickState state changed");
-            console.log("new selected is : "+ this.state.imageClickedState);
+           // console.log("imageClickState state changed");
+            //console.log("new selected is : "+ this.state.imageClickedState);
         }  
     }
     //get item itemIndex on each activity click
@@ -124,8 +124,8 @@ export default class ActivityList extends React.Component{
     receivedData  = (value) =>
     { 
         let data = value;
-        console.log ("ITEM SELECTED "+ data);
-        console.log ("ITEM STATE "+ this.state.imageClickedState);
+        //console.log ("ITEM SELECTED "+ data);
+        //console.log ("ITEM STATE "+ this.state.imageClickedState);
 
         
         this.setState({
@@ -137,72 +137,98 @@ export default class ActivityList extends React.Component{
         // console.log("ITEM CLICKED STATE : "+ this.state.imageClickedState);
     }
  /**This method checks for the extension of file (jpg or mp4) */
- checkExtensionOfFile=(item)=>{
+ checkExtensionOfFile=(item, itemIndex)=>{
     //set the state of extension 
     let ext = item.split('.').pop();
     //console.log("Extension "+ ext);
     if (ext == 'jpg'){
+       
          return(
             <Image
-            style={styles.imageInBox}   
+            style={{ width:115, height:214,margin:1, resizeMode:'cover'}}   
             source = {{ uri: "file://"+ item}}/>
      )
     } 
-    if (ext == 'mp4'){
+    if (ext == 'mp4'){ 
         return(
             <View>
                 <Image
-                style={styles.imageInBox}  
+                style={{ width:115, height:214,margin:1, resizeMode:'cover'}}   
                 source = {{ uri: "file://"+ item}}/>
                 <View style={{ backgroundColor: 'black',
-                 position:'absolute',justifyContent:'center',alignItems: 'center',margin:2,
-                 width: 80 , height: 86,opacity:0.5}}>
-                <Play
+                 position:'absolute',justifyContent:'center',alignItems: 'center',margin:1,
+                 width: 115 , height: 214,opacity:0.5}}>
+                    <Play
                     name={'play-circle-outline'}
                     size={35}
-                    color="white" />   
-                </View>      
-              
+                    color="white"/>   
+                </View>  
             </View>
-            )
-            
-    }
+            )  
+        }
+    //this.countPics(itemIndex);
+    console.log(itemIndex)    
 }
+ countFiles = (value)=> {
+    //  const value = 1;
+    //  let countState = this.state.count;
+     this.setState({
+         count:  value,
+     })
+     console.log("I am in hurraay"+this.state.count)
+ }
+    //save path of video to display in videoPreview
+    storeData =async (value)=> {
+    try{
+        await AsyncStorage.setItem('previewVideoOrImage',value)
+        } catch (e) {
+            console.log('error saving video for preview')
+        }
+    }
 
- showPreview =(path)=>{
+    showPreview =(path)=>{
      //set the state of extension 
     let ext = path.split('.').pop();
-    console.log("show Preview ready")
+    //console.log("show Preview ready")
+    //console.log(path)
     if (ext == 'mp4'){
+        this.storeData(path);
         return(
-        this.props.navigation.navigate( 'VideoPreview', {itemToPreview: path})
+        this.props.navigation.navigate( 'VideoPreview')
         )
     } 
+    if (ext == 'jpg'){
+        return(
+            this.props.navigation.navigate('PhotoPreviewer',{transferredImageItem: path})
+        )
+    }
     
+    //else show preview for image
  
 }
     render () {
-        // const { navigation } = this.props;
-        // const itemIndex = navigation.getParam('itemIndex', 'NO-ID');
-       
-        // console.log("INDEX "+ itemIndex);
         
-        // console.log("INDEX " + itemIndex);
-         //console.log(itemIndex);
-         //console.log("ITEMS PHOTOS")
-        // console.log("time "+itemIndex.picDetail.timeTaken)
-        // console.log("date "+itemIndex.picDetail.dateTaken)
-        // console.log("incidence "+itemIndex.incidenceValue)
-        // console.log("des "+itemIndex.description)
         const { itemIndex } = this.props.route.params; //list of items received from an activityList
-        console.log(itemIndex)
-        console.log("file:/"+itemIndex.evidenceFiles[0]);
-       
+         console.log(itemIndex.picDetail)
+        //console.log(typeof Number(itemIndex.picDetail.locationLat))
+        let counter = 0;
+        let myCounterArray  = [];
+        myCounterArray = itemIndex.evidenceFiles;
+        myCounterArray.forEach(function(item){
+            const value = 1;
+            counter = counter + value;  
+        })
+        
+        
+        
+     
         return(
         <View style= {styles.container}>
             <StatusBar barStyle="light-content" backgroundColor="#174060"/>
-            <View style={{width:Dimensions.get('window').width, height: 60,
-             backgroundColor:'#1D5179', elevation: 5, flexDirection: 'row',}}>
+            <View />
+            
+            {/* <View style={{width:Dimensions.get('window').width, height: 60,
+                backgroundColor:'#1D5179', elevation: 5, flexDirection: 'row',}}>
                 <TouchableOpacity
                     onPress={()=> this.props.navigation.goBack()}>
                     <ArrowBack
@@ -212,15 +238,20 @@ export default class ActivityList extends React.Component{
                     style={{margin:15, alignContent: 'center'}}/>  
                 </TouchableOpacity>
                 <View style={{flexDirection: 'column', justifyContent:'center', }}>
-                    <Text style={{alignSelf:'center',marginLeft:40,marginTop: 10, fontFamily:'roboto',fontSize:18,color:'white'}}>
-                        INCIDENT: {itemIndex.incidenceValue.toUpperCase()}
-                    </Text>
+                    <View style={{flexDirection:'row'}}>
+                        <Text style={{alignSelf:'center',marginLeft:45,marginTop: 10, fontFamily:'roboto',fontSize:13,color:'white', fontWeight: 'bold' }}>
+                                INCIDENT: 
+                        </Text>
+                        <Text style={{alignSelf:'center',marginLeft:2,marginTop: 10, fontFamily:'roboto',fontSize:13,color:'white'}}>
+                            {itemIndex.incidenceValue.toUpperCase()}
+                        </Text>
+                    </View> 
                     <View style={{flexDirection: 'row',marginLeft:50, }}>
                          <View style={{flexDirection: 'row'}}>
-                            <Text style={{fontSize:12,color:'white', top:0, marginLeft: 0,marginRight:2,fontWeight:'bold' }}>
+                            <Text style={{fontSize:13,color:'white', top:0, marginLeft: 0,marginRight:2,fontWeight:'bold' }}>
                                 DATE: 
                             </Text>
-                            <Text style={{fontSize:12,color:'white', top:0, marginRight:5, }}>
+                            <Text style={{fontSize:13,color:'white', top:0, marginRight:5, }}>
                                 {itemIndex.picDetail.dateTaken}
                             </Text>
                         </View>
@@ -236,7 +267,9 @@ export default class ActivityList extends React.Component{
                     </View>
                   
                 </View>
-            </View>
+            </View> */}
+            
+           
                 {/* <View style={{background: '', margin: 10}}>
                     {this.state.imageClickedState==false? 
                         <Image 
@@ -254,23 +287,29 @@ export default class ActivityList extends React.Component{
                     
                 </View> */}
                
-                <View style={{flex: 1.2,marginRight: 5, backgroundColor:'', marginLeft:5,
-                 marginTop: 10, borderWidth:0.5,padding:2, }}>
+                <View style={{flex: 1.5,marginRight: 5, backgroundColor:'', marginLeft:5,
+                 marginTop: 10, borderWidth:0,padding:2, alignItems:'center'}}>
                     <FlatList
-                    data= {itemIndex.evidenceFiles}
-                    keyExtractor={(item, index)=> index.toString()}
-                    horizontal={false}
-                    renderItem={ ({ item }) => (  
+                        data= {itemIndex.evidenceFiles.reverse()}
+                        keyExtractor={(item, index)=> index.toString()}
+                        horizontal={true}
+                        renderItem={ ({ item }) => (  
                         <TouchableOpacity
                             onPress={()=> this.showPreview(item)}>
                             <View style={{flexDirection: 'row'}}>         
                                 {this.checkExtensionOfFile(item)}
+                               
                             </View>
                         </TouchableOpacity>
                         
                     )}
-                    numColumns={4}
+
                     />
+                    <Text style={{fontSize:12}}> {itemIndex.picDetail.locationLat}  {itemIndex.picDetail.locationLng} </Text>
+                    <Text style={{fontSize:12}}> {itemIndex.picDetail.dateTaken} </Text>
+                <TouchableOpacity style={styles.addPhotoButton}>
+                   <Text style={{color:'white', justifyContent:'center',alignSelf:'center'}}> {counter}</Text> 
+                </TouchableOpacity>
                 </View>
                 <View style={{flexDirection:'row', backgroundColor:'', marginTop: 10, marginLeft: 10, marginRight: 10,}}>
                         {/* <Text style={{fontFamily:'roboto',fontSize:16, fontWeight:'500', }}>
@@ -282,13 +321,14 @@ export default class ActivityList extends React.Component{
                 </View>
                 <View style={{flexDirection:'row', flex:0.5,backgroundColor:'', marginTop:5, 
                     marginLeft: 10, marginRight: 10, borderWidth: 0}}>
-                    <Text style={{fontFamily:'roboto',fontSize:16, fontWeight:'500', marginRight:0}}>
+                    <Text style={{fontFamily:'roboto',fontSize:15, fontWeight:'500', marginRight:0}}>
                         Description: 
                     </Text>
-                    <View style={{ alignSelf:'center',marginLeft:5,borderWidth: 0, backgroundColor:''}}>
+                    <View style={{ alignSelf:'center',borderWidth: 0, backgroundColor:''}}>
                         <ScrollView 
-                        style={{flex:1}}>
-                            <Text style={{fontFamily:'roboto',fontSize:15, alignSelf:'center', marginLeft:5, alignSelf:'center', 
+                        >
+                            <Text style={{fontFamily:'roboto',fontSize:15, alignSelf:'center',
+                             marginLeft:5, alignSelf:'center', padding:0,
                                 color: '#7E7E7E'}}>
                                 {itemIndex.description}
                                 {/* BUILD SUCCESSFUL in 54s
@@ -300,10 +340,15 @@ export default class ActivityList extends React.Component{
                                 </Text>
                         </ScrollView>  
                     </View>   
-                 </View>
-                        <Text style={{marginLeft:10}}>Location</Text>
-                        <View style={{flex:2, backgroundColor:'',}}>
-                        <LocationMap />
+                     </View>
+                        <Text style={{marginLeft:10}}></Text>
+                        <View style={{flex:1.5, backgroundColor:'',}}>
+                        <LocationMap 
+                            incidence={itemIndex.incidenceValue} 
+                            description={itemIndex.description} 
+                            lat={Number(itemIndex.picDetail.locationLat)}
+                            lng={Number(itemIndex.picDetail.locationLng)}
+                        />
                     </View>
             </View>   
                 
@@ -344,6 +389,17 @@ const styles = StyleSheet.create ({
         alignSelf: 'center',
        
       },
+      addPhotoButton:{
+        height: 20,
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: 20,
+        borderRadius: 100,
+        backgroundColor: '#ed7055',
+        position: 'absolute',
+        left: 0,
+        top: 0, 
+    },
     incidence: {
         backgroundColor:'#FFFFFF',
         margin: 2.5,

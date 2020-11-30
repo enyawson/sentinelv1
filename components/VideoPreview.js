@@ -1,112 +1,169 @@
-import React from 'react';
-
-import {
-    StyleSheet, View,
-
-} from 'react-native';
-import { TouchableOpacity, TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import React, {useState, useRef, useEffect} from 'react';
+import {SafeAreaView, StyleSheet, Text, View } from 'react-native';
 import Video from 'react-native-video';
+import MediaControls, {PLAYER_STATES} from 'react-native-media-controls';
+import AsyncStorage from '@react-native-community/async-storage';
+
+export default function videoPreview (route, navigation){
+    const videoPlayer = useRef(null);
+    const [currentTime, setCurrentTime] = useState(0);
+    const [duration, setDuration] = useState(0);
+    const [isFullScreen, setIsFullScreen] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
+    const [paused, setPaused] = useState(false);
+    const [ 
+        playerState, setPlayerState
+    ] = useState(PLAYER_STATES.PLAYING);
+    const[screenType, setScreenType] = useState('content');
+    const [videoOrImage, setVideoOrImage] = useState('');
+
+     // receive image data from previous page to preview
+    //  const { itemToPreview } = route.params;
+    //  console.log(itemToPreview)
+
+    useEffect(() => {
+        // retrieve video or image to be previewed
+        getData();
+      
+        return () => {
+            
+        }
+    }, [videoOrImage])
 
 
-export default class VideoPreview extends React.Component{
-    constructor(props){
-        super(props);
-       // console.log({...props});
+    // Retrieving image uri of video from ActivityPreview to be displayed 
+    const getData = async()=>{
+        try {
+            const value = await AsyncStorage.getItem('previewVideoOrImage')
+            console.log('Value of preview Data'+ value)
+            if (value !== null){
+                //set state of the previewed image or video
+                setPreviewImageOrVideo(value);
+            }
+        } catch (e){
+            console.log('error occurred in getting store activity preview data')
+        }
 
-        this.state ={
-           repeat: false,
-           muted: false,
-           volume: 1,
-           resizeMode: 'contain',//mode: none, cover, stretch, contain
-           duration: 0.0, //video's duration set on event onLoad
-           currentTime: 0.0, //set on event onProgress
-           paused: true, //check if video is pausing or not
-           rateText: '1.0', //rate value in component Picker
-           pausedText: 'play',//view to user: 'Play'-when video is pausing, 
-           //'Pause' when video is playing
-           hideControls: false,//hide control button when video is playing and show it 
-           //when user clicks on video
-        } 
-       
+    }
+
+    // setting state of image or video to be previewed
+    const setPreviewImageOrVideo = (path) =>{
+        setVideoOrImage(path);
+    }
+
+    const onSeek = (seek)=> {
+        //Handler for change in seekBar
+        videoPlayer.current.seek(seek);
+    };
+
+    const onPaused = (playerState) =>{
+        //Handler for Video Pause
+        setPaused(!paused);
+        setPlayerState(playerState);
+    };
+
+    const onProgress = (data) => {
+        //video Player will progress continue even if it ends
+        if (!isLoading  && playerState !== PLAYER_STATES.ENDED){
+            setCurrentTime(data.currentTime);
+        }
+    };
+
+    const onReplay = ()=> {
+        //Handler for Replay
+        setPlayerState(PLAYER_STATES.PLAYING);
+        videoPlayer.current.seek(0);
+    };
+
+    const onLoad = (data)=>{
+        setDuration(data.duration);
+        setIsLoading(false)
+    }
+
+    const onLoadStart = (data) => setIsLoading(true);
+    
+    const onEnd = ()=> setPlayerState(PLAYER_STATES.ENDED);
+
+    const onError = () => alert ('error');
+
+    const exitFullScreen =  ()=> {};
+
+    const onFullScreen = ()=> {
+        setIsFullScreen(isFullScreen);
+        if(screenTYpe == 'content') 
+        {
+            setScreenType('cover')
+        }else{
+            setScreenType('content')
+        }
         
     }
 
+    const renderToolbar = ()=> (
+        <View>
+           <Text style={styles.toolbar}>toolbar</Text> 
+        </View>
+    )
+    const onSeeking = (currentTime)=> setCurrentTime(currentTime);
 
-componentDidMount(){
-    console.log('video preview mounted')
-}
-componentWillUnmount(){
-}
-componentDidUpdate(){
-}
 
-//  onLoad = (data) => {
-//      //set duration
-//      this.setState({duration: data.duration});
-//  }
-//  onProgress = (data)=> {
-//      //set current time
-//      this.setState({currentTime: data.currentTime});
-//  }
+    return (
+          <View style ={{flex: 1}}>
+              <Video
+                onEnd={onEnd}
+                onLoad={onLoad}
+                onLoadStart={onLoadStart}
+                onProgress={onProgress}
+                paused={paused}
+                ref={videoPlayer}
+                resizeMode={screenType}
+                source={{
+                    uri: videoOrImage
+                }
+                }
+                style={styles.mediaPlayer}
+                volume={10}
+                repeat={true}
+                />
 
-//  onEnd = ()=>{
-//      //set pausedText and paused, set video current time to 0
-//      this.setState({pausedText: 'Play', paused: true});
+                <MediaControls 
+                    duration={duration}
+                    isLoading={isLoading}
+                    mainColor = "rgba(12, 83, 175, 0.2)"
+                    onFullScreen={onFullScreen}
+                    onPaused={onPaused}
+                    onReplay={onReplay}
+                    onSeek = {onSeek}
+                    onSeeking={onSeeking}
+                    playerState={playerState}
+                    progress={currentTime}
+                    toolbar={renderToolbar()}
+                /> 
+            
+            </View>   
 
-//      this.video.seek(0);
-//  }
-    render()
-    {
-        const { itemToPreview } = this.props.route.params;
-        console.log("itemToPreview :"+ itemToPreview);
-        return(
-        <View style={styles.container}>
-            <TouchableOpacity
-            style={styles.fullScreen}
-            onPress={()=> this.setState({paused: !this.state.paused})}>
-                <Video source={require('../assets/funny_cat.mp4')}
-                    ref={(ref)=> {this.video = ref }}
-                    style ={styles.fullScreen}
-                    repeat={this.state.repeat}
-                    rate={this.state.rate}
-                    volume ={this.state.volume}
-                    muted = {this.state.muted}
-                    resizeMode={this.state.resizeMode}
-                    paused = {this.state.paused}
-                    onLoad ={this.onLoad}
-                    onProgress = {this.onProgress}
-                    onEnd = {this.onEnd}
-                    onBuffer ={this.onBuffer}
-                    onError = {this.videoError}/>
 
-            </TouchableOpacity>
-         </View>
-        );
 
-    }
-   
-}
+    );
+
+};
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor:'black'
     },
-
-    text: {
-        fontFamily: 'roboto',
-        fontSize: 16,
-        fontWeight: 'bold', 
-    }, 
-    fullScreen: {
+    toolbar: {
+        marginTop: 30,
+        backgroundColor: 'white',
+        padding:10,
+        borderRadius: 5,
+    },
+    mediaPlayer: {
         position: 'absolute',
         top: 0,
-        left: 0,
+        left:0,
         bottom: 0,
         right: 0,
-    }
-   
-    
-    
+        backgroundColor:'black',
+        justifyContent: 'center',
+    },
 })

@@ -1,0 +1,76 @@
+  constituencyDataSource: [
+                {
+                  id: '1',
+                  name:'Ayawso-North CC0014',
+                },
+                {
+                  id: '2',
+                  name: 'Ablekuma-North CC0674',
+                },
+                {
+                  id: '3',
+                  name: 'Doodowa-Central CC0244',
+                },
+                {
+                  id: '4',
+                  name: 'Kasao-East CC0034',
+                },
+                {
+                  id: '5',
+                  name: 'Hafo-east CC00544',
+                },
+                {
+                  id: '6',
+                  name: 'Tain CC00554',
+                },
+                {
+                  id: '7',
+                  name: 'Paga  CC00454',
+                },
+                {
+                  id: '8',
+                  name: 'Boko CC0894',
+                },
+                {
+                    id: '9',
+                    name: 'Nima-Central CC0017', 
+                }, {
+                    id: '10',
+                    name: 'Boko CC0894',
+                  },
+                  {
+                      id: '11',
+                      name: 'Nima-Central CC0017', 
+                  },
+                  {
+                    id: '12',
+                    name: 'Boko CC0894',
+                  },
+                  {
+                      id: '13',
+                      name: 'Nima-Central CC0017', 
+                  },{
+                    id: '14',
+                    name: 'Nima-Central CC0017', 
+                },
+                {
+                  id: '15',
+                  name: 'Boko CC0894',
+                },
+                {
+                    id: '16',
+                    name: 'Nima-Central CC0017', 
+                },
+                {
+                    id: '17',
+                    name: 'Boko CC0894',
+                  },
+                  {
+                      id: '18',
+                      name: 'Nima-Central CC0017', 
+                  }, {
+                      id: '19',
+                      name: 'Boko CC0894',
+                    },
+                
+              ],

@@ -69,7 +69,6 @@ export default class ResultPreview extends React.Component{
     
   
 
-
 componentDidMount(){
 }
 componentWillUnmount(){
