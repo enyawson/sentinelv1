@@ -56,10 +56,7 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
         /*get the saved description and incidence*/
         getIncidenceDescription();
 
-        /**all images saved in storage */
-        //getMainActivityListData();
-        //sendDataToServer();
-
+       
         /**generate token */
         const data = JSON.stringify({"apikey": APIKEY});
         const config = {
@@ -84,7 +81,6 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
         console.log(error);
         })
        
-        
         /**sending data to server */
         sendDataToServer();
        
@@ -119,18 +115,6 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
         setLoading(true)
     }
 
-
-    // React.useLayoutEffect(() => {
-    //     navigation.setOptions({
-    //       headerLeft: () => (
-    //        <TouchableOpacity onPress={() => 
-    //        navigation.goBack()} >
-    //            <Icon style = {{paddingLeft : 10}} name="arrow-back-sharp" size={26} color="white" />
-    //        </TouchableOpacity>
-            
-    //       ),
-    //     });
-    // }, [navigation]);
    
 
   //*****************************************************************
@@ -145,19 +129,6 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
    //this method loops array images into Fetchblob path
 const sendDataToServer =()=> {
     
-    
-//    // for loop to separate .jpg and .mp4 files
-//     photos.forEach(function(item){
-//         let ext = item.split('.').pop(); 
-//         if (ext == 'mp4'){
-//             evidenceVideos.push(item)
-//             }else{
-//             evidenceImages.push(item)
-//         }
-//     });
-    //console.log(picDetails)
-    //console.log("VIDEOS", evidenceVideos)
-    // console.log("PHOTOS", evidenceImages)
 
     //This loop sends images
     for (let i=0; i < photos.length; i++){
@@ -174,9 +145,7 @@ const sendDataToServer =()=> {
         //pass individual files to server
         callRNFetchBlob(evidenceImage, evidenceVideo);  
         
-    }
-
-   }
+    }}
    
 
   //Sending data to server RNFetchBlob
@@ -306,7 +275,7 @@ const sendDataToServer =()=> {
         try {
             const picDetailsValue = await AsyncStorage.getItem('activityListPicDetail')
             const value = JSON.parse(picDetailsValue);
-            // console.log('async PicDetail values,'+ picDetailsValue);
+             console.log('async PicDetail values,'+ picDetailsValue);
             // console.log("Time on Pic "+ value.locationLat);
             if(value !== null){
                 setPicDetails(value);
@@ -342,13 +311,8 @@ const sendDataToServer =()=> {
         newData.evidenceFiles = photos;
         newData.incidenceValue = selectedIncidence;
         newData.description = description;
-        //newData.timeTaken = timeFileTaken;
-        //newData.streetName = location;
-        //picture details 
         newData.picDetail = picDetails;
        
-        //newData.locationCord = locCoordinates;
-        //newData.dateTaken = dateFileTaken;
         
         let data = await AsyncStorage.getItem('mainActivityData');
         data = data? JSON.parse(data) : [];

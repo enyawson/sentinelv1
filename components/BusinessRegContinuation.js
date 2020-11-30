@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 
 import {
     StyleSheet, View, KeyboardAvoidingView,Text, Image, TouchableOpacity,StatusBar,
@@ -15,7 +15,7 @@ export default class BusinessRegistration extends React.Component{
             userName: '',
             password: '',
             confirmPassword: ' ',
-            onSubmitForm: false,
+            onSubmitFormStatus: false,
 
               } 
     };
@@ -41,9 +41,9 @@ export default class BusinessRegistration extends React.Component{
     onSubmitForm = () =>{
         //set the onSubmit state to true
         this.setState({
-            onSubmitForm: true,
+            onSubmitFormStatus: true,
         })
-        navigation.navigate('Home');
+        this.props.navigation.navigate('Home');
     }
 
     render(){
@@ -111,7 +111,7 @@ export default class BusinessRegistration extends React.Component{
                         
                         <View>
                             <TouchableOpacity style={styles.submitButton}
-                                onPress={()=> onSubmitForm()}>
+                                onPress={()=> this.onSubmitForm()}>
                                 <Text style={{alignSelf:'center', color:'white'}}>
                                     submit
                                 </Text>

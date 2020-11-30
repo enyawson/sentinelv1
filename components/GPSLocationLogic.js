@@ -20,7 +20,7 @@ export default class GPSLocationLogic extends Component{
         dateTime: null,
         isWithInAccuracy: null, // receives the accuracy of the coordinates
         disableCameraButton: false,
-        standardAccuracyValue: 20,
+        standardAccuracyValue: 2000,
         streetAddress: '',
         
     };
@@ -67,8 +67,7 @@ export default class GPSLocationLogic extends Component{
                     date: dateString,
                     // dateTime: timeString
                 });
-            }, 1000)
-            
+        }, 1000)   
     }
 
     //This function sets time 
@@ -98,27 +97,31 @@ export default class GPSLocationLogic extends Component{
                     const currentLatitude = JSON.stringify(position.coords.latitude);
                     const locationTime = this.state.date;
                     const locationAccuracy = position.coords.accuracy;
-                   // console.log('I happened'); // console log
-                   // console.log(position);  // console log
-                    //this set the disableCameraButton to true
-                    if(position.coords.accuracy > this.state.standardAccuracyValue){ //change fifty to this.state.standardAccuracyValue
-                        this.setState({disableCameraButton: true,})
-                       // console.log('abooozegi true :' + this.state.disableCameraButton);
-                    }
-                    if(position.coords.accuracy < this.state.standardAccuracyValue){ //change fifty to this.state.standardAccuracyValue
-
-                        this.setState({disableCameraButton: false,})
+                  
+                    /** this set the disableCameraButton to true*/
+// ***********************************************************************************************************
+                    if(position.coords.longitude && position.coords.latitude == null){
+                        this.setState({disableCameraButton: true,});
                         //console.log('abooozegi true :' + this.state.disableCameraButton);
-                         //setting state to re-render positions
-                        this.setState ({ longitude: currentLongitude,
-                        latitude: currentLatitude,
-                        timeStamp: locationTime,
-                        isWithInAccuracy : locationAccuracy,
-
-                        //save the state of GPS
-                    });
-                       
                     }
+                    if(position.coords.longitude && position.coords.latitude != null){
+                        this.setState({disableCameraButton: false,});
+                        //console.log('abooozegi true :' + this.state.disableCameraButton);
+                    }
+                                        // if(position.coords.accuracy < this.state.standardAccuracyValue){ //change fifty to this.state.standardAccuracyValue
+
+                    //     this.setState({disableCameraButton: false,})
+                    //     //console.log('abooozegi true :' + this.state.disableCameraButton);
+                    //      //setting state to re-render positions
+                    //     this.setState ({ longitude: currentLongitude,
+                    //     latitude: currentLatitude,
+                    //     timeStamp: locationTime,
+                    //     isWithInAccuracy : locationAccuracy,
+
+                    //     //save the state of GPS
+                    // });
+                       
+                    // }
   
                     this.setState({ longitude: currentLongitude,
                         latitude: currentLatitude,
@@ -147,49 +150,53 @@ export default class GPSLocationLogic extends Component{
                 }
             );
                 that.watchID = Geolocation.watchPosition((position) => {
-               console.log('change in position'); //console log
-                console.log(position); //console log
+              // console.log('change in position'); //console log
+              //  console.log(position); //console log
+              
                 const currentLongitude = JSON.stringify(position.coords.longitude);
                 const currentLatitude = JSON.stringify(position.coords.latitude);
                 const locationTime =  this.state.date;
                 const locationAccuracy = position.coords.accuracy;
+                that.setState(
+                    {
+                    longitude: currentLongitude,
+                    latitude: currentLatitude,
+                    timeStamp: locationTime,
+                    isWithInAccuracy : locationAccuracy
+                });
                
                 /*set the state(disableCameraButton) to false or true when
                  below or above standardValue*/
-                if(position.coords.accuracy > this.state.standardAccuracyValue){
+                //**************************************************************** 
+                if(position.coords.longitude && position.coords.latitude == null){
                     this.setState({disableCameraButton: true,});
                     //console.log('abooozegi true :' + this.state.disableCameraButton);
                 }
-                //check if accuracy falls within standard accuracy set
-                
-                that.props.customProp(this.state);
-
-                if(position.coords.accuracy < this.state.standardAccuracyValue){
+                if(position.coords.longitude && position.coords.latitude != null){
                     this.setState({disableCameraButton: false,});
                     //console.log('abooozegi true :' + this.state.disableCameraButton);
-                    that.setState({longitude: currentLongitude,
-                    latitude: currentLatitude,
-                    timeStamp: locationTime,
-                    isWithInAccuracy : locationAccuracy});
-
-                    that.watchID =  Geolocation.stopObserving();
-                    Geolocation.clearWatch(this.watchID);
                 }
-
-
+                // //check if accuracy falls within standard accuracy set
                 
-                           },
+                // that.props.customProp(this.state);
+
+                // if(position.coords.accuracy < this.state.standardAccuracyValue){
+                //     this.setState({disableCameraButton: false,});
+                //     //console.log('abooozegi true :' + this.state.disableCameraButton);
+                    
+                //     Geolocation.stopObserving();
+                //     Geolocation.clearWatch(this.watchID);
+                // }
+
+                         },
             (error) => {console.log('still on the search'+error)},
-            {distanceFilter: 0, 
+            {distanceFilter: 0.1, 
                 interval: 10000, 
                 fastestInterval:5000,
                 enableHighAccuracy: true,
                 useSignificantChanges: true
              });
              
-             //Save pictures details(time, date, street name)
-             this.activityListPicDetail();
-
     }
 
         //remove location updates on component unmount
@@ -203,47 +210,6 @@ export default class GPSLocationLogic extends Component{
         };
     }
    
-    // /**Get street address name */
-    // getStreetData(lat, lng){
-    //     // Initialize the module 
-    //     Geocoder.init("AIzaSyB1nEal4lqDWdBz9mf79KUd0zGZdgArVfY");
-       
-    //     console.log("lat and lng" + lat + " " +lng);
-
-    //     Geocoder.from(lat, lng)
-    //     .then(json => {
-    //     	const addressComponent = json.results[0].formatted_address;
-    //        //console.log("Street address " + addressComponent);
-    //         this.setState({
-    //             streetAddress: addressComponent
-    //         })
-    //     })
-    //     .catch(error => console.log("error in network, affecting GPS location"));
-    // }
-
-    //  /**This method saves data in async storage
-    //   * @param  timeTaken The time pic was taken
-    //   * @param  dateTaken The date pic was taken
-    //   * @param  locationCord The coordinates of the location
-    //   * @param  streetName The the streetName of the location
-    //  */
-    // activityListPicDetail = async ()=> {
-    //     let newData = {}
-    //     //newData.evidenceFiles = photos;
-    //     //newData.incidenceValue = selectedIncidence;
-    //     //newData.description = description;
-    //     newData.timeTaken = await this.state.dateTime;
-    //     newData.streetName =  this.state.streetAddress;
-    //     newData.locationLat =  await this.state.latitude;
-    //     newData.locationLng = await this.state.longitude;
-    //     newData.dateTaken = await this.state.date;
-        
-    //     await AsyncStorage.setItem('activityListPicDetail', JSON.stringify(newData), () => {    
-    //         console.log('ACTIVITY_LIST_PIC_DETAIL '+ newData);
-    //         console.log(newData)
-    //     });
-      
-    // }
     
     render(){
         return (
@@ -263,10 +229,10 @@ export default class GPSLocationLogic extends Component{
                     <Text style={{fontSize: 16, color: 'white', marginLeft: 10}}>
                          {this.state.longitude}   
                     </Text>
-                    <Text style={{fontSize: 16, color: 'white', alignItems: 'center',
+                    {/* <Text style={{fontSize: 16, color: 'white', alignItems: 'center',
                      alignSelf:'center', marginLeft: 5, marginBottom:0}} >
                     acc:{Math.round(this.state.isWithInAccuracy).toFixed(3)} 
-                    </Text>
+                    </Text> */}
                 </View>
             }
                 <View style={{marginBottom: 75, alignSelf: 'center',}}>

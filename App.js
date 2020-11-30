@@ -45,6 +45,7 @@ import { Navigation } from '@material-ui/icons';
 import CameraScanner from './components/CameraScanner';
 import CropperTool from './components/CropperTool';
 import CropperToolSecond from './components/CropperToolSecond';
+//import PollingStation from './components/PollingStation';
 
 
 const Stack = createStackNavigator();
@@ -85,15 +86,15 @@ export default function App() {
   
   return (
   <MenuProvider>
-    <NavigationContainer initialRouteName = "Home">
+    <NavigationContainer initialRouteName = "LoginPage">
    {/* Auth Navigator: Include Login and Signup */}
    
     <Stack.Navigator>
-        {/* <Stack.Screen
+        <Stack.Screen
           name="Auth"
           component={Auth}
           options={{headerShown:false}}
-        /> */}
+        />
         <Stack.Screen 
         name="Home"
         component={Home}
@@ -505,7 +506,25 @@ export default function App() {
          }}
           }
         />  */}
-        
+        {/* <Stack.Screen 
+          name="PollingStation" 
+          component ={PollingStation}
+          options={{
+          
+          title:'',
+          headerShown: false,
+          headerStyle: {
+          backgroundColor: '#1D5179',
+          },
+          headerTintColor: '#FFFFFF',
+          headerTitleStyle: {
+            fontWeight: 'normal',
+            alignSelf:'center',
+            fontFamily: 'roboto'
+         }}
+        }
+        /> 
+         */}
       </Stack.Navigator>
       
     </NavigationContainer>

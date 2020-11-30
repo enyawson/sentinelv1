@@ -9,5 +9,10 @@ pin, deviceid ......................... LoginPage
 croppedImages .............................ScannedDocumentPage
 Result database:
 presidentialData---------------------found in--presidentialComponent
-scannerCroppedImage --------------------- cropper tool
+scannerCroppedImage --------------------- cropper 
 
+
+
+colors
+blue.......................... #1D5179
+eWcolor.......               #F79520

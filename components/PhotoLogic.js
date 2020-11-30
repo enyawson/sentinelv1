@@ -28,8 +28,6 @@ import Marker from 'react-native-image-marker';
 import AsyncStorage from '@react-native-community/async-storage';
 import Geocoder from 'react-native-geocoding';
 import { RFPercentage} from "react-native-responsive-fontsize";
-import VideoCompress from 'react-native-video-compressor';
-
 
 TouchableOpacity.defaultProps = { activeOpacity : 0.3};
 
@@ -85,10 +83,10 @@ export default function PhotoLogic ({ props, navigation }) {
 
     // this state holds the coordinates of the image on capture
     const[capturedImageState, setCapturedImageState] = useState({
-        capturedImageLatitude: null,
-        capturedImageLongitude: null,
-        capturedImageDate: null,
-        capturedImageDateTime: null,
+        // capturedImageLatitude: null,
+        // capturedImageLongitude: null,
+        // capturedImageDate: null,
+        // capturedImageDateTime: null,
         capturedStreetName: null,
         //state for watermark
         loading: null, 
@@ -107,19 +105,48 @@ export default function PhotoLogic ({ props, navigation }) {
     useEffect(() => {
         console.log("Camera component mounted");
 
+        getTimeOfLocation();
+
+        getDateOfLocation();
         //test for undefine
-        console.log('test lat',capturedImageLatitude)
-        console.log('test time',capturedImageDateTime)
-        console.log('test long',capturedImageLongitude)
-        console.log('test date',capturedImageDate)
-            console.log("TogglePauseButton state "+ videoComponent.togglePauseButton);
+        console.log('test lat',capturedImageLatitude);
+        console.log('test long',capturedImageLongitude);
+        console.log('test date',capturedImageDate);
+        console.log("TogglePauseButton state "+ videoComponent.togglePauseButton);
+
         return () => {
-            console.log('camera component umnounted')
+           // console.log('camera component umnounted')
         }
     }, [imageUri, videoComponent.toggleVideoButton, videoComponent.togglePauseButton, imageWithIcon, 
     isRecording, videoUri, capturedImageDate, capturedImageDateTime, capturedImageLongitude, capturedImageLatitude])
     
+    
    
+    const getTimeOfLocation =()=> {
+        setInterval(() => {
+            let hours = new Date().getHours(); //current hours
+                let min = new Date().getMinutes(); //current minutes
+                // let sec = new Date().getSeconds(); //current getSeconds
+                const timeString = (hours + ':' + min );
+                setCapturedImageDateTime(timeString);
+        }, 1000);
+        
+    }
+
+    const getDateOfLocation =()=>{
+        setInterval(()=> {
+            let datePic = new Date().getDate(); //current date
+            let month = new Date().getMonth() + 1; //current Month
+            let year = new Date().getFullYear(); //current year
+            //setting sate to time
+            const dateString = ( datePic + '/' + month + '/' + year) 
+            // const timeString = (hours + ':' + min + ':' + sec)
+           setCapturedImageDate(dateString)
+    }, 1000)   
+}
+        
+
+
     /**
      * This method handles the accuracy of the coordinates  from GPSLocation
     */
@@ -131,43 +158,45 @@ export default function PhotoLogic ({ props, navigation }) {
          //sets the value of coordinates from GPSLocationLogic
          let setPreviewImageLongitude = value.longitude;
          let setPreviewImageLatitude = value.latitude;
-         let setPreviewImageDate = value.date;
-         let setPreviewImageDateTime = value.dateTime;
-
+       // let setPreviewImageDate = value.date;
+        // let setPreviewImageDateTime = value.dateTime;
+       
+       
          setState({
             accuracyValue : setAccuracyValue,
             disableCameraView : setDisableCameraView, 
         }),
         //this sets the value of co-ordinates , date and time on the preview image
-         setCapturedImageState({
-             capturedImageLatitude: setPreviewImageLatitude,
-             capturedImageLongitude: setPreviewImageLongitude,
-             capturedImageDate: setPreviewImageDate,
-             capturedImageDateTime: setPreviewImageDateTime,
-         })
-         setCapturedImageDate(setPreviewImageDate);
-         setCapturedImageDateTime(setPreviewImageDateTime );
+        //  setCapturedImageState({
+        //     capturedImageLatitude: setPreviewImageLatitude,
+        //     capturedImageLongitude: setPreviewImageLongitude,
+        //     capturedImageDate: setPreviewImageDate,
+        //     capturedImageDateTime: setPreviewImageDateTime,
+        //  })
+        //  setCapturedImageDate(setPreviewImageDate);
+        //  setCapturedImageDateTime(setPreviewImageDateTime );
          setCapturedImageLongitude(setPreviewImageLongitude);
          setCapturedImageLatitude(setPreviewImageLatitude);
 
 
         //Get street name from coordinates
 
-       getStreetData(value.latitude, value.longitude);
+        getStreetData(value.latitude, value.longitude);
         //Save pictures details(time, date, street name) to async Storage
       
         let newData = {}
         
-        newData.timeTaken = value.dateTime;
+        newData.timeTaken = capturedImageDateTime;
         newData.streetName =  capturedImageState.capturedStreetName;
         newData.locationLat =  value.latitude;
         newData.locationLng = value.longitude;
-        newData.dateTaken =  value.date;
-        
+        newData.dateTaken =  capturedImageDate;
+
+        console.log(newData.streetName)
         //store pic details in async storage
-       storePicDetails(newData);
-      
+        storePicDetails(newData);
     }
+    
     //console check of accuracyValue and disableCameraView
     // console.log ('yep: '+state.accuracyValue);
     // console.log('tey: '+ state.disableCameraView);
@@ -236,6 +265,7 @@ export default function PhotoLogic ({ props, navigation }) {
             setCapturedImageState({
                 capturedStreetName: addressComponent,
             })
+            
             
         })
         .catch(error => console.log("error in network, affecting GPS location"));
@@ -330,7 +360,6 @@ const createNewWaterMark = (path) => new Promise((resolve, reject) => {
 const getImageWithLogo= (uri) => {
     setImageWithIcon (uri);
    // console.log("LOGO imprinted on Image")
-
 }
 
 
@@ -385,11 +414,15 @@ const  navigateToEvidenceScreen = (path) =>{
 const setStateOfVideoUri = (uriFromVideo)=> {
     setVideoUri(uriFromVideo);
 }
+
+
 /** set state of image uri */
 const setStateOfImageUri = (dataUri)=>{
     setImageUri(dataUri);
-    console.log("state of imageUri after Pic taken " + imageUri);
+    //console.log("state of imageUri after Pic taken " + imageUri);
 }
+
+
 /**
  * This method takes photo on capture.
  * 
@@ -409,7 +442,7 @@ const takePicture = async () => {
            // console.log("image state"+ imageState)
         }
         //print date and time on image
-        const status  = await  createNewWaterMark(data.uri);
+       const status  = await  createNewWaterMark(data.uri);
        // console.log("Done creating a water and Status is: ", status);
        
     }
@@ -419,13 +452,8 @@ const takePicture = async () => {
     })  
     
 }; 
-//this method compresses video
-const compressVideo=(videoUri)=>{
-    VideoCompress.compress(videoUri).then((data) =>{
-        console.log("video compressed")
-        console.log(data)
-     })
-}
+
+
 
 const takeVideo = async () => {  
         if (camera && !isRecording) {
@@ -461,70 +489,6 @@ const stopVideo = async () => {
  
 };
 
-// const renderRecording = () =>{
-//     console.log('is Recording status : '+ isRecording)
-//     if(isRecording){
-//         stopVideo();
-//         renderStopRecBtn();
-//     }else{
-//         takeVideo();
-//         console.log('isRecording status in takeVideo : '+ isRecording)
-//         renderRecBtn();
-        
-//     }
-//     // const backgroundColor = isRecording ? 'white' : 'black';
-//     // const action = isRecording ? stopVideo() : takeVideo();
-//     // const button = isRecording ? renderStopRecBtn(): renderRecBtn();
-//     // return (
-//     //     <View style={styles.container}>
-//     //          <TouchableOpacity
-//     //         style={[styles.flipButton, {flex: 0.3, alignSelf: 'flex-end', backgroundColor,}]}
-//     //         onPress={()=> action()}
-//     //     >
-//     //     {button}
-//     //     </TouchableOpacity>
-        
-//     //     </View>
-       
-//     // );
-// }
-
-
-
-// const renderRecBtn =() => {
-//     console.log("RECORDING.............")
-//     return (
-//         <View>
-//             <Text>
-//                Recording...... 
-//             </Text>
-//         </View>
-//     )
-// }
-
-// const renderStopRecBtn = () => {
-//     console.log("STOP VIDEO")
-//     return (
-//         <View>
-//             <Text>
-//                Stop
-//             </Text>
-//         </View>
-//     )
-// }
-
-/**On Press stop render video component is set to null */
-// const renderVideoComponentOff = ()=> {
-//     const newState = !videoComponent.toggleVideoButton;
-//     const toggleOnCamView = !videoComponent.toggleCameraButton;
-   
-//     setVideoComponent({
-   
-//         toggleVideoButton: newState,
-//         toggleCameraButton: toggleOnCamView,
-//     })
-//     console.log('toggleVideoComponentButton to false '+ videoComponent.toggleVideoButton)
-// }
 
 /**Function to change video icon views on click*/
 const renderVideoComponent = ()=> {
@@ -681,8 +645,8 @@ const renderCamera = ()=>{
                 
                 <View 
                 flexDirection='row' 
-                pointerEvents={(state.disableCameraView)? 'none': 'auto'} //change first auto to none to use accuracy detection
-                opacity={(state.disableCameraView===false)? 1 : 0.5}
+               pointerEvents={(state.disableCameraView)? 'none': 'auto'} //change first auto to none to use accuracy detection
+               opacity={(state.disableCameraView===false)? 1 : 0.5}
                 style={{ marginBottom: 25, }}>
                 
                 {videoComponent.toggleCameraButton ==true? 

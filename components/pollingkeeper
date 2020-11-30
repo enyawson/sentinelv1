@@ -1,0 +1,231 @@
+import React, {Component} from 'react';
+import {
+    StyleSheet, Text,  View, StatusBar, TextInput,
+    Image, TouchableOpacity, Dimensions, Keyboard} from 'react-native';
+
+import { ListItem, SearchBar } from 'react-native-elements';
+​​
+import axios from 'axios';
+
+import {APIKEY, POLLING_SEARCH} from '../components/ConstantUrls';
+
+export default class PollingStation extends React.Component{
+    
+    constructor(props){
+        super(props)
+        this.state = {
+          dataSource: [],
+          placeHolderText: "Please Select Polling Station",
+          selectedText: "", 
+          token: '',
+          search: ''
+        };
+    
+    }
+    
+  ​
+  ​
+    getToken(){
+      let self = this
+      
+      const data = JSON.stringify({"apikey": 'MKzBvzRPvs'});
+      const config = {
+          method: 'post',
+          url: 'https://electionsapi.softmastersgroup.com/token',
+          headers:{
+              'Accept': 'application/json',
+              'content-Type': 'application/json'
+          },
+          data : data,
+      };
+      axios(config)
+      .then(function (response){
+        console.log('token', response.data.data.accessToken)
+  ​
+        self.setState({ token : response.data.data.accessToken   })
+         //return  response.data.data.accessToken;
+    
+      })
+      .catch(function (error){
+      console.log(error);
+      }) 
+      
+      
+    }
+  ​
+  ​
+   
+  ​
+  getLiveData(parameter){
+    ​
+        let formdata = new FormData();
+        formdata.append('pollingname', parameter);
+        let dat = this
+    ​
+        const config = {
+            method: 'post',
+            url: 'https://electionsapi.softmastersgroup.com/ballot/searchpolling',
+            headers:{
+                'Accept': 'application/json',
+                'content-Type': 'application/json',
+                'apikey' : 'MKzBvzRPvs',
+                'Authorization': 'Bearer '+ dat.state.token
+            },
+            data : formdata,
+        };
+        axios(config)
+        .then(function (response){
+          console.log("VALUE ", response.data.data.constituencies);
+          dat.setState({
+            dataSource: response.data.data.constituencies
+          })
+        })
+        .catch(function (error){
+        console.log(error);
+        }) 
+        
+        
+      }
+    ​
+     
+    
+    _selectedValue(index, item) {
+      this.setState({ selectedText: item.pollingname });
+    }
+  ​
+    componentDidMount(){
+     
+      this.getToken();
+  ​
+    }
+  ​
+    searchFilterFunction = (search) =>{
+      this.setState({ search })
+      console.log(search)
+  ​
+      if(search.length >3 ){
+      this.getLiveData(search)
+      }
+  ​
+    };
+  ​
+  ​
+  ​
+  ​
+    render() {
+        return (
+       
+  ​
+            <ScrollView style={{flex:1}}>
+            <SearchBar
+               placeholder="Search Polling Station ..."
+              // onChangeText={this.updateSearch}
+               onChangeText={(text) => this.searchFilterFunction(text)} 
+               onClear={(text) => searchFilterFunction('')}
+               value={this.state.search}
+               />
+             
+            <View>
+            {
+              this.state.dataSource.map((l, i) => (
+                <ListItem key={i} bottomDivider>
+                  <ListItem.Content>
+                    <ListItem.Title><Text style={{ color:'#000' }}>{l.pollingname}</Text></ListItem.Title>
+                    <ListItem.Subtitle>{l.pollingcode}</ListItem.Subtitle>
+                  </ListItem.Content>
+                </ListItem>
+              ))
+            }
+          </View>
+            
+          </ScrollView>
+  ​
+               
+        );
+    }
+  }
+  ​
+  const Styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      alignItems: "center",
+      justifyContent: "center"
+    },
+    itemSeparatorStyle:{
+      height: 1,
+      width: "90%",
+      alignSelf: "center",
+      backgroundColor: "#D3D3D3"
+    },
+    searchBarContainerStyle: {
+      marginBottom: 10,
+      flexDirection: "row",
+      height: 40,
+      shadowOpacity: 1.0,
+      shadowRadius: 5,
+      shadowOffset: {
+        width: 1,
+        height: 1
+      },
+      backgroundColor: "rgba(255,255,255,1)",
+      shadowColor: "#d3d3d3",
+      borderRadius: 10,
+      elevation: 3,
+      marginLeft: 10,
+      marginRight: 10
+    },
+  ​
+    selectLabelTextStyle: {
+      color: "#fff",
+      textAlign: "left",
+      width: "99%",
+      padding: 10,
+      flexDirection: "row"
+    },
+    placeHolderTextStyle: {
+      color: "#000",
+      padding: 10,
+      textAlign: "left",
+      width: "99%",
+      flexDirection: "row"
+    },
+    dropDownImageStyle: {
+      marginLeft: 10,
+      width: 10,
+      height: 10,
+      alignSelf: "center"
+    },
+    listTextViewStyle: {
+      backgroundColor: "#000",
+      color:'#fff',
+      marginVertical: 10,
+      flex: 0.9,
+      marginLeft: 20,
+      marginHorizontal: 10,
+      textAlign: "left"
+    },
+    pickerStyle: {
+      marginLeft: 18,
+      elevation:3,
+      paddingRight: 25,
+      marginRight: 10,
+      marginBottom: 2,
+      shadowOpacity: 1.0,
+      shadowOffset: {
+        width: 1,
+        height: 1
+      },
+      borderWidth:1,
+      shadowRadius: 10,
+      backgroundColor: "rgba(255,255,255,1)",
+      shadowColor: "#d3d3d3",
+      borderRadius: 5,
+      flexDirection: "row"
+    }
+  });
+  ​
+  export default App;
+
+  
+  
+  

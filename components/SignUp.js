@@ -3,10 +3,12 @@ import axios from 'axios';
 import {MAIN_URL, APIKEY} from './ConstantUrls';
 import {
     StyleSheet, View, KeyboardAvoidingView,Text, Image, TouchableOpacity,StatusBar,
-    TextInput, FlatList,ActivityIndicator, Platform
+    TextInput, FlatList,ActivityIndicator, Platform, BackHandler,
 } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import KeyboardSpacer from 'react-native-keyboard-spacer';
+import ArrowBack from 'react-native-vector-icons/Ionicons';
+
 
 export default class SignUp extends React.Component{
     constructor(props){
@@ -22,8 +24,6 @@ export default class SignUp extends React.Component{
            institution: '',
            institutionIDNum: '', // remove this// use accreditation number or code is optional
            deviceIMEI: '', // submit the device id when submitting telephone number
-
-
            onContinue: false,
            individualColor: '#1D5179', 
            businessColor: '#f0f0f0',
@@ -32,25 +32,27 @@ export default class SignUp extends React.Component{
     };
     componentDidMount(){
         this.onIndividualButtonClick();
+        this.backHandler = BackHandler.addEventListener(
+            "hardwareBackPress",
+            this.backAction
+        );
 
     }
     componentDidUpdate(){
 
     }
     componentWillUnmount(){
+        BackHandler.removeEventListener('hardwareBackPress', this.backAction)
         
     }
+     // this method navigates to home on device back press
+     backAction=()=>{
+        //    alert('go')
+           return true;
+        }
 
      _register =()=>{
-        // firstname Chaos
-        // lastname Figthing
-        // email Ghana
-        // affiliation Joy FM
-        // affiliationcode 8020202
-        // password 11111
-        // telephone 904030303
-        // address Abeka
-        // country Ghana
+        
         let formData=new FormData();
         formData.append('firstname',this.state.firstName);
         formData.append('lastname', this.state.lastName);
@@ -58,8 +60,6 @@ export default class SignUp extends React.Component{
         formData.append('affiliation', this.state.institution);
         formData.append('affiliationcode', this.state.institutionIDNum);
         formData.append('telephone', this.state.contact);
-       
-
 
         axios({
             method:'POST',
@@ -147,22 +147,35 @@ export default class SignUp extends React.Component{
             <View style={styles.container}>
              <StatusBar barStyle="light-content" backgroundColor="#174060"/>
                     <View style={{flex:0.35, backgroundColor: '#1D5179'}}>
+                        <View style={{flexDirection:'row'}}>
+                            <TouchableOpacity
+                                onPress={()=> this.props.navigation.navigate('Home')}>
+                                <ArrowBack
+                                    name={'arrow-back-outline'}
+                                    size={23}
+                                    color="white"
+                                    style={{margin:0, alignContent: 'center', marginTop: 15, padding:10}}   
+                                />
+                            </TouchableOpacity>
                         <Text style={{fontFamily:'roboto',
                             fontSize:35,
-                            marginTop: 10,
-                            marginLeft: 30,
-                            marginRight: 30,
+                            marginTop: '2%',
                             fontWeight:'bold',
                             color: 'white', 
                             alignSelf: 'center',
                         }}>
                             ELECTION WATCH
                         </Text>
+                        </View>
+                        
                            
-                        <Text style={{fontFamily:'roboto',
-                        fontSize:24,
-                         fontWeight:'bold', 
-                         color: 'white', alignSelf: 'center', margin:2,}}>
+                        <Text style={{
+                            fontFamily:'roboto',
+                            fontSize:24,
+                            fontWeight:'bold', 
+                            color: 'white', 
+                            alignSelf: 'center',
+                            }}>
                              Sign up
                         </Text>
                     </View>
@@ -171,33 +184,33 @@ export default class SignUp extends React.Component{
                         <View style={{flexDirection:'row',marginTop: 45, backgroundColor:'',
                              alignItems:'flex-end'}}>
                             <TouchableOpacity
-                            style={{background:'red',
+                            style={{
                                 width: 20,
                                 height:20,
                                 borderRadius: 100,
                                 borderWidth:1,
                                 backgroundColor: this.state.individualColor, 
                                 borderColor:'#1D5179'}}
-                             onPress={()=> {this.onIndividualButtonClick()}}>
+                                onPress={()=> {this.onIndividualButtonClick()}}>
                             </TouchableOpacity>
-                            <Text style={{paddingLeft: 5}}
+                            <Text style={{paddingLeft: '2%'}}
                             onPress={()=> {this.onIndividualButtonClick()}}>Individual</Text>
     
                             <TouchableOpacity
                              style={{background:'red', 
                                 width: 20,
                                 height:20,
-                                marginLeft:50,
+                                marginLeft:'10%',
                                 borderRadius: 100,
                                 borderWidth:1,
                                 backgroundColor:this.state.businessColor, 
                                 borderColor:'#1D5179'}}
                              onPress={()=> {this.onBusinessButtonClick()}}>
                             </TouchableOpacity>
-                            <Text style={{paddingLeft: 5}} onPress={()=> {this.onBusinessButtonClick()}}>Institution</Text> 
+                            <Text style={{paddingLeft: '2%'}} onPress={()=> {this.onBusinessButtonClick()}}>Institution</Text> 
     
                         </View>
-                        <View style={{marginTop: 30,marginBottom: 0}}>
+                        <View style={{marginTop:'5%',marginBottom: 0}}>
                             <View> 
                                 <TextInput 
                                     style={styles.textInputBoxStyle}
@@ -292,14 +305,13 @@ export default class SignUp extends React.Component{
                             </View>
                         
                             <View>
-                                <TouchableOpacity style={styles.submitButton}
-                                    onPress={()=> this.props.navigation.navigate('SignUpContinuation')}>
+                                <TouchableOpacity style={styles.submitButton}>
                                     <Text style={{alignSelf:'center', color:'white'}}>
-                                        continue
+                                        Submit
                                     </Text>
                                 </TouchableOpacity>
                             </View>  
-                            <KeyboardSpacer />
+                           
                             <Text style={{fontFamily:'roboto',
                                 fontSize:14,
                                 fontWeight:'bold', 
@@ -309,7 +321,7 @@ export default class SignUp extends React.Component{
                             <Text style={{fontFamily:'roboto',
                                 fontSize:24,
                                 fontWeight:'bold', 
-                                color: '#EE7155', alignSelf: 'center', marginBottom:30,}}>
+                                color: '#EE7155', alignSelf: 'center', marginBottom:'10%',}}>
                                 SOFTMASTERS
                             </Text>
                         </View>
