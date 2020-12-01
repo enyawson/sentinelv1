@@ -13,7 +13,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 
 //import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default function LoginPage({route, navigation}){
+export default function LoginPage({route, navigation, props}){
 
     const [phoneNumber, setPhoneNumber] = useState("");
     const [uniqueId, setUniqueId] = useState(" ");
@@ -21,12 +21,12 @@ export default function LoginPage({route, navigation}){
  
     
     
-    useEffect(() => {
+    useEffect( async() => {
             console.log('Login Page Mounted');
             let deviceId = DeviceInfo.getUniqueId();
-            const telephone = '';
-            telephone = AsyncStorage.getItem('telephone')
-            checkUserAuthentication(deviceId, telephone);
+            const status = await AsyncStorage.getItem('status')
+            //console.log('users ss', status)
+            checkUserAuthentication(status)
             setUniqueId( deviceId);
             console.log(uniqueId)
 
@@ -53,23 +53,15 @@ export default function LoginPage({route, navigation}){
                 apikey: APIKEY,
               },
         }).then(response=>{
-            // let value = response['data']
-            ;
-            const storeData = async()=> {
-                try{
-                    await AsyncStorage.setItem('pin', response.data.data.pin)
-                    await AsyncStorage.setItem('telephone', response.data.data.telephone)
-                    await AsyncStorage.setItem('deviceid',
-                    JSON.stringify( response.data.data.deviceid))
-                    //(response.data.data.pin);
-                    console.log("Pin Retrieved ", response.data.data.pin)
-                    //navigate  to verification 
-                    navigation.navigate('VerificationCodeForm', {pinFromResponse: response.data.data.pin })
-                }catch (e){
-                    console.log('error saving login response')
-                }
-            }
-            storeData();
+            console.log('Test', response.data.data)
+            console.log('Phone', phoneNumber)
+            const pin  = response.data.data.pin;
+            const telephone = phoneNumber; 
+            const deviceid = JSON.stringify( response.data.data.deviceid);
+        
+
+            storeData(pin, telephone, deviceid);
+          
         })
 
 
@@ -85,32 +77,55 @@ export default function LoginPage({route, navigation}){
 
     }
 
-    const checkUserAuthentication = (deviceid, telephone)=>{
+    const storeData = async(pin, telephone, deviceid)=> {
+        try{
+            await AsyncStorage.setItem('pin', pin)
+            await AsyncStorage.setItem('telephone', telephone)
+            await AsyncStorage.setItem('deviceid', deviceid)
+            await AsyncStorage.setItem('status', 'verified')
+      
+            //navigate  to verification 
+            navigation.navigate('VerificationCodeForm', {pinFromResponse: pin })
+        }catch (e){
+            console.log('error saving login response', e)
+        }
+    }
+    
+
+    const checkUserAuthentication = (status)=>{
+
+        if(status === 'verified'){
+            navigation.navigate('Home')
+        }else{
+            navigation.navigate('LoginPage')
+           // Alert.alert("Enter number to Sign Up");
+
+        }
        
-        let formData=new FormData();
-        formData.append('deviceid', deviceid);
-        formData.append('telephone', telephone);
+        // let formData=new FormData();
+        // formData.append('deviceid', deviceid);
+        // formData.append('telephone', telephone);
         
-        axios({
-            method:'POST',
-            url:VERIFY_DEVICE,
-            data:formData,
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                apikey: APIKEY,
-              },
-         }).then(response=>{
-             if(response.data.data.verificationstatus === 'verified'){
-               //perform the action
-               navigation.navigate('Home')
-               console.log("is verified")
-             }else{
-                // remain on the same page
-                navigation.navigate('LoginPage')
-                Alert.alert("Enter number to Sign Up");
-             }
-        })
+        // axios({
+        //     method:'POST',
+        //     url:VERIFY_DEVICE,
+        //     data:formData,
+        //     headers: {
+        //         'Accept': 'application/json',
+        //         'Content-Type': 'application/json',
+        //         apikey: APIKEY,
+        //       },
+        //  }).then(response=>{
+        //      if(response.data.data.verificationstatus === 'verified'){
+        //        //perform the action
+        //        navigation.navigate('Home')
+        //        console.log("is verified")
+        //      }else{
+        //         // remain on the same page
+        //         navigation.navigate('LoginPage')
+        //         Alert.alert("Enter number to Sign Up");
+        //      }
+        // })
     }
    
     const userPhoneNumber = (value)=>{

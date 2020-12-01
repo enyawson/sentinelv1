@@ -83,6 +83,13 @@ const Auth = ()=> {
 }
 
 export default function App() {
+
+  //const [isLoading, setIsLoading]=useState('');
+  //For splash Screen
+  // if(isLoading){
+  //   //we haven't finished checking for the token yet
+  //   //return<SplashScreen />
+  // }
   
   return (
   <MenuProvider>

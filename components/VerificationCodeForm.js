@@ -7,7 +7,7 @@ import {
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 import AsyncStorage from '@react-native-community/async-storage';
 
-export default function VerificationCodeForm({route, navigation}){
+export default function VerificationCodeForm({route, navigation, props}){
 
     const [verificationPin, setVerificationPin] = useState("");
     const [pinReceived, setPinReceived] = useState("");
@@ -15,6 +15,7 @@ export default function VerificationCodeForm({route, navigation}){
     
 
     useEffect(() => {
+       
             console.log('Verification page mounted');
             getData();
             //userVerificationPin();

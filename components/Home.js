@@ -29,16 +29,16 @@ useEffect(() => {
 //generate Token
   getToken();
 
-  backHandler = BackHandler.addEventListener(
-    "hardwareBackPress",
-    backAction
-);
+//   backHandler = BackHandler.addEventListener(
+//     "hardwareBackPress",
+//     backAction
+// );
 
   removePinStored();
 
 
   return () => {
-    BackHandler.removeEventListener('hardwareBackPress', backAction)
+    //BackHandler.removeEventListener('hardwareBackPress', backAction)
   } 
 }, [])
 
@@ -180,7 +180,7 @@ const notReadyToVote=() =>{
                 </View>
                 <View style={styles.box}>
                 <TouchableOpacity
-                  onPress={notReadyToVote}>
+                  onPress={()=> navigation.navigate('EnterResult')}>
                     <Image 
                     style={styles.imageInBox}
                     source = { require('../assets/resultImage.png') } />
@@ -194,7 +194,8 @@ const notReadyToVote=() =>{
               <Text>Register</Text>
             </TouchableOpacity>
             <TouchableOpacity
-             >
+             onPress={()=> navigation.navigate('EvidenceSubmission')}
+            >
               <Text>Locate</Text>
             </TouchableOpacity>
             <TouchableOpacity>
