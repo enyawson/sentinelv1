@@ -123,7 +123,7 @@ export default function videoPreview (route, navigation){
                 }
                 style={styles.mediaPlayer}
                 volume={10}
-                repeat={true}
+                repeat={false}
                 />
 
                 <MediaControls 

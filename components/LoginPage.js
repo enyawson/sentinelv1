@@ -2,7 +2,7 @@ import { Email } from '@material-ui/icons';
 import React, { useState, useEffect } from 'react';
 import {
     StyleSheet, View, KeyboardAvoidingView,Text, Image, TouchableOpacity,StatusBar,
-    TextInput, FlatList,ActivityIndicator, Platform, Alert
+    TextInput, FlatList,ActivityIndicator, Platform, Alert, BackHandler
 } from 'react-native';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 import axios from 'axios';
@@ -18,26 +18,33 @@ export default function LoginPage({route, navigation, props}){
     const [phoneNumber, setPhoneNumber] = useState("");
     const [uniqueId, setUniqueId] = useState(" ");
     const [pinVerification, setPinVerification] = useState('')
- 
+    const [savingTelephone, setSavingTelephone]=useState(false);
     
-    
-    useEffect( async() => {
+    const handleBackButtonClick= () =>{
+        navigation.navigate('Home');
+        return true;
+    }
+    useEffect( ()=>{
+        BackHandler.addEventListener('hardwareBackPress', handleBackButtonClick);
+        ( async() => {
             console.log('Login Page Mounted');
             let deviceId = DeviceInfo.getUniqueId();
             const status = await AsyncStorage.getItem('status')
             //console.log('users ss', status)
             checkUserAuthentication(status)
             setUniqueId( deviceId);
-            console.log(uniqueId)
-
-        return () => {  
+            console.log(uniqueId);
+        })();
+        return () => { 
+            BackHandler.removeEventListener('hardwareBackPress', handleBackButtonClick); 
         }
-    }, [])
+    }, []);
 
+   
     
-
-    //sign up 
+    /** sign up method */
     const _signUp =()=>{
+        setSavingTelephone(true);
         if(phoneNumber){
            
         let formData=new FormData();
@@ -53,19 +60,14 @@ export default function LoginPage({route, navigation, props}){
                 apikey: APIKEY,
               },
         }).then(response=>{
-            console.log('Test', response.data.data)
-            console.log('Phone', phoneNumber)
+            //console.log('Test', response.data.data)
+            //console.log('Phone', phoneNumber)
             const pin  = response.data.data.pin;
             const telephone = phoneNumber; 
             const deviceid = JSON.stringify( response.data.data.deviceid);
-        
-
+            
             storeData(pin, telephone, deviceid);
-          
         })
-
-
-        
 
 
     } else if (phoneNumber.length() < 10){
@@ -76,27 +78,35 @@ export default function LoginPage({route, navigation, props}){
     }
 
     }
-
+    /** This method saves pin, telephone, deviceid */
     const storeData = async(pin, telephone, deviceid)=> {
+     //set loader to true.
+       
         try{
             await AsyncStorage.setItem('pin', pin)
             await AsyncStorage.setItem('telephone', telephone)
             await AsyncStorage.setItem('deviceid', deviceid)
             await AsyncStorage.setItem('status', 'verified')
       
+             setSavingTelephone(false);
             //navigate  to verification 
             navigation.navigate('VerificationCodeForm', {pinFromResponse: pin })
         }catch (e){
             console.log('error saving login response', e)
         }
     }
-    
-
+    /** This method checks authentication */
     const checkUserAuthentication = (status)=>{
 
         if(status === 'verified'){
-            navigation.navigate('Home')
+            //set loader to false
+            setSavingTelephone(false);
+           navigation.navigate('EnterResult')
+
+
         }else{
+            //set loader to false
+            setSavingTelephone(false);
             navigation.navigate('LoginPage')
            // Alert.alert("Enter number to Sign Up");
 
@@ -127,20 +137,18 @@ export default function LoginPage({route, navigation, props}){
         //      }
         // })
     }
-   
+   /** set user's phone number in state */
     const userPhoneNumber = (value)=>{
         setPhoneNumber(value);
     }
-   
-
+   /** sign up method */
    const onSubmitForm=()=> {
        _signUp();
        
    }
 
 
-    return(
-        
+    return(  
     <View style={styles.contentContainer}>
        
             <Image
@@ -186,6 +194,13 @@ export default function LoginPage({route, navigation, props}){
                 SOFTMASTERS
             </Text>
         </View>
+        {savingTelephone &&  
+                <ActivityIndicator
+                size='large'
+                color='#1D5179'
+                style={styles.activityIndicator}
+                animating={savingTelephone}
+                />}
     </View>
  
     );
@@ -202,6 +217,16 @@ const styles = StyleSheet.create({
     backgroundColor: '#F0F0F0',
     alignItems: 'center',
     justifyContent: 'center',
+    },
+    activityIndicator: {
+       
+        color: 'blue',
+        position: 'absolute',
+        left: 10,
+        right: 10,
+        top: 10,
+        bottom: 0,
+        alignSelf:'center'
     },
 
     text: {

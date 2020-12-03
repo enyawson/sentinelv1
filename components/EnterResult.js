@@ -425,7 +425,7 @@ export default class EnterResult extends React.Component{
                     size={23}
                     color="black"
                     style={{margin:15, marginRight:50, }}
-                    onPress={()=> this.props.navigation.goBack()}
+                    onPress={()=> this.props.navigation.popToTop()}
                     />
 
                     <Text style={{ color:"#6D6B6B", fontSize: 16, marginTop: 0,

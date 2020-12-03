@@ -39,6 +39,7 @@ useEffect(() => {
 
   return () => {
     //BackHandler.removeEventListener('hardwareBackPress', backAction)
+    console.log("Home unmounted")
   } 
 }, [])
 
@@ -180,7 +181,7 @@ const notReadyToVote=() =>{
                 </View>
                 <View style={styles.box}>
                 <TouchableOpacity
-                  onPress={()=> navigation.navigate('EnterResult')}>
+                  onPress={()=> navigation.navigate('LoginPage')}>
                     <Image 
                     style={styles.imageInBox}
                     source = { require('../assets/resultImage.png') } />
@@ -194,7 +195,7 @@ const notReadyToVote=() =>{
               <Text>Register</Text>
             </TouchableOpacity>
             <TouchableOpacity
-             onPress={()=> navigation.navigate('EvidenceSubmission')}
+             onPress={()=> navigation.navigate('BusinessRegistration')}
             >
               <Text>Locate</Text>
             </TouchableOpacity>
@@ -202,6 +203,7 @@ const notReadyToVote=() =>{
               <Text>Stories</Text>
             </TouchableOpacity>
             <TouchableOpacity
+             onPress={()=> navigation.navigate('EvidenceSubmission')}
             >
               <Text>Help</Text>
             </TouchableOpacity>

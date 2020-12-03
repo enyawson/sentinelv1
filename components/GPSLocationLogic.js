@@ -3,6 +3,7 @@ import Geolocation, { stopObserving } from 'react-native-geolocation-service';
 import { AppRegistry,StyleSheet, Text, PermissionsAndroid, View, Image, Alert} from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import Geocoder from 'react-native-geocoding';
+import { SettingsRemote } from '@material-ui/icons';
 
 
 
@@ -71,7 +72,7 @@ export default class GPSLocationLogic extends Component{
     }
 
     //This function sets time 
-    getTimeOfLocation() {
+    getTimeOfLocation () {
         setInterval(() => {
             let hours = new Date().getHours(); //current hours
                 let min = new Date().getMinutes(); //current minutes
@@ -83,7 +84,12 @@ export default class GPSLocationLogic extends Component{
         }, 1000);
         
     }
-         
+    storeDateTimeCoordinates= async(date, dateTime, lat, lng)=> {
+    await AsyncStorage.setItem('date', date);
+    await AsyncStorage.setItem('dateTime', dateTime);
+    await AsyncStorage.setItem('gpsLat', lat);
+    await AsyncStorage.setItem('gpsLng', lng);
+    }
     /**
      * This method generates the gps location of the device using react native
      * geolocation
@@ -212,6 +218,9 @@ export default class GPSLocationLogic extends Component{
    
     
     render(){
+        //this.storeDateTimeCoordinates(this.state.date, this.state.dateTime, this.state.latitude, this.state.longitude)
+        
+
         return (
             <View style={{flexDirection: 'column', marginBottom: 10}}>
             {this.props.streetName != null? 

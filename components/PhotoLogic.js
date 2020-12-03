@@ -118,7 +118,7 @@ export default function PhotoLogic ({ props, navigation }) {
        // console.log("TogglePauseButton state "+ videoComponent.togglePauseButton);
 
         return () => {
-           // console.log('camera component umnounted')
+           console.log('camera component unmounted')
         }
     }, [imageUri, videoComponent.toggleVideoButton, videoComponent.togglePauseButton, imageWithIcon, 
     isRecording, videoUri, capturedImageDate, capturedImageDateTime, capturedImageLongitude, capturedImageLatitude])
@@ -248,6 +248,7 @@ export default function PhotoLogic ({ props, navigation }) {
       
     }
 
+
     /**this method saves pic details in async storage  */
     const storePicDetails = async (newData) => {
         try{
@@ -260,6 +261,7 @@ export default function PhotoLogic ({ props, navigation }) {
         
     }
 
+    
     /** this method gets street address name */
     // const getStreetData= (lat, lng) =>{
     //     // Initialize the module 

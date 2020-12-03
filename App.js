@@ -84,24 +84,12 @@ const Auth = ()=> {
 
 export default function App() {
 
-  //const [isLoading, setIsLoading]=useState('');
-  //For splash Screen
-  // if(isLoading){
-  //   //we haven't finished checking for the token yet
-  //   //return<SplashScreen />
-  // }
-  
   return (
   <MenuProvider>
-    <NavigationContainer initialRouteName = "LoginPage">
+    <NavigationContainer initialRouteName = "Home">
    {/* Auth Navigator: Include Login and Signup */}
    
     <Stack.Navigator>
-        <Stack.Screen
-          name="Auth"
-          component={Auth}
-          options={{headerShown:false}}
-        />
         <Stack.Screen 
         name="Home"
         component={Home}
@@ -129,6 +117,30 @@ export default function App() {
           }
           
         }}/>
+         <Stack.Screen 
+          name="LoginPage" 
+          component ={LoginPage}
+          options={{
+          headerLeft:null,
+          title:'Report on Result',
+          headerShown: false,
+          headerStyle: {
+          backgroundColor: '#1D5179',
+          },
+          headerTintColor: '#FFFFFF',
+          headerTitleStyle: {
+            fontWeight: 'normal',
+            alignSelf:'center',
+            fontFamily: 'roboto'
+         }}
+          }
+        /> 
+         <Stack.Screen 
+          name="VerificationCodeForm" 
+          component ={VerificationCodeForm}
+          options={{
+          headerShown: false
+        }}/> 
         <Stack.Screen 
           name="PhotoLogic" 
           component ={PhotoLogic}

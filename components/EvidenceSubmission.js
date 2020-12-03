@@ -20,7 +20,7 @@ import Play from 'react-native-vector-icons/Ionicons';
 import RNFetchBlob from 'rn-fetch-blob';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 import axios from 'axios';
-import {APIKEY, TOKEN_URL, SUBMIT_INCIDENT} from '../components/ConstantUrls';
+import {APIKEY, TOKEN_URL, SUBMIT_INCIDENT, VIDEO_UPLOAD, IMAGE_UPLOAD, AUDIO_UPLOAD} from '../components/ConstantUrls';
 
 
 
@@ -42,16 +42,24 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
     const [dataToServer, setDataToServer] = useState([])
     const [uniqueGenID, setUniqueGenID] = useState('');
     const [status, setStatus] =useState('0');
+    const [responseUniqueId,setResponseUniqueId] =useState('');
+    const [retrievedDeviceId, setRetrievedDeviceId] =useState('');
+    const [telephone,setTelephone ] =useState('');
 
-    
-  
+    //state of files to server 
+    const [audios, setAudios] = useState([]);
+    const [videos, setVideos] = useState([]);
+    const [images, setImages] = useState([]);
+    const [incidentId, setIncidentId] = useState('');
 
+   
 
     /**navigated image */
    // const { transferredImage } = route.params
     /**component did mount , component will unmount */
     useEffect(()=> {
         console.log('EVIDENCE USE_EFFECT,  mounted');
+        console.log(photos)
         /*Get the stored captured images from async storage*/   
         getData();
         getPicDetails();
@@ -77,8 +85,7 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
         let tokenValue = JSON.stringify(response.data.data.accessToken);
         setGenerateToken(tokenValue);
         //console.log("just appeared",tokenValue)
-        
-        })
+         })
         .catch(function (error){
         console.log(error);
         })
@@ -87,28 +94,30 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
         //sendDataToServer();
        
         generateUniqueID();
+
+        //get telephone and deviceid
+        getTelephoneDeviceId();
       
-
-        
-
-     
-       
+      
         /**component will unmount */
         return ()=> { 
-            //saveIncidenceDescription()
-           // console.log("report page unmounted")
+            
+            console.log('EvidenceSubmission unmounted')
         }
-
-       
-        
     }, []);
 
     
    
 
-// *********************************************************************
+    // *********************************************************************
 
-   
+    const  getTelephoneDeviceId = async() => {
+        const deviceId = await AsyncStorage.getItem('telephone')
+        const telephone = await AsyncStorage.getItem('deviceid')
+
+        setRetrievedDeviceId(deviceId);
+        setTelephone(telephone);
+     }
    /*set the state of incident selected */
     const setIncidence = (itemSelected) => {
       setSelectedIncidence(itemSelected)
@@ -116,8 +125,6 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
     }
 
     // validate incidence selection
-   
-
     const setInputtedText = (inputtedText) => {
         setDescription(inputtedText)
         console.log("InputtedText "+ inputtedText)
@@ -130,18 +137,15 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
         setLoading(true)
     }
 
-   
-
-  //*****************************************************************
-//generate unique id
-  const generateUniqueID = () => {
+    //*****************************************************************
+    //generate unique id
+    const generateUniqueID = () => {
         let S4 = function() {
            return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
         };
         let value =(S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4())
         setUniqueGenID(value);
-       
-  }
+    }
 
    // this method takes another photo
    const addAnotherPhoto =()=> {
@@ -152,7 +156,7 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
    }
 
    //this method loops array images into Fetchblob path
-const sendDataToServer =()=> {
+    const sendDataToServer =()=> {
     
     //This loop sends images
     for (let i=0; i < photos.length; i++){
@@ -160,50 +164,50 @@ const sendDataToServer =()=> {
         const evidenceVideo = '';
        let ext = photos[i].split('.').pop();
        if (ext == 'mp4'){
-             evidenceVideo = photos[i];
+            evidenceVideo = photos[i]; 
+
         }
 
         if (ext == 'jpg'){
             evidenceImage = photos[i];
-            console.log("image"+ i + " "+evidenceImage)
+           // console.log("image"+ i + " "+evidenceImage)
         }
         //pass individual files to server
         callRNFetchBlob(evidenceImage, evidenceVideo);  
         
-    }}
-   
+    }
 
-  //Sending data to server RNFetchBlob
-  //item 1 represent image file
-  //item 2 represent video file
+}
+   
     const callRNFetchBlob = async(item1, item2)=> { 
-        console.log("key",uniqueGenID);
+      //  console.log("key",uniqueGenID);
     
         RNFetchBlob.fetch('POST', SUBMIT_INCIDENT, {
             Authorization : generateToken,
             otherHeader : APIKEY,
             // this is required, otherwise it won't be process as a multipart/form-data request
             'Content-Type' : 'multipart/form-data',
-          }, [
+          },
+          [
             // incident image
-            
             {
-              name : 'incidentimage[]',
-              filename : 'incidentImage.png',
-              // Change BASE64 encoded data to a file path with prefix `RNFetchBlob-file://`.
-              // Or simply wrap the file path with RNFetchBlob.wrap().
-              data: RNFetchBlob.wrap(item1),
+                name : 'incidentimage[]',
+                filename : 'incidentImage.png',
+                // Change BASE64 encoded data to a file path with prefix `RNFetchBlob-file://`.
+                // Or simply wrap the file path with RNFetchBlob.wrap().
+                data: RNFetchBlob.wrap(item1),
             },
             //incident video
             {
-            name : 'incidentvideo[]',
-            filename : 'incidentImage.png',
-            // Change BASE64 encoded data to a file path with prefix `RNFetchBlob-file://`.
-            // Or simply wrap the file path with RNFetchBlob.wrap().
-            data: RNFetchBlob.wrap(item2)
+                name : 'incidentvideo[]',
+                filename : 'incidentImage.png',
+                // Change BASE64 encoded data to a file path with prefix `RNFetchBlob-file://`.
+                // Or simply wrap the file path with RNFetchBlob.wrap().
+                data: RNFetchBlob.wrap(item2)
             },
             // incidence type
-            { name : 'type', data : selectedIncidence },
+            {  
+                 name : 'type', data : selectedIncidence },
             // description
             { name : 'description', data : description },
             //latitude
@@ -218,9 +222,11 @@ const sendDataToServer =()=> {
             { name : 'uniqueid', data : uniqueGenID },
           ]).then((resp) => {
             console.log(resp)
+            //response returned if data gets to the server
            let uniqueReceiver={}
            uniqueReceiver = JSON.parse(resp.data).data
-           console.log(uniqueReceiver.uniqueid)
+          // console.log(uniqueReceiver.uniqueid)
+           setResponseUniqueId(uniqueReceiver.uniqueid)
           }).catch((err) => {
             // ...
         })
@@ -251,7 +257,7 @@ const sendDataToServer =()=> {
         //check if incidence type is null
        
         /**Clears storage*/
-        //clearStorage();
+        //clearStorage(); //.............this clears the entire storage: for testing purposes
         /**save data to be displayed on the activityList  in storage */
        // console.log("PHOTOS : "+ photos);
 
@@ -259,10 +265,11 @@ const sendDataToServer =()=> {
        if (selectedIncidence == "select incidence" || selectedIncidence == ''){
            Alert.alert('Please select incidence type')
        } else{
-        await removeDataStored();
+        sendIncidentToServer()
+        await removeDataStored(); 
         await mainActivityListData();
-        
-        sendDataToServer(); 
+       
+       
         // navigate to submit form
         navigation.navigate('Home'); 
 
@@ -309,7 +316,9 @@ const sendDataToServer =()=> {
             if(value !== null){
                 setPhotos((JSON.parse(value)));
             }
-            
+
+            console.log(value)
+
         }catch(e){
         console.log('error with async getData');
         }     
@@ -342,15 +351,14 @@ const sendDataToServer =()=> {
         }catch(e){
             console.log('error')
         }
-        console.log('removed photos, picture details')
+       // console.log('removed photos, picture details')
     }
 
     /** save image in an array 
-     * evidence-files : consist of audio, videos, pictures
+     * evidence-files : consist of audio, videos, pictures and text
     */
-
     const mainActivityListData = async ()=> {
-        //note before saving change status to response status
+        
         let newData = {}
 
         newData.id = uniqueGenID;
@@ -360,11 +368,11 @@ const sendDataToServer =()=> {
         newData.description = description;
         newData.picDetail = picDetails;
        
-        
         let data = await AsyncStorage.getItem('mainActivityData');
         data = data? JSON.parse(data) : [];
         
         data.push(newData);
+        //saves evidence files to be viewed in activities
         await AsyncStorage.setItem('mainActivityData', JSON.stringify(data), () => {    
             // console.log('MAIN ACTIVITY DATA '+ data);
             // console.log(data)
@@ -376,6 +384,142 @@ const sendDataToServer =()=> {
         setSelectedIncidence("")
     }
 
+    /** This method sorts incidence files into audio, video, and image
+    */
+    const sortFilesToServer=( fileArray, incidentId)=> {
+        let evidenceImage = [];
+        let evidenceVideo = [];
+        let evidenceAudio = [];
+        
+        for (let i=0; i < fileArray.length; i++){
+            let ext = fileArray[i].split('.').pop();
+            if (ext == 'mp4'){
+                sendIncidentVideos(fileArray[i], incidentId)
+                // evidenceVideo.push([i]); 
+                // setVideos(evidenceVideo);
+            }
+            if (ext == 'jpg'){
+                sendIncidentImages(fileArray[i], incidentId)
+                // evidenceImage.push([i]);
+                // setImages(evidenceImage);
+            }
+            if (ext == 'mp3'){
+               // evidenceAudio.push(fileArray[i]);
+                //setAudios(evidenceAudio);
+            } 
+        }
+        //push all to respective state
+    }
+
+   /**This method sends text data of incident to the server */
+    const sendIncidentToServer  = async () => {
+        // let incidentTextData = {} ;
+        // incidentTextData.type = selectedIncidence;
+        // incidentTextData.description = description;
+        // incidentTextData.address = picDetails.address;
+        // incidentTextData.longitude = picDetails.longitude;
+        // incidentTextData.latitude = picDetails.latitude;
+        // incidentTextData.status = status;
+        // incidentTextData.uniqueid = uniqueGenID;
+        // incidentTextData.telephone = telephone;
+        // incidentTextData.deviceid = retrievedDeviceId;
+        let formData = new FormData();
+        formData.append('type',  selectedIncidence);
+        formData.append('description', description);
+        formData.append('longitude',  picDetails.locationLng)
+        formData.append('latitude', picDetails.locationLat);
+        formData.append('status', status);
+        formData.append('uniqueid',uniqueGenID );
+        formData.append('telephone',telephone );
+        formData.append('deviceid', retrievedDeviceId);
+  
+          let config = {
+              method: 'post',
+              url: SUBMIT_INCIDENT,
+              headers: {
+                  Authorization: generateToken, 
+                  apikey: APIKEY,
+              },
+              data: formData,
+          }
+          axios(config)
+          .then(function(response) {
+            console.log('submitted incidence')
+            console.log(response)
+            const value = ((response.data.data.incidentid));
+            //console.log(response.data.data.incidentid)
+            //setIncidentId(value);
+
+            //This sends respect files to the server
+            sortFilesToServer(photos, value);
+          })
+          .catch(function (error) {
+              console.log(error);
+          });
+    }
+
+    /**This method sends video of incident to the server 
+     * @param incidentID This is the id gotten from incident response
+     * @param file This is the type of file from evidence files
+     * 
+    */
+    const sendIncidentVideos = async (filePath, incidentID) => {
+        RNFetchBlob.fetch(
+            'POST', 'https://electionsapi.softmastersgroup.com/incident/videoupload/'+incidentID, {
+            Authorization : "Bearer"+ generateToken,
+            apiKey : APIKEY,
+            // this is required, otherwise it won't be process as a multipart/form-data request
+            'Content-Type' : 'multipart/form-data',
+          }, [
+            // append field data from file path
+            {
+              name : 'incidentvideo[]',
+              filename : 'incidentvideo.mp4',
+              // Change BASE64 encoded data to a file path with prefix `RNFetchBlob-file://`.
+              // Or simply wrap the file path with RNFetchBlob.wrap().
+              data: RNFetchBlob.wrap(filePath)
+            },
+          ]).then((resp) => {
+              console.log("video response")
+              console.log(resp);
+            // ...
+          }).catch((err) => {
+            console.log('video upload'+ err );
+            // ...
+        })
+    }
+
+    /**This method uploads images to the server */
+    const sendIncidentImages = (filePath,incidentID ) => {
+        RNFetchBlob.fetch(
+            'POST', 'https://electionsapi.softmastersgroup.com/incident/imageupload/'+parseInt(incidentID), {
+            Authorization : "Bearer"+ generateToken,
+            apiKey : APIKEY,
+            // this is required, otherwise it won't be process as a multipart/form-data request
+            'Content-Type' : 'multipart/form-data',
+          }, [
+            // append field data from file path
+            {
+              name : 'incidentimage[]',
+              filename : 'incidentimage.png',
+              // Change BASE64 encoded data to a file path with prefix `RNFetchBlob-file://`.
+              // Or simply wrap the file path with RNFetchBlob.wrap().
+              data: RNFetchBlob.wrap(filePath)
+            },
+          ]).then((resp) => {
+              console.log("image response")
+              console.log(resp);
+            // ...
+          }).catch((err) => {
+            console.log('image upload'+ err );
+            // ...
+        })
+    }
+
+    /**This method sends audio of incident to the server */
+    const sendIncidentAudios = async () => {
+
+    }
 
     /** Get items in mainActivityList to send to the server */
     const getMainActivityListData = async ()=> {
@@ -394,10 +538,8 @@ const sendDataToServer =()=> {
         }catch(e){
             console.log('error getting data for server')
         }
-        }
+    }
 
-
-    
     //this method stores video path
     const storeData =async (value)=> {
         try{
@@ -405,12 +547,12 @@ const sendDataToServer =()=> {
             } catch (e) {
                 console.log('error saving video for preview')
             }
-        }
+    }
 
-/**
- * This method navigates to photo preview page
- * @param path image retrieved from flat list item in evidence page
- */
+    /**
+     * This method navigates to photo preview page
+     * @param path image retrieved from flat list item in evidence page
+    */
     const  navigateToPhotoPreview = (path) =>{
     //set the state of extension 
     let ext = path.split('.').pop();
@@ -427,43 +569,53 @@ const sendDataToServer =()=> {
             navigation.navigate('PhotoPreviewer',{transferredImageItem: path})
         );  
     }
-}
+    }
 
-/**This method checks for the extension of file (jpg or mp4) */
-const checkExtensionOfFile=(item)=>{
-    //set the state of extension 
-    let ext = item.split('.').pop();
-    //console.log("Extension "+ ext);
-    if (ext == 'jpg'){
-         return(
-            <Image
-            onLoadStart={_onLoadStart}
-            onLoadEnd={_onLoadEnd}
-            style={{ width:115, height:214,margin:1, resizeMode:'cover'}}   
-            source = {{ uri: "file://"+ item}}/>
-        )
-    } 
-    if (ext == 'mp4'){
-        return(
-            <View>
+    /**This method checks for the extension of file (jpg or mp4) */
+    const checkExtensionOfFile=(item)=>{
+        //set the state of extension 
+        let ext = item.split('.').pop();
+        //console.log("Extension "+ ext);
+        if (ext == 'jpg'){
+            return(
                 <Image
                 onLoadStart={_onLoadStart}
                 onLoadEnd={_onLoadEnd}
                 style={{ width:115, height:214,margin:1, resizeMode:'cover'}}   
                 source = {{ uri: "file://"+ item}}/>
-                <View style={{ backgroundColor: 'black',
-                 position:'absolute',justifyContent:'center',alignItems: 'center',margin:1,
-                 width: 115 , height: 214,opacity:0.5}}>
-                    <Play
-                    name={'play-circle-outline'}
-                    size={35}
-                    color="white"/>   
-                </View>  
-            </View>
-        )
-            
+            )
+        } 
+        if (ext == 'mp4'){
+            return(
+                <View>
+                    <Image
+                    onLoadStart={_onLoadStart}
+                    onLoadEnd={_onLoadEnd}
+                    style={{ width:115, height:214,margin:1, resizeMode:'cover'}}   
+                    source = {{ uri: "file://"+ item}}/>
+                    <View style={{ backgroundColor: 'black',
+                    position:'absolute',justifyContent:'center',alignItems: 'center',margin:1,
+                    width: 115 , height: 214,opacity:0.5}}>
+                        <Play
+                        name={'play-circle-outline'}
+                        size={35}
+                        color="white"/>   
+                    </View>  
+                </View>
+            )      
+        }
     }
- }
+
+    /**This method updates the status value in for each incidence
+     *  report when gotten to the server 
+     * @param uniqueid This is the key received from the server if 
+     * incident gets to the server*/
+     const update=()=> {
+        // use uniqueid retrieved from evidence submission response to update status 
+        //of data, to be bundled to 
+    }
+
+
 
     return(
         <View style= {{flex:6,}}>
@@ -479,7 +631,7 @@ const checkExtensionOfFile=(item)=>{
                     borderColor='#7E7E7E'>
                     <FlatList
                         data= {photos}
-                        keyExtractor={(item, index)=> index}
+                        keyExtractor={(item, index)=> index.toString()}
                         horizontal={true}
                         renderItem={ ({ item}) => (  
                             <TouchableOpacity onPress={() => navigateToPhotoPreview(item) }>
@@ -570,13 +722,14 @@ const checkExtensionOfFile=(item)=>{
             </View>
 
 
-            <View style={{flex:0.2, backgroundColor:'yellow'}}>
+            <View style={{flex:0.2,}}>
                  <TouchableOpacity
                     style={{ 
                     backgroundColor:'#1D5179',
                     height:'100%', justifyContent:'center'
                     }}
-                    onPress={()=> evidenceSubmit()}>
+                    onPress={()=> 
+                    evidenceSubmit()}>
                     <Text style={{color:'white', 
                         alignSelf:'center',padding:5,
                         fontSize: 18,

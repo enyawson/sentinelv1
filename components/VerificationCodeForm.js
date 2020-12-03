@@ -74,7 +74,7 @@ export default function VerificationCodeForm({route, navigation, props}){
                         }
                         if(pinReceived != null){
                              ToastAndroid.show('Registered Successfully', ToastAndroid.LONG);
-                            navigation.navigate('Home')
+                            navigation.navigate('EnterResult')
                           
                         }
                        

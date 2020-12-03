@@ -50,9 +50,9 @@ export default class ActivityList extends React.Component{
                 {
                     receivedFiles:  (JSON.parse(value)),
                 });
-            if(value !== null){
+                 if(value !== null){
                 const retrievedData = JSON.parse(value)
-                console.log('value received '+ retrievedData[2].incidenceValue )
+                //console.log('value received '+ retrievedData[2].incidenceValue )
                 console.log('array '+ (value))
                  /**looping through array */
                 // for(let i=0; i<retrievedData.length; i++){
