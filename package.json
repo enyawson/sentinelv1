@@ -12,6 +12,7 @@
   "dependencies": {
     "@material-ui/core": "^4.11.0",
     "@material-ui/icons": "^4.9.1",
+    "@nomi9995/react-native-image-compressor": "0.0.1",
     "@react-native-community/async-storage": "^1.12.0",
     "@react-native-community/cameraroll": "^4.0.0",
     "@react-native-community/image-editor": "^2.3.0",

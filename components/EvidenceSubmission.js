@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 
 import {
     StyleSheet, View, KeyboardAvoidingView,Text, Image, TouchableOpacity,StatusBar,
-    TextInput, FlatList,ActivityIndicator, Platform,Dimensions, Button, Keyboard,
+    TextInput, FlatList,ActivityIndicator, Platform,Dimensions, Button, Keyboard, Alert,
 } from 'react-native';
 import globalStyle from '../components_styles/globalStyle';
 import { ScrollView, State, TouchableWithoutFeedback } from 'react-native-gesture-handler';
@@ -20,7 +20,7 @@ import Play from 'react-native-vector-icons/Ionicons';
 import RNFetchBlob from 'rn-fetch-blob';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 import axios from 'axios';
-import {APIKEY, TOKEN_URL, SUBMIT_INCIDENT} from '../components/ConstantUrls';
+import {APIKEY, TOKEN_URL, SUBMIT_INCIDENT, VIDEO_UPLOAD, IMAGE_UPLOAD, AUDIO_UPLOAD} from '../components/ConstantUrls';
 
 
 
@@ -40,26 +40,33 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
 
     const [generateToken, setGenerateToken]= useState('');
     const [dataToServer, setDataToServer] = useState([])
+    const [uniqueGenID, setUniqueGenID] = useState('');
+    const [status, setStatus] =useState('0');
+    const [responseUniqueId,setResponseUniqueId] =useState('');
+    const [retrievedDeviceId, setRetrievedDeviceId] =useState('');
+    const [telephone,setTelephone ] =useState('');
 
-    
-  
+    //state of files to server 
+    const [audios, setAudios] = useState([]);
+    const [videos, setVideos] = useState([]);
+    const [images, setImages] = useState([]);
+    const [incidentId, setIncidentId] = useState('');
 
+   
 
     /**navigated image */
    // const { transferredImage } = route.params
     /**component did mount , component will unmount */
     useEffect(()=> {
         console.log('EVIDENCE USE_EFFECT,  mounted');
+        console.log(photos)
         /*Get the stored captured images from async storage*/   
         getData();
         getPicDetails();
         /*get the saved description and incidence*/
         getIncidenceDescription();
 
-        /**all images saved in storage */
-        //getMainActivityListData();
-        //sendDataToServer();
-
+       
         /**generate token */
         const data = JSON.stringify({"apikey": APIKEY});
         const config = {
@@ -78,35 +85,46 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
         let tokenValue = JSON.stringify(response.data.data.accessToken);
         setGenerateToken(tokenValue);
         //console.log("just appeared",tokenValue)
-        
-        })
+         })
         .catch(function (error){
         console.log(error);
         })
        
-        
         /**sending data to server */
-        sendDataToServer();
+        //sendDataToServer();
        
-       
+        generateUniqueID();
+
+        //get telephone and deviceid
+        getTelephoneDeviceId();
+      
+      
         /**component will unmount */
         return ()=> { 
-            //saveIncidenceDescription()
-           // console.log("report page unmounted")
+            
+            console.log('EvidenceSubmission unmounted')
         }
-        
     }, []);
 
     
    
 
-// *********************************************************************
+    // *********************************************************************
 
+    const  getTelephoneDeviceId = async() => {
+        const deviceId = await AsyncStorage.getItem('telephone')
+        const telephone = await AsyncStorage.getItem('deviceid')
+
+        setRetrievedDeviceId(deviceId);
+        setTelephone(telephone);
+     }
    /*set the state of incident selected */
     const setIncidence = (itemSelected) => {
       setSelectedIncidence(itemSelected)
-      console.log("Incidence " + itemSelected)
+      //console.log("Incidence " + itemSelected)
     }
+
+    // validate incidence selection
     const setInputtedText = (inputtedText) => {
         setDescription(inputtedText)
         console.log("InputtedText "+ inputtedText)
@@ -119,21 +137,16 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
         setLoading(true)
     }
 
+    //*****************************************************************
+    //generate unique id
+    const generateUniqueID = () => {
+        let S4 = function() {
+           return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
+        };
+        let value =(S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4())
+        setUniqueGenID(value);
+    }
 
-    // React.useLayoutEffect(() => {
-    //     navigation.setOptions({
-    //       headerLeft: () => (
-    //        <TouchableOpacity onPress={() => 
-    //        navigation.goBack()} >
-    //            <Icon style = {{paddingLeft : 10}} name="arrow-back-sharp" size={26} color="white" />
-    //        </TouchableOpacity>
-            
-    //       ),
-    //     });
-    // }, [navigation]);
-   
-
-  //*****************************************************************
    // this method takes another photo
    const addAnotherPhoto =()=> {
     //before adding a new photo, save state of text input
@@ -143,71 +156,58 @@ export default function EvidenceSubmission ({route, navigation,navigation:{setPa
    }
 
    //this method loops array images into Fetchblob path
-const sendDataToServer =()=> {
+    const sendDataToServer =()=> {
     
-    
-//    // for loop to separate .jpg and .mp4 files
-//     photos.forEach(function(item){
-//         let ext = item.split('.').pop(); 
-//         if (ext == 'mp4'){
-//             evidenceVideos.push(item)
-//             }else{
-//             evidenceImages.push(item)
-//         }
-//     });
-    //console.log(picDetails)
-    //console.log("VIDEOS", evidenceVideos)
-    // console.log("PHOTOS", evidenceImages)
-
     //This loop sends images
     for (let i=0; i < photos.length; i++){
         const evidenceImage = '';
         const evidenceVideo = '';
        let ext = photos[i].split('.').pop();
        if (ext == 'mp4'){
-             evidenceVideo = photos[i];
+            evidenceVideo = photos[i]; 
+
         }
+
         if (ext == 'jpg'){
             evidenceImage = photos[i];
-            console.log("image"+ i + " "+evidenceImage)
+           // console.log("image"+ i + " "+evidenceImage)
         }
         //pass individual files to server
         callRNFetchBlob(evidenceImage, evidenceVideo);  
         
     }
 
-   }
+}
    
-
-  //Sending data to server RNFetchBlob
     const callRNFetchBlob = async(item1, item2)=> { 
+      //  console.log("key",uniqueGenID);
     
         RNFetchBlob.fetch('POST', SUBMIT_INCIDENT, {
             Authorization : generateToken,
             otherHeader : APIKEY,
             // this is required, otherwise it won't be process as a multipart/form-data request
             'Content-Type' : 'multipart/form-data',
-          }, [
+          },
+          [
             // incident image
-            
             {
-              
-              name : 'incidentimage',
-              filename : 'incidentImage.png',
-              // Change BASE64 encoded data to a file path with prefix `RNFetchBlob-file://`.
-              // Or simply wrap the file path with RNFetchBlob.wrap().
-              data: RNFetchBlob.wrap(item1),
+                name : 'incidentimage[]',
+                filename : 'incidentImage.png',
+                // Change BASE64 encoded data to a file path with prefix `RNFetchBlob-file://`.
+                // Or simply wrap the file path with RNFetchBlob.wrap().
+                data: RNFetchBlob.wrap(item1),
             },
             //incident video
             {
-            name : 'incidentvideo',
-            filename : 'incidentImage.png',
-            // Change BASE64 encoded data to a file path with prefix `RNFetchBlob-file://`.
-            // Or simply wrap the file path with RNFetchBlob.wrap().
-            data: RNFetchBlob.wrap(item2)
+                name : 'incidentvideo[]',
+                filename : 'incidentImage.png',
+                // Change BASE64 encoded data to a file path with prefix `RNFetchBlob-file://`.
+                // Or simply wrap the file path with RNFetchBlob.wrap().
+                data: RNFetchBlob.wrap(item2)
             },
             // incidence type
-            { name : 'type', data : selectedIncidence },
+            {  
+                 name : 'type', data : selectedIncidence },
             // description
             { name : 'description', data : description },
             //latitude
@@ -216,11 +216,22 @@ const sendDataToServer =()=> {
             { name : 'longitude', data : picDetails.locationLng},
             //street address
             { name : 'address', data : picDetails.streetName },
+            //status
+            { name : 'status', data : status },
+            //uniqueID
+            { name : 'uniqueid', data : uniqueGenID },
           ]).then((resp) => {
-            console.log(resp);
+            console.log(resp)
+            //response returned if data gets to the server
+           let uniqueReceiver={}
+           uniqueReceiver = JSON.parse(resp.data).data
+          // console.log(uniqueReceiver.uniqueid)
+           setResponseUniqueId(uniqueReceiver.uniqueid)
           }).catch((err) => {
             // ...
         })
+
+        //change status of object to be saved
     }
 
     /**
@@ -230,7 +241,7 @@ const sendDataToServer =()=> {
     const clearStorage= async() =>{
         try{
             await AsyncStorage.clear();
-            console.log("Storage cleared")
+           // console.log("Storage cleared")
         } catch(exception){
             console.log('error clearing  items');
     }
@@ -242,17 +253,27 @@ const sendDataToServer =()=> {
     }
 
     const evidenceSubmit = async () => {
+
+        //check if incidence type is null
+       
         /**Clears storage*/
-        //clearStorage();
+        //clearStorage(); //.............this clears the entire storage: for testing purposes
         /**save data to be displayed on the activityList  in storage */
        // console.log("PHOTOS : "+ photos);
-        await removeDataStored();
+
+       // validate selected incidence
+       if (selectedIncidence == "select incidence" || selectedIncidence == ''){
+           Alert.alert('Please select incidence type')
+       } else{
+        sendIncidentToServer()
+        await removeDataStored(); 
         await mainActivityListData();
-        
-        sendDataToServer(); 
+       
+       
         // navigate to submit form
         navigation.navigate('Home'); 
-        
+
+       } 
     }
 
     /**save incidence type and description */
@@ -263,8 +284,8 @@ const sendDataToServer =()=> {
 
     try {
         AsyncStorage.setItem('allTextValue', JSON.stringify(storedObject));
-        console.log("save incidence from storage", storedObject.incidenceValue)
-        console.log("save description from storage", storedObject.descriptionText)
+        //console.log("save incidence from storage", storedObject.incidenceValue)
+        //console.log("save description from storage", storedObject.descriptionText)
         
     }catch (error){
         console.log('error with saving incidence and description');
@@ -276,11 +297,11 @@ const sendDataToServer =()=> {
             let resObject = {};
             let infoValue = await AsyncStorage.getItem('allTextValue')
             resObject = JSON.parse(infoValue);
-            console.log( "OBJECT BEING RECEIVED ",typeof resObject)
+           // console.log( "OBJECT BEING RECEIVED ",typeof resObject)
             setDescription(resObject.descriptionText)
             setSelectedIncidence(resObject.incidenceValue)
-             console.log("Test inputted" + resObject.descriptionText)
-             console.log("Incidence" + resObject.incidenceValue)
+            // console.log("Test inputted" + resObject.descriptionText)
+            // console.log("Incidence" + resObject.incidenceValue)
 
         } catch (error){
             console.log(error);
@@ -295,7 +316,9 @@ const sendDataToServer =()=> {
             if(value !== null){
                 setPhotos((JSON.parse(value)));
             }
-            
+
+            console.log(value)
+
         }catch(e){
         console.log('error with async getData');
         }     
@@ -306,7 +329,7 @@ const sendDataToServer =()=> {
         try {
             const picDetailsValue = await AsyncStorage.getItem('activityListPicDetail')
             const value = JSON.parse(picDetailsValue);
-            // console.log('async PicDetail values,'+ picDetailsValue);
+             //console.log('async PicDetail values,'+ picDetailsValue);
             // console.log("Time on Pic "+ value.locationLat);
             if(value !== null){
                 setPicDetails(value);
@@ -315,7 +338,7 @@ const sendDataToServer =()=> {
         console.log('error with async getData');
         }     
        
-         console.log('state picDetails '+ picDetails);
+        // console.log('state picDetails '+ picDetails);
         // console.log('one of it '+ picDetails.locationLat);
     }
  
@@ -328,32 +351,28 @@ const sendDataToServer =()=> {
         }catch(e){
             console.log('error')
         }
-        console.log('removed photos, picture details')
+       // console.log('removed photos, picture details')
     }
 
-
-
     /** save image in an array 
-     * evidence-files : consist of audio, videos, pictures
+     * evidence-files : consist of audio, videos, pictures and text
     */
     const mainActivityListData = async ()=> {
+        
         let newData = {}
 
+        newData.id = uniqueGenID;
+        newData.status = status;
         newData.evidenceFiles = photos;
         newData.incidenceValue = selectedIncidence;
         newData.description = description;
-        //newData.timeTaken = timeFileTaken;
-        //newData.streetName = location;
-        //picture details 
         newData.picDetail = picDetails;
        
-        //newData.locationCord = locCoordinates;
-        //newData.dateTaken = dateFileTaken;
-        
         let data = await AsyncStorage.getItem('mainActivityData');
         data = data? JSON.parse(data) : [];
         
         data.push(newData);
+        //saves evidence files to be viewed in activities
         await AsyncStorage.setItem('mainActivityData', JSON.stringify(data), () => {    
             // console.log('MAIN ACTIVITY DATA '+ data);
             // console.log(data)
@@ -363,6 +382,143 @@ const sendDataToServer =()=> {
         setPhotos("")
         setDescription("")
         setSelectedIncidence("")
+    }
+
+    /** This method sorts incidence files into audio, video, and image
+    */
+    const sortFilesToServer=( fileArray, incidentId)=> {
+        let evidenceImage = [];
+        let evidenceVideo = [];
+        let evidenceAudio = [];
+        
+        for (let i=0; i < fileArray.length; i++){
+            let ext = fileArray[i].split('.').pop();
+            if (ext == 'mp4'){
+                sendIncidentVideos(fileArray[i], incidentId)
+                // evidenceVideo.push([i]); 
+                // setVideos(evidenceVideo);
+            }
+            if (ext == 'jpg'){
+                sendIncidentImages(fileArray[i], incidentId)
+                // evidenceImage.push([i]);
+                // setImages(evidenceImage);
+            }
+            if (ext == 'mp3'){
+               // evidenceAudio.push(fileArray[i]);
+                //setAudios(evidenceAudio);
+            } 
+        }
+        //push all to respective state
+    }
+
+   /**This method sends text data of incident to the server */
+    const sendIncidentToServer  = async () => {
+        // let incidentTextData = {} ;
+        // incidentTextData.type = selectedIncidence;
+        // incidentTextData.description = description;
+        // incidentTextData.address = picDetails.address;
+        // incidentTextData.longitude = picDetails.longitude;
+        // incidentTextData.latitude = picDetails.latitude;
+        // incidentTextData.status = status;
+        // incidentTextData.uniqueid = uniqueGenID;
+        // incidentTextData.telephone = telephone;
+        // incidentTextData.deviceid = retrievedDeviceId;
+        let formData = new FormData();
+        formData.append('type',  selectedIncidence);
+        formData.append('description', description);
+        formData.append('longitude',  picDetails.locationLng)
+        formData.append('latitude', picDetails.locationLat);
+        formData.append('status', status);
+        formData.append('uniqueid',uniqueGenID );
+        formData.append('telephone',telephone );
+        formData.append('deviceid', retrievedDeviceId);
+  
+          let config = {
+              method: 'post',
+              url: SUBMIT_INCIDENT,
+              headers: {
+                  Authorization: generateToken, 
+                  apikey: APIKEY,
+              },
+              data: formData,
+          }
+          axios(config)
+          .then(function(response) {
+            console.log('submitted incidence')
+            console.log(response)
+            const value = ((response.data.data.incidentid));
+            //console.log(response.data.data.incidentid)
+            //setIncidentId(value);
+
+            //This sends respect files to the server
+            sortFilesToServer(photos, value);
+          })
+          .catch(function (error) {
+              console.log(error);
+          });
+    }
+
+    /**This method sends video of incident to the server 
+     * @param incidentID This is the id gotten from incident response
+     * @param file This is the type of file from evidence files
+     * 
+    */
+    const sendIncidentVideos = async (filePath, incidentID) => {
+        RNFetchBlob.fetch(
+            'POST', 'https://electionsapi.softmastersgroup.com/incident/videoupload/'+incidentID, {
+            Authorization : "Bearer"+ generateToken,
+            apiKey : APIKEY,
+            // this is required, otherwise it won't be process as a multipart/form-data request
+            'Content-Type' : 'multipart/form-data',
+          }, [
+            // append field data from file path
+            {
+              name : 'incidentvideo[]',
+              filename : 'incidentvideo.mp4',
+              // Change BASE64 encoded data to a file path with prefix `RNFetchBlob-file://`.
+              // Or simply wrap the file path with RNFetchBlob.wrap().
+              data: RNFetchBlob.wrap(filePath)
+            },
+          ]).then((resp) => {
+              console.log("video response")
+              console.log(resp);
+            // ...
+          }).catch((err) => {
+            console.log('video upload'+ err );
+            // ...
+        })
+    }
+
+    /**This method uploads images to the server */
+    const sendIncidentImages = (filePath,incidentID ) => {
+        RNFetchBlob.fetch(
+            'POST', 'https://electionsapi.softmastersgroup.com/incident/imageupload/'+parseInt(incidentID), {
+            Authorization : "Bearer"+ generateToken,
+            apiKey : APIKEY,
+            // this is required, otherwise it won't be process as a multipart/form-data request
+            'Content-Type' : 'multipart/form-data',
+          }, [
+            // append field data from file path
+            {
+              name : 'incidentimage[]',
+              filename : 'incidentimage.png',
+              // Change BASE64 encoded data to a file path with prefix `RNFetchBlob-file://`.
+              // Or simply wrap the file path with RNFetchBlob.wrap().
+              data: RNFetchBlob.wrap(filePath)
+            },
+          ]).then((resp) => {
+              console.log("image response")
+              console.log(resp);
+            // ...
+          }).catch((err) => {
+            console.log('image upload'+ err );
+            // ...
+        })
+    }
+
+    /**This method sends audio of incident to the server */
+    const sendIncidentAudios = async () => {
+
     }
 
     /** Get items in mainActivityList to send to the server */
@@ -382,8 +538,8 @@ const sendDataToServer =()=> {
         }catch(e){
             console.log('error getting data for server')
         }
-        }
-    
+    }
+
     //this method stores video path
     const storeData =async (value)=> {
         try{
@@ -391,11 +547,12 @@ const sendDataToServer =()=> {
             } catch (e) {
                 console.log('error saving video for preview')
             }
-        }
-/**
- * This method navigates to photo preview page
- * @param path image retrieved from flat list item in evidence page
- */
+    }
+
+    /**
+     * This method navigates to photo preview page
+     * @param path image retrieved from flat list item in evidence page
+    */
     const  navigateToPhotoPreview = (path) =>{
     //set the state of extension 
     let ext = path.split('.').pop();
@@ -412,60 +569,69 @@ const sendDataToServer =()=> {
             navigation.navigate('PhotoPreviewer',{transferredImageItem: path})
         );  
     }
-}
-/**This method checks for the extension of file (jpg or mp4) */
-const checkExtensionOfFile=(item)=>{
-    //set the state of extension 
-    let ext = item.split('.').pop();
-    //console.log("Extension "+ ext);
-    if (ext == 'jpg'){
-         return(
-            <Image
-            onLoadStart={_onLoadStart}
-            onLoadEnd={_onLoadEnd}
-            style={{ width:115, height:214,margin:1, resizeMode:'cover'}}   
-            source = {{ uri: "file://"+ item}}/>
-        )
-    } 
-    if (ext == 'mp4'){
-        return(
-            <View>
+    }
+
+    /**This method checks for the extension of file (jpg or mp4) */
+    const checkExtensionOfFile=(item)=>{
+        //set the state of extension 
+        let ext = item.split('.').pop();
+        //console.log("Extension "+ ext);
+        if (ext == 'jpg'){
+            return(
                 <Image
                 onLoadStart={_onLoadStart}
                 onLoadEnd={_onLoadEnd}
                 style={{ width:115, height:214,margin:1, resizeMode:'cover'}}   
                 source = {{ uri: "file://"+ item}}/>
-                <View style={{ backgroundColor: 'black',
-                 position:'absolute',justifyContent:'center',alignItems: 'center',margin:1,
-                 width: 115 , height: 214,opacity:0.5}}>
-                    <Play
-                    name={'play-circle-outline'}
-                    size={35}
-                    color="white"/>   
-                </View>  
-            </View>
-        )
-            
+            )
+        } 
+        if (ext == 'mp4'){
+            return(
+                <View>
+                    <Image
+                    onLoadStart={_onLoadStart}
+                    onLoadEnd={_onLoadEnd}
+                    style={{ width:115, height:214,margin:1, resizeMode:'cover'}}   
+                    source = {{ uri: "file://"+ item}}/>
+                    <View style={{ backgroundColor: 'black',
+                    position:'absolute',justifyContent:'center',alignItems: 'center',margin:1,
+                    width: 115 , height: 214,opacity:0.5}}>
+                        <Play
+                        name={'play-circle-outline'}
+                        size={35}
+                        color="white"/>   
+                    </View>  
+                </View>
+            )      
+        }
     }
- }
+
+    /**This method updates the status value in for each incidence
+     *  report when gotten to the server 
+     * @param uniqueid This is the key received from the server if 
+     * incident gets to the server*/
+     const update=()=> {
+        // use uniqueid retrieved from evidence submission response to update status 
+        //of data, to be bundled to 
+    }
+
+
+
     return(
         <View style= {{flex:6,}}>
          <StatusBar barStyle="light-content" backgroundColor="#174060"/>
 
             <ScrollView contentContainerStyle={{flexGrow: 1, justifyContent: 'space-between'}}>
 
-           
-            
             <View style={{flex:0,}}>
                 <View flexDirection='column' marginTop={30}  alignItems={'center'}
                     marginRight ={5}
                     marginLeft ={5}
                     borderRadius={3}
-                
                     borderColor='#7E7E7E'>
                     <FlatList
                         data= {photos}
-                        keyExtractor={(item, index)=> index}
+                        keyExtractor={(item, index)=> index.toString()}
                         horizontal={true}
                         renderItem={ ({ item}) => (  
                             <TouchableOpacity onPress={() => navigateToPhotoPreview(item) }>
@@ -556,13 +722,14 @@ const checkExtensionOfFile=(item)=>{
             </View>
 
 
-            <View style={{flex:0.2, backgroundColor:'yellow'}}>
+            <View style={{flex:0.2,}}>
                  <TouchableOpacity
                     style={{ 
                     backgroundColor:'#1D5179',
                     height:'100%', justifyContent:'center'
                     }}
-                    onPress={()=> evidenceSubmit()}>
+                    onPress={()=> 
+                    evidenceSubmit()}>
                     <Text style={{color:'white', 
                         alignSelf:'center',padding:5,
                         fontSize: 18,

@@ -2,7 +2,7 @@ import { Email } from '@material-ui/icons';
 import React, { useState, useEffect } from 'react';
 import {
     StyleSheet, View, KeyboardAvoidingView,Text, Image, TouchableOpacity,StatusBar,
-    TextInput, FlatList,ActivityIndicator, Platform, Alert
+    TextInput, FlatList,ActivityIndicator, Platform, Alert, BackHandler
 } from 'react-native';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 import axios from 'axios';
@@ -13,28 +13,38 @@ import AsyncStorage from '@react-native-community/async-storage';
 
 //import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default function LoginPage({route, navigation}){
+export default function LoginPage({route, navigation, props}){
 
     const [phoneNumber, setPhoneNumber] = useState("");
     const [uniqueId, setUniqueId] = useState(" ");
- 
+    const [pinVerification, setPinVerification] = useState('')
+    const [savingTelephone, setSavingTelephone]=useState(false);
     
-    
-    useEffect(() => {
+    const handleBackButtonClick= () =>{
+        navigation.navigate('Home');
+        return true;
+    }
+    useEffect( ()=>{
+        BackHandler.addEventListener('hardwareBackPress', handleBackButtonClick);
+        ( async() => {
             console.log('Login Page Mounted');
             let deviceId = DeviceInfo.getUniqueId();
-            checkUserAuthentication(deviceId);
+            const status = await AsyncStorage.getItem('status')
+            //console.log('users ss', status)
+            checkUserAuthentication(status)
             setUniqueId( deviceId);
-            console.log(uniqueId)
-
-        return () => {  
+            console.log(uniqueId);
+        })();
+        return () => { 
+            BackHandler.removeEventListener('hardwareBackPress', handleBackButtonClick); 
         }
-    }, [])
+    }, []);
 
+   
     
-
-    //sign up 
+    /** sign up method */
     const _signUp =()=>{
+        setSavingTelephone(true);
         if(phoneNumber){
            
         let formData=new FormData();
@@ -50,24 +60,14 @@ export default function LoginPage({route, navigation}){
                 apikey: APIKEY,
               },
         }).then(response=>{
-            // let value = response['data']
-            ;
-            const storeData = async()=> {
-                try{
-                    await AsyncStorage.setItem('pin', response.data.data.pin)
-                    await AsyncStorage.setItem('deviceid', 
-                    JSON.stringify( response.data.data.deviceid))
-                    console.log('login data saved success')
-                }catch (e){
-                    console.log('error saving login response')
-                }
-            }
-            storeData();
+            //console.log('Test', response.data.data)
+            //console.log('Phone', phoneNumber)
+            const pin  = response.data.data.pin;
+            const telephone = phoneNumber; 
+            const deviceid = JSON.stringify( response.data.data.deviceid);
+            
+            storeData(pin, telephone, deviceid);
         })
-
-
-        //navigate  to verification 
-        navigation.navigate('VerificationCodeForm')
 
 
     } else if (phoneNumber.length() < 10){
@@ -78,46 +78,77 @@ export default function LoginPage({route, navigation}){
     }
 
     }
-
-    const checkUserAuthentication = (deviceid)=>{
+    /** This method saves pin, telephone, deviceid */
+    const storeData = async(pin, telephone, deviceid)=> {
+     //set loader to true.
        
-        let formData=new FormData();
-        formData.append('deviceid', deviceid);
-        axios({
-            method:'POST',
-            url:VERIFY_DEVICE,
-            data:formData,
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                apikey: APIKEY,
-              },
-         }).then(response=>{
-             if(response.data.data.verificationstatus === 'verified'){
-               //perform the action
-               navigation.navigate('Home')
-               console.log("is verified")
-             }else{
-                // remain on the same page
-                navigation.navigate('LoginPage')
-                Alert.alert("Enter number to Sign Up");
-             }
-        })
+        try{
+            await AsyncStorage.setItem('pin', pin)
+            await AsyncStorage.setItem('telephone', telephone)
+            await AsyncStorage.setItem('deviceid', deviceid)
+            await AsyncStorage.setItem('status', 'verified')
+      
+             setSavingTelephone(false);
+            //navigate  to verification 
+            navigation.navigate('VerificationCodeForm', {pinFromResponse: pin })
+        }catch (e){
+            console.log('error saving login response', e)
+        }
     }
-   
+    /** This method checks authentication */
+    const checkUserAuthentication = (status)=>{
+
+        if(status === 'verified'){
+            //set loader to false
+            setSavingTelephone(false);
+           navigation.navigate('EnterResult')
+
+
+        }else{
+            //set loader to false
+            setSavingTelephone(false);
+            navigation.navigate('LoginPage')
+           // Alert.alert("Enter number to Sign Up");
+
+        }
+       
+        // let formData=new FormData();
+        // formData.append('deviceid', deviceid);
+        // formData.append('telephone', telephone);
+        
+        // axios({
+        //     method:'POST',
+        //     url:VERIFY_DEVICE,
+        //     data:formData,
+        //     headers: {
+        //         'Accept': 'application/json',
+        //         'Content-Type': 'application/json',
+        //         apikey: APIKEY,
+        //       },
+        //  }).then(response=>{
+        //      if(response.data.data.verificationstatus === 'verified'){
+        //        //perform the action
+        //        navigation.navigate('Home')
+        //        console.log("is verified")
+        //      }else{
+        //         // remain on the same page
+        //         navigation.navigate('LoginPage')
+        //         Alert.alert("Enter number to Sign Up");
+        //      }
+        // })
+    }
+   /** set user's phone number in state */
     const userPhoneNumber = (value)=>{
         setPhoneNumber(value);
     }
-   
-
+   /** sign up method */
    const onSubmitForm=()=> {
        _signUp();
        
    }
 
 
-    return(
-        
+    return(  
     <View style={styles.contentContainer}>
        
             <Image
@@ -163,6 +194,13 @@ export default function LoginPage({route, navigation}){
                 SOFTMASTERS
             </Text>
         </View>
+        {savingTelephone &&  
+                <ActivityIndicator
+                size='large'
+                color='#1D5179'
+                style={styles.activityIndicator}
+                animating={savingTelephone}
+                />}
     </View>
  
     );
@@ -179,6 +217,16 @@ const styles = StyleSheet.create({
     backgroundColor: '#F0F0F0',
     alignItems: 'center',
     justifyContent: 'center',
+    },
+    activityIndicator: {
+       
+        color: 'blue',
+        position: 'absolute',
+        left: 10,
+        right: 10,
+        top: 10,
+        bottom: 0,
+        alignSelf:'center'
     },
 
     text: {

@@ -43,6 +43,7 @@ export default class BusinessRegistration extends React.Component{
        BackHandler.removeEventListener('hardwareBackPress', this.backAction)
 
     }
+
    // this method navigates to home on device back press
     backAction=()=>{
     //    alert('go')
@@ -117,8 +118,7 @@ export default class BusinessRegistration extends React.Component{
                                     name={'arrow-back-outline'}
                                     size={23}
                                     color="white"
-                                    style={{margin:0, alignContent: 'center', marginTop: 15, padding:10}}
-                                    
+                                    style={{margin:0, alignContent: 'center', marginTop: 15, padding:10}}   
                                 />
                             </TouchableOpacity>
                             
@@ -143,7 +143,7 @@ export default class BusinessRegistration extends React.Component{
                     </View>
     
                     <View style={styles.contentContainer}>
-                    <View style={{marginTop: 45,marginBottom: 0}}>
+                    <View style={{marginTop: '10%',marginBottom: 0}}>
                      <View> 
                             <TextInput 
                                 style={styles.textInputBoxStyle}
@@ -228,10 +228,9 @@ export default class BusinessRegistration extends React.Component{
                        
                       
                         <View>
-                            <TouchableOpacity style={styles.submitButton}
-                                onPress={()=> this.props.navigation.navigate('BusinessRegContinuation')}>
+                            <TouchableOpacity style={styles.submitButton}>
                                 <Text style={{alignSelf:'center', color:'white'}}>
-                                    continue
+                                    Submit
                                 </Text>
                             </TouchableOpacity>
                         </View>  
@@ -244,7 +243,7 @@ export default class BusinessRegistration extends React.Component{
                         <Text style={{fontFamily:'roboto',
                             fontSize:24,
                             fontWeight:'bold', 
-                            color: '#EE7155', alignSelf: 'center', marginBottom:30,}}>
+                            color: '#EE7155', alignSelf: 'center', marginBottom:'15%',}}>
                             SOFTMASTERS
                         </Text>
                     </View>

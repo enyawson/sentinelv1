@@ -9,6 +9,7 @@ import StopRecord from 'react-native-vector-icons/Ionicons';
 import Arrow from 'react-native-vector-icons/FontAwesome5';
 import { NavigateBefore, Navigation } from '@material-ui/icons';
 import AudioRecorderPlayer from 'react-native-audio-recorder-player';
+import ArrowBack from 'react-native-vector-icons/Ionicons';
 
 
 const audioRecorderPlayer = new AudioRecorderPlayer();
@@ -141,19 +142,22 @@ export default class AudioRecorder extends Component{
                  
                 <View style={{flex:0.9, backgroundColor:'#1D5179', justifyContent:'center'
                     ,borderBottomRightRadius:5, borderBottomLeftRadius:5}}>
-                    <Arrow
-                        name={"long-arrow-alt-left"}
-                        size={25}
-                        color="white"
-                        style={{marginLeft:17, alignContent: 'center'}}
-                        onPress={()=> {
-                            this.props.navigation.goBack();
-                        }}                        
-                        />  
+                    <View style={{flexDirection:'row',  marginTop:'0%', }}>
+                    <TouchableOpacity
+                                onPress={()=> this.props.navigation.navigate('Home')}>
+                                <ArrowBack
+                                    name={'arrow-back-outline'}
+                                    size={23}
+                                    color="white"
+                                    style={{margin:0, alignContent: 'center', marginTop: 15, padding:10}}   
+                                />
+                    </TouchableOpacity>
                     <Text style={{fontSize:20, fontStyle:'normal', color:'white', fontFamily:'roboto',
-                        alignSelf:'center', margin:10, marginTop:10}}>
+                        alignSelf:'center', marginLeft:'15%', }}>
                         New Recording
                     </Text>
+                    </View>
+                     
                     <Text style={{color:'white',justifyContent:'center',fontFamily:'roboto',alignSelf:'center'
                         ,marginBottom: 5, marginTop: 5}}>
                         Time & date

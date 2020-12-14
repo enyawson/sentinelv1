@@ -11,6 +11,7 @@ import {
   BackHandler,
   ToastAndroid,
   TouchableOpacity,
+  Alert
 } from 'react-native';
 import CopyRight from 'react-native-vector-icons/FontAwesome5';
 import  More from 'react-native-vector-icons/Ionicons';
@@ -27,15 +28,38 @@ export default function Home ({ navigation }){
 useEffect(() => {
 //generate Token
   getToken();
-//BackHandler.addEventListener('hardwareBackPress', handleBackButton);
+
+//   backHandler = BackHandler.addEventListener(
+//     "hardwareBackPress",
+//     backAction
+// );
+
+  removePinStored();
 
 
   return () => {
-   // BackHandler.removeEventListener('hardwareBackPress', handleBackButton);
+    //BackHandler.removeEventListener('hardwareBackPress', backAction)
+    console.log("Home unmounted")
   } 
 }, [])
 
+ // this method navigates to home on device back press
+ const backAction=()=>{
+  //    alert('go')
+     return true;
+  }
 
+
+
+const removePinStored = async () =>{
+  try{
+      await AsyncStorage.removeItem('pin');
+     
+  }catch(e){
+      console.log('error')
+  }
+  console.log('pin cleared')
+}
 const turnPopUpOn =()=>{
   setTurnPop(true);
   console.log('pop up')
@@ -64,14 +88,20 @@ const getToken = () => {
   console.log(error);
   }) 
   
-  
-  
+   /**This method clears storage on submit */
+   
+
 }
-// const handleBackButton =()=>{
-//   ToastAndroid.show('Back button is pressed', ToastAndroid.SHORT)
-//   return true;
+
+const handleBackButton =()=>{
+  navigation.navigate('Home');
+  // ToastAndroid.show('Back button is pressed', ToastAndroid.SHORT)
+  //return true;
  
-// }
+}
+const notReadyToVote=() =>{
+  Alert.alert('Not allowed to submit result before voting day')
+}
 
 
     return (
@@ -151,7 +181,7 @@ const getToken = () => {
                 </View>
                 <View style={styles.box}>
                 <TouchableOpacity
-                  onPress={()=>navigation.navigate('EnterResult')}>
+                  onPress={()=> navigation.navigate('LoginPage')}>
                     <Image 
                     style={styles.imageInBox}
                     source = { require('../assets/resultImage.png') } />
@@ -160,13 +190,21 @@ const getToken = () => {
                 </View>    
           </View>
       <View style={styles.bottomContainer}>
-            <TouchableOpacity>
+            <TouchableOpacity
+            onPress={()=> navigation.navigate('SignUp')}>
+              <Text>Register</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+             onPress={()=> navigation.navigate('BusinessRegistration')}
+            >
               <Text>Locate</Text>
             </TouchableOpacity>
             <TouchableOpacity>
               <Text>Stories</Text>
             </TouchableOpacity>
-            <TouchableOpacity>
+            <TouchableOpacity
+             onPress={()=> navigation.navigate('EvidenceSubmission')}
+            >
               <Text>Help</Text>
             </TouchableOpacity>
       </View>

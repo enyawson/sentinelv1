@@ -2,7 +2,7 @@ import React, { useState, Fragment } from 'react';
 
 import {
     StyleSheet, View, KeyboardAvoidingView,Text, Image, TouchableOpacity,StatusBar,
-    TextInput, FlatList,ActivityIndicator, Platform, Dimensions, ScrollView, ListItem
+    TextInput, FlatList,ActivityIndicator, Platform, Dimensions, ScrollView, ListItem, Alert
 } from 'react-native';
 import SearchableDropdown from 'react-native-searchable-dropdown';
 import ArrowBack from 'react-native-vector-icons/Ionicons';
@@ -45,7 +45,8 @@ export default class EnterResult extends React.Component{
             scannerReady: true,
             toggleParliamentaryView: false,
             generatedToken: '', 
-            cdata : []
+            cdata : [],
+            notReady: 'true',
 
         }             
 
@@ -281,12 +282,14 @@ export default class EnterResult extends React.Component{
        
     }
 
+   
+
  
     /**This method creates rejected ballot view */
     _rejectedBallotPapers=()=> {
     return(
         <View>
-          
+         
             
             <View style={{flex:1,backgroundColor: '',flexDirection:'column',margin:15 }}>
                 <View style={{backgroundColor:'', flexDirection:'row', flex:0.2,borderRadius:7,elevation:2}}>
@@ -422,7 +425,7 @@ export default class EnterResult extends React.Component{
                     size={23}
                     color="black"
                     style={{margin:15, marginRight:50, }}
-                    onPress={()=> this.props.navigation.goBack()}
+                    onPress={()=> this.props.navigation.popToTop()}
                     />
 
                     <Text style={{ color:"#6D6B6B", fontSize: 16, marginTop: 0,

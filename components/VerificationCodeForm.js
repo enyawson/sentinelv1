@@ -6,7 +6,8 @@ import {
 } from 'react-native';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 import AsyncStorage from '@react-native-community/async-storage';
-export default function VerificationCodeForm({route, navigation}){
+
+export default function VerificationCodeForm({route, navigation, props}){
 
     const [verificationPin, setVerificationPin] = useState("");
     const [pinReceived, setPinReceived] = useState("");
@@ -14,31 +15,32 @@ export default function VerificationCodeForm({route, navigation}){
     
 
     useEffect(() => {
+       
             console.log('Verification page mounted');
             getData();
-            userVerificationPin();
+            //userVerificationPin();
     
         return () => {
             
         }
     }, [])
 
+
+       
     // retrieve login Response
     const getData = async ()=> {
-       
             const jsonValue = await AsyncStorage.getItem('pin')
             // get verification pin to login
             setPinReceived(jsonValue);
-            console.log("Yes"+jsonValue)
-     
+            console.log("Pin Received "+ pinReceived)
         }
 
    
-    const userVerificationPin = (value)=>{
-        setVerificationPin(value);
-    }
+    // const userVerificationPin = (value)=>{
+    //     setVerificationPin(value);
+    // }
     
-
+    let {pinFromResponse}= route.params
     return(
         
     <View style={styles.contentContainer}>
@@ -51,12 +53,11 @@ export default function VerificationCodeForm({route, navigation}){
         <View style={{marginTop: '50%',marginBottom: 0}}>
             <View> 
                 <TextInput 
-                    defaultValue={pinReceived}
                     style={styles.textInputBoxStyle }
-                    onChangeText={(value) => 
-                        userVerificationPin(value)
-                    }
-                    value={verificationPin}
+                    // onChangeText={(value) => 
+                    //     //userVerificationPin(value)
+                    // }
+                    value={pinFromResponse}
                     multiline={false}
                     keyboardType={'numeric'}
                     placeholder={'Enter verification code'}
@@ -73,7 +74,8 @@ export default function VerificationCodeForm({route, navigation}){
                         }
                         if(pinReceived != null){
                              ToastAndroid.show('Registered Successfully', ToastAndroid.LONG);
-                            navigation.navigate('Home')
+                            navigation.navigate('EnterResult')
+                          
                         }
                        
                     }}>

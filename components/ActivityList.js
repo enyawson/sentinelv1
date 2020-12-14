@@ -50,9 +50,9 @@ export default class ActivityList extends React.Component{
                 {
                     receivedFiles:  (JSON.parse(value)),
                 });
-            if(value !== null){
+                 if(value !== null){
                 const retrievedData = JSON.parse(value)
-                console.log('value received '+ retrievedData[2].incidenceValue )
+                //console.log('value received '+ retrievedData[2].incidenceValue )
                 console.log('array '+ (value))
                  /**looping through array */
                 // for(let i=0; i<retrievedData.length; i++){
@@ -98,9 +98,15 @@ export default class ActivityList extends React.Component{
  
     render(){
          return(
+            
         <View style= {styles.container}>
             <StatusBar barStyle="light-content" backgroundColor="#174060"/>
-                
+            {this.state.receivedFiles == null? 
+            
+            <View>
+                <Text style={{alignSelf:'center', justifyContent:'center'}}> </Text>
+            </View> 
+            :  
             <FlatList
                 data= {this.state.receivedFiles.reverse()}
                 keyExtractor={(item, index)=> index.toString()}
@@ -136,7 +142,7 @@ export default class ActivityList extends React.Component{
                     }
                     
                 />
-            
+             }
          </View>   
             
             

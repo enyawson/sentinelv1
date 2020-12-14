@@ -57,3 +57,10 @@ buck-out/
 
 # CocoaPods
 /ios/Pods/
+
+
+# java files
+java_pid11112.hprof
+java_pid10348.hprof
+java_pid14792.hprof
+java_pid14892.hprof
